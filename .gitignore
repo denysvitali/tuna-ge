@@ -1,2 +1,6 @@
 .idea
 cmake-build-debug
+
+# Windows Specific
+x64
+.vs
