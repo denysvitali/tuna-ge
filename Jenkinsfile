@@ -35,7 +35,6 @@ pipeline {
     always {
         script {
           COMMIT_LOG = sh(script:"git log --oneline --pretty=format:'%h - %s (%an)' ${GIT_PREVIOUS_COMMIT}..HEAD", returnStdout: true)
-          //slackSend color: '#7f8c8d', message: "*Commit Log: *\n${COMMIT_LOG}"
         }
         sh "git remote add supsi https://$CRED@scm.ti-edu.ch/repogit/labingsw022018201907tunagelibrary.git || true"
         sh "git push -u supsi origin/$GIT_BRANCH:$GIT_BRANCH"
