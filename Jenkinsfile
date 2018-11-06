@@ -31,7 +31,7 @@ pipeline {
           }
         }
         sh "git remote add supsi https://$CRED@scm.ti-edu.ch/repogit/labingsw022018201907tunagelibrary.git || true"
-        sh "git push -u supsi origin/$GIT_BRANCH:$GIT_BRANCH"
+        sh "git push -u supsi origin/$GIT_BRANCH:supsi/$GIT_BRANCH"
         sh "git push --tags supsi"
         cleanWs()
     }
