@@ -32,7 +32,7 @@ pipeline {
         }
         sh "git remote add supsi https://$CRED@scm.ti-edu.ch/repogit/labingsw022018201907tunagelibrary.git || true"
         sh "git checkout -b $GIT_BRANCH"
-        sh "git push -u supsi $GIT_BRANCH:supsi/$GIT_BRANCH"
+        sh "git push -u supsi $GIT_BRANCH"
         sh "git push --tags supsi"
         cleanWs()
     }
