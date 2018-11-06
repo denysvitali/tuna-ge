@@ -4,6 +4,11 @@ pipeline {
     CRED = credentials('supsi-scm-denvit')
   }
   stages {
+    stage("Slack Noti"){
+      steps {
+        slackSend color: '#2c3e50', message: "Started build <${BUILD_URL}|#${BUILD_NUMBER}> for ${JOB_NAME} (<https://git.ded1.denv.it/shrug/tuna-ge/commit/${GIT_COMMIT}|${GIT_COMMIT}>) on branch $GIT_BRANCH."
+      }
+    }
     stage("Slack Notification"){
       steps {
         slackSend color: '#2c3e50', message: "Started build <${BUILD_URL}|#${BUILD_NUMBER}> for ${JOB_NAME} (<https://git.ded1.denv.it/shrug/tuna-ge/commit/${GIT_COMMIT}|${GIT_COMMIT}>) on branch $GIT_BRANCH."
@@ -22,7 +27,7 @@ pipeline {
           COMMIT_LOG = sh(script:"git log --oneline --pretty=format:'%h - %s (%an)' ${GIT_PREVIOUS_COMMIT}..HEAD", returnStdout: true)
         }
         sh "git remote add supsi https://$CRED@scm.ti-edu.ch/repogit/labingsw022018201907tunagelibrary.git || true"
-        sh "git push supsi"
+        sh "git push supsi origin/$GIT_BRANCH:supsi/$GIT_BRANCH"
         sh "git push --tags supsi"
         cleanWs()
     }
