@@ -9,21 +9,6 @@ pipeline {
         slackSend color: '#2c3e50', message: "Started build <${BUILD_URL}|#${BUILD_NUMBER}> for ${JOB_NAME} (<https://git.ded1.denv.it/shrug/tuna-ge/commit/${GIT_COMMIT}|${GIT_COMMIT}>) on branch $GIT_BRANCH."
       }
     }
-
-    stage("Cleanup"){
-      steps {
-        sh "git clean -fdx"
-      }
-    }
-
-    stage("Package"){
-      steps {
-        script {
-          docker.image('maven:3-jdk-11').inside() {
-          }
-        }
-      }
-    }
   }
   post {
     failure {
