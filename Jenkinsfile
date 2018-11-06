@@ -27,7 +27,7 @@ pipeline {
           COMMIT_LOG = sh(script:"git log --oneline --pretty=format:'%h - %s (%an)' ${GIT_PREVIOUS_COMMIT}..HEAD", returnStdout: true)
         }
         sh "git remote add supsi https://$CRED@scm.ti-edu.ch/repogit/labingsw022018201907tunagelibrary.git || true"
-        sh "git push supsi origin/$GIT_BRANCH:supsi/$GIT_BRANCH"
+        sh "git push supsi origin/$GIT_BRANCH:$GIT_BRANCH"
         sh "git push --tags supsi"
         cleanWs()
     }
