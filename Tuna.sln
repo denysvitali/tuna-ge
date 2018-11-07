@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Barracuda", "Barracuda\Barracuda.vcxproj", "{D98C3E61-249E-4E3E-9809-7EFC986BA790}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tuna", "Tuna\Tuna.vcxproj", "{D98C3E61-249E-4E3E-9809-7EFC986BA790}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
