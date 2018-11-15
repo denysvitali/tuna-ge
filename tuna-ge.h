@@ -10,7 +10,6 @@
 
 
 #ifdef _WINDOWS 	
-  #include "stdafx.h"
 	#ifdef TUNAGE_EXPORTS
 		#define LIB_API __declspec(dllexport)
 	#else
@@ -29,4 +28,3 @@ private:
 	TunaGE() {}
 	~TunaGE() {}
 };
-

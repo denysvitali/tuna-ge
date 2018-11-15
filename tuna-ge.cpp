@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "tuna-ge.h"
 #include <iostream>
 
