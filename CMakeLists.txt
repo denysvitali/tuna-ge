@@ -3,4 +3,4 @@ project(tuna_ge)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(tuna_ge library.cpp include/library.h)
+add_library(tuna_ge tuna-ge.cpp)
