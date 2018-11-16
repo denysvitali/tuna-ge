@@ -19,11 +19,14 @@
 	#define LIB_API  // Dummy declaration
 #endif
 
+#include <string>
+
 
 class LIB_API TunaGE {
 public:
 	static bool init();
 	static bool free();
+	static std::string version();
 private:
 	TunaGE() {}
 	~TunaGE() {}
