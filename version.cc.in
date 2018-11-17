@@ -1,4 +1,4 @@
-#include "../version.hh"
+#include "../../tuna-ge/version.hh"
 
 const std::string Version::GIT_SHA1 = "@GIT_SHA1@";
 const std::string Version::GIT_DATE = "@GIT_DATE@";
