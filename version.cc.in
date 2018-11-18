@@ -1,5 +1,13 @@
-#include "../../tuna-ge/version.hh"
+#pragma once
+#include "stdafx.h"
 
+#ifdef _WINDOWS
+#include "version.hh"
+#else
+#include "../../tuna-ge/version.hh"
+#endif
+
+using namespace tunage;
 const std::string Version::GIT_SHA1 = "@GIT_SHA1@";
 const std::string Version::GIT_DATE = "@GIT_DATE@";
 const std::string Version::GIT_COMMIT_SUBJECT = "@GIT_COMMIT_SUBJECT@";
