@@ -342,3 +342,4 @@ ASALocalRun/
 
 cmake-build-debug/
 .idea/
+version.cc
