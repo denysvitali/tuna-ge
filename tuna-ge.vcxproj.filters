@@ -30,6 +30,12 @@
     <ClInclude Include="version.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="structure\TunaNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\TunaObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +51,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="version.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structure\TunaNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structure\TunaObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -35,7 +35,15 @@ find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
 
-add_library(tuna_ge STATIC tuna-ge.cpp RGBColor.h RGBColor.cpp Point.cpp Point.h)
+add_library(tuna_ge STATIC tuna-ge.cpp
+        RGBColor.h
+        RGBColor.cpp
+        Point.cpp
+        Point.h
+        structure/TunaNode.h
+        structure/TunaObject.h
+        structure/TunaNode.cpp
+        structure/TunaObject.cpp)
 include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
 target_sources(tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/version.hh ${CMAKE_CURRENT_BINARY_DIR}/version.cc)

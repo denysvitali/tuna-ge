@@ -1,5 +1,5 @@
+#include <stdafx.h>
 #include "TunaObject.h"
-#include "../stdafx.h"
 
 int TunaObject::idGenCount = 0;
 

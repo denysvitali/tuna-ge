@@ -165,6 +165,8 @@
   <ItemGroup>
     <ClInclude Include="RGBColor.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="structure\TunaNode.h" />
+    <ClInclude Include="structure\TunaObject.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tuna-ge.h" />
     <ClInclude Include="version.hh" />
@@ -178,6 +180,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="structure\TunaNode.cpp" />
+    <ClCompile Include="structure\TunaObject.cpp" />
     <ClCompile Include="tuna-ge.cpp" />
     <ClCompile Include="version.cc" />
   </ItemGroup>
