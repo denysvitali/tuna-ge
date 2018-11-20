@@ -4,7 +4,7 @@
 #ifdef _WINDOWS
 #include "version.hh"
 #else
-#include "../../tuna-ge/version.hh"
+#include "@CMAKE_CURRENT_SOURCE_DIR@/version.hh"
 #endif
 
 using namespace tunage;
