@@ -4,7 +4,7 @@
 #ifdef _WINDOWS
 #include "version.hh"
 #else
-#include "../../tuna-gui/version.hh"
+#include "../../tuna-ge/version.hh"
 #endif
 
 using namespace tunage;
