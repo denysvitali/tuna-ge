@@ -3,6 +3,12 @@
 
 int TunaObject::idGenCount = 0;
 
+TunaObject::TunaObject()
+{
+	id = idGenCount;
+	idGenCount++;
+}
+
 int TunaObject::getId()
 {
 	return id;

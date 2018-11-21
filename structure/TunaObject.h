@@ -7,6 +7,7 @@ using namespace std;
 class TunaObject {
 
 public:
+	TunaObject();
 	virtual void render()=0;
 	int getId();
 	string getName();
