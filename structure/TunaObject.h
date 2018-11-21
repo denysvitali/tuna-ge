@@ -2,19 +2,21 @@
 
 #include <string>
 #include <glm/glm.hpp>
-using namespace std;
 
-class TunaObject {
+namespace tunage {
+    class TunaObject {
 
-public:
-	TunaObject();
-	virtual void render()=0;
-	int getId();
-	string getName();
-	void setName(string newString);
+    public:
+        TunaObject();
+        TunaObject(std::string name) : m_name{name}{}
 
-private:
-	static int idGenCount;
-	int id;
-	string name;
-};
+        virtual void render() = 0;
+        int getId();
+        std::string getName();
+        void setName(std::string newString);
+    private:
+        static int idGenCount;
+        int m_id;
+        std::string m_name;
+    };
+}

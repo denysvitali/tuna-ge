@@ -3,17 +3,22 @@
 #include <vector>
 #include <iostream>
 
-class TunaNode : public TunaObject {
+namespace tunage {
+	class TunaNode : public TunaObject {
 
-public:
-	void render() override;
-	void setMatrix(glm::mat4 matrix);
-	TunaNode* getParent();
-	void link(TunaNode* child);
-	TunaNode* unlinkById(int id);
-private:
-	void setParent(TunaNode* parent);
-	vector<TunaNode*> hierarchy;
-	TunaNode* parent;
-	glm::mat4 nodeMatrix;
-};
+	public:
+	    TunaNode(std::string name) : TunaObject(name) {};
+		void render() override;
+		void setMatrix(glm::mat4 matrix);
+		glm::mat4 getMatrix();
+		TunaNode* getParent();
+		void link(TunaNode *child);
+		TunaNode* unlinkById(int id);
+
+	private:
+		void setParent(TunaNode *parent);
+		std::vector<TunaNode *> m_hierarchy;
+		TunaNode *m_parent;
+		glm::mat4 m_matrix;
+	};
+}

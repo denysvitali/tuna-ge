@@ -34,6 +34,15 @@ find_package(glm REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
+# Testing Framework
+enable_testing()
+find_package(GTest REQUIRED)
+
+add_executable(NodeTest structure/TunaNode.cpp structure/TunaObject.cpp test/NodeTest.cpp)
+target_link_libraries(NodeTest ${GTEST_BOTH_LIBRARIES})
+add_test(NodeTest NodeTest)
+
+
 
 add_library(tuna_ge STATIC tuna-ge.cpp
         RGBColor.h

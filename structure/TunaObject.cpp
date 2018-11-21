@@ -1,25 +1,29 @@
+#ifdef _WINDOWS
 #include <stdafx.h>
+#endif
 #include "TunaObject.h"
+
+using namespace tunage;
 
 int TunaObject::idGenCount = 0;
 
 TunaObject::TunaObject()
 {
-	id = idGenCount;
+	m_id = idGenCount;
 	idGenCount++;
 }
 
 int TunaObject::getId()
 {
-	return id;
+	return m_id;
 }
 
-string TunaObject::getName()
+std::string TunaObject::getName()
 {
-	return name;
+	return m_name;
 }
 
-void TunaObject::setName(string newName)
+void TunaObject::setName(std::string newName)
 {
-	name = newName;
+	m_name = newName;
 }
