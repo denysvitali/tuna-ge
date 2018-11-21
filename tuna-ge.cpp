@@ -19,8 +19,14 @@ using namespace tunage;
 bool TunaGE::wireframe = false;
 bool TunaGE::originMarker = false;
 bool TunaGE::debug = true;
+bool TunaGE::culling = true;
+bool TunaGE::lighting = true;
+
 RGBColor TunaGE::color = RGBColor(0,0,0);
 int TunaGE::windowId = -1;
+
+Material TunaGE::material = Material{TunaGE::color};
+
 glm::mat4 TunaGE::camera = glm::lookAt(
         glm::vec3(0,3,3), // Camera is at (0,3,3), in World Space
         glm::vec3(0,0,0), // and looks at the origin
@@ -78,6 +84,24 @@ void TunaGE::initGlut() {
     glutSpecialFunc(TunaGE::specialFuncCB);
     glutKeyboardFunc(TunaGE::kbdCB);
     //glutDisplayFunc(displayCallback);
+
+    if(TunaGE::culling){
+        glEnable(GL_CULL_FACE);
+    } else {
+        glDisable(GL_CULL_FACE);
+    }
+
+    if(TunaGE::lighting){
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+
+        glm::vec4 gAmbient(0.2f, 0.2f, 0.2f, 1.0f);
+        glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0f); // default 0.0
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, glm::value_ptr(gAmbient));
+    }
+
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
 }
 
 void TunaGE::enableOriginMarker() {
@@ -100,6 +124,7 @@ void TunaGE::setColor(RGBColor color){
 
 void TunaGE::drawCube(float width){
     glBegin(GL_TRIANGLE_STRIP);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(width/2, -width/2, width/2);
     glVertex3f(-width/2, -width/2, width/2);
     glVertex3f(width/2, width/2, width/2);
@@ -107,6 +132,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(width/2, -width/2, -width/2);
     glVertex3f(-width/2, -width/2, -width/2);
     glVertex3f(width/2, width/2, -width/2);
@@ -114,6 +140,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(width/2, -width/2, -width/2);
     glVertex3f(width/2, width/2, -width/2);
     glVertex3f(width/2, -width/2, width/2);
@@ -121,6 +148,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    glNormal3f(-1.0f, 0.0f, 0.0f);
     glVertex3f(-width/2, -width/2, -width/2);
     glVertex3f(-width/2, width/2, -width/2);
     glVertex3f(-width/2, -width/2, width/2);
@@ -128,6 +156,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(-width/2, -width/2, -width/2);
     glVertex3f(width/2, -width/2, -width/2);
     glVertex3f(-width/2, -width/2, width/2);
@@ -136,7 +165,7 @@ void TunaGE::drawCube(float width){
 
 
     glBegin(GL_TRIANGLE_STRIP);
-    setColor(RGBColor::getColor("#F44336")); // Red
+    glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(-width/2, width/2, -width/2);
     glVertex3f(width/2, width/2, -width/2);
     glVertex3f(-width/2, width/2, width/2);
@@ -204,7 +233,8 @@ void TunaGE::drawPlane(float width){
 
     glBegin(GL_TRIANGLE_STRIP);
     RGBColor color = RGBColor::getColor("#8e44ad");
-    setColor(color);
+    setMaterial(Material{color});
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(width, 0, 0);
     glVertex3f(0, 0, -width);
     glVertex3f(0, 0, width);
@@ -271,9 +301,7 @@ void TunaGE::displayCB() {
         glRasterPos2i(10, 10);
         std::string s = TunaGE::version();
         void * font = GLUT_BITMAP_9_BY_15;
-        for (std::string::iterator i = s.begin(); i != s.end(); ++i)
-        {
-            char c = *i;
+        for (char c : s) {
             glutBitmapCharacter(font, c);
         }
 
@@ -369,4 +397,21 @@ void TunaGE::reshapeCB(int w, int h) {
 
 void TunaGE::setWorldRotation(glm::mat4 worldRotation) {
     TunaGE::worldRotation = worldRotation;
+}
+
+void TunaGE::setMaterial(Material material){
+    TunaGE::material = material;
+    glm::vec4 ambient{0.2f, 0.2f, 0.2f, 1.0f};
+    glm::vec4 diffuse{0.8f, 0.8f, 0.8f, 1.0f};
+    glm::vec4 specular{0.5f, 0.5f, 0.5f, 1.0f};
+
+    int shininess = 128;
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
+                 glm::value_ptr(ambient));
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
+                 glm::value_ptr(diffuse));
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,
+                 glm::value_ptr(specular));
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    setColor(material.color());
 }

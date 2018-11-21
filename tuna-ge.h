@@ -21,6 +21,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include <structure/material/Material.h>
 #include "RGBColor.h"
 
 namespace tunage {
@@ -39,6 +40,7 @@ namespace tunage {
         static void drawPlane(float width);
         static void drawOriginMarkers(float width);
         static void setColor(RGBColor color);
+        static void setMaterial(Material material);
         static void enableOriginMarker();
         static void setCameraMatrix(glm::mat4 view);
         static void setWorldRotation(glm::mat4 worldRotation);
@@ -62,7 +64,12 @@ namespace tunage {
         static bool wireframe;
         static bool originMarker;
         static bool debug;
+        static bool culling;
+        static bool lighting;
+
         static RGBColor color;
+
+        static Material material;
 
         static glm::mat4 camera;
         static glm::mat4 worldRotation;

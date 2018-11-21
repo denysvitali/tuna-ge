@@ -57,6 +57,7 @@ add_library(tuna_ge STATIC tuna-ge.cpp
         RGBColor.cpp
         Point.cpp
         Point.h
+        structure/material/Material.cpp
         structure/TunaNode.h
         structure/TunaObject.h
         structure/TunaNode.cpp
