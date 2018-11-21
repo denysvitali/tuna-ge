@@ -27,6 +27,16 @@ pipeline {
         }
       }
     }
+
+    stage("Run Tests"){
+      steps {
+        script {
+          docker.image('dvitali/tuna-builder:latest').inside() {
+            sh "cd cmake-build-debug && make test"
+          }
+        }
+      }
+    }
   }
   post {
     failure {
