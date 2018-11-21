@@ -1,9 +1,6 @@
-#include <utility>
-
-#ifdef _WINDOWS
-#include <stdafx.h>
-#endif
+#include "../stdafx.h"
 #include "TunaObject.h"
+#include <utility>
 
 using namespace tunage;
 
