@@ -276,6 +276,7 @@ void TunaGE::displayCB() {
             char c = *i;
             glutBitmapCharacter(font, c);
         }
+
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
         glMatrixMode(GL_MODELVIEW);

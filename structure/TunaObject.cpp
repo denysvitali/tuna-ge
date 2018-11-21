@@ -1,3 +1,5 @@
+#include <utility>
+
 #ifdef _WINDOWS
 #include <stdafx.h>
 #endif
@@ -11,6 +13,11 @@ TunaObject::TunaObject()
 {
 	m_id = idGenCount;
 	idGenCount++;
+}
+
+TunaObject::TunaObject(std::string name) : m_name{std::move(name)} {
+    m_id = idGenCount;
+    idGenCount++;
 }
 
 int TunaObject::getId()

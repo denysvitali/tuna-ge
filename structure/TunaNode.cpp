@@ -2,11 +2,12 @@
     #include <stdafx.h>
 #endif
 
+#include <stdexcept>
 #include "TunaNode.h"
 namespace tunage{
         void TunaNode::render()
         {
-            std::cout << "Called render on a pure Node object" << std::endl;
+            throw std::runtime_error("render() called on a pure TunaNode object");
         }
 
         void TunaNode::setMatrix(glm::mat4 matrix)
@@ -22,6 +23,10 @@ namespace tunage{
         TunaNode* TunaNode::getParent()
         {
             return m_parent;
+        }
+
+        std::vector<TunaNode*> TunaNode::getChildren(){
+            return m_hierarchy;
         }
 
         void TunaNode::link(TunaNode* child)

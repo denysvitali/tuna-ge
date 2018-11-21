@@ -33,9 +33,64 @@ class NodeTest : public ::testing::Test {
         // Objects declared here can be used by all tests in the test case for Foo.
     };
 
-    TEST(NodeCreation, node_creation){
+    TEST(NodeTest, node_creation){
         TunaNode node{"Node 1"};
         ASSERT_EQ("Node 1", node.getName());
+    }
+
+    TEST(NodeTest, node_id){
+        TunaNode node{"Node A"};
+        int id1 = node.getId();
+        TunaNode node2{"Node B"};
+        int id2 = node2.getId();
+
+        ASSERT_NE(id1, id2);
+        ASSERT_LT(id1, id2);
+    }
+
+    TEST(NodeTest, node_hierarchy){
+        TunaNode node_a{"Node A"};
+        TunaNode node_b{"Node B"};
+        TunaNode node_c{"Node C"};
+
+        /*      A
+         *  B       C
+         */
+
+        ASSERT_EQ(nullptr, node_a.getParent());
+        ASSERT_EQ(nullptr, node_b.getParent());
+        ASSERT_EQ(nullptr, node_c.getParent());
+
+        // Link B to A (A -> B)
+        node_a.link(&node_b);
+        ASSERT_EQ(&node_a, node_b.getParent());
+
+        // Link C to A (A -> C)
+        node_a.link(&node_c);
+        ASSERT_EQ(&node_a, node_c.getParent());
+
+        ASSERT_EQ(2, node_a.getChildren().size());
+        ASSERT_EQ(&node_b, node_a.getChildren()[0]);
+        ASSERT_EQ(&node_c, node_a.getChildren()[1]);
+
+        TunaNode* p = node_a.unlinkById(node_b.getId());
+        ASSERT_EQ(&node_b, p);
+
+        ASSERT_EQ(1, node_a.getChildren().size());
+        ASSERT_EQ(&node_c, node_a.getChildren()[0]);
+    }
+
+    TEST(NodeTest, node_matrix){
+        TunaNode n{"Node 1"};
+        glm::mat4 m{1.2f};
+        n.setMatrix(m);
+
+        ASSERT_EQ(m, n.getMatrix());
+    }
+
+    TEST(NodeTest, node_render){
+        TunaNode n{"Node 1"};
+        ASSERT_THROW(n.render(), std::runtime_error);
     }
 
 }

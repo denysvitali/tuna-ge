@@ -8,7 +8,7 @@ namespace tunage {
 
     public:
         TunaObject();
-        TunaObject(std::string name) : m_name{name}{}
+        TunaObject(std::string name);
 
         virtual void render() = 0;
         int getId();

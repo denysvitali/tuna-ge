@@ -13,12 +13,13 @@ namespace tunage {
 		glm::mat4 getMatrix();
 		TunaNode* getParent();
 		void link(TunaNode *child);
+		std::vector<TunaNode*> getChildren();
 		TunaNode* unlinkById(int id);
 
 	private:
 		void setParent(TunaNode *parent);
-		std::vector<TunaNode *> m_hierarchy;
-		TunaNode *m_parent;
+		std::vector<TunaNode*> m_hierarchy;
+		TunaNode *m_parent = nullptr;
 		glm::mat4 m_matrix;
 	};
 }

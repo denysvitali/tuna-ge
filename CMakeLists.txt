@@ -38,10 +38,18 @@ find_package(OpenGL REQUIRED)
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_executable(NodeTest structure/TunaNode.cpp structure/TunaObject.cpp test/NodeTest.cpp)
+add_executable(NodeTest structure/TunaObject.cpp structure/TunaNode.cpp test/NodeTest.cpp)
 target_link_libraries(NodeTest ${GTEST_BOTH_LIBRARIES})
 add_test(NodeTest NodeTest)
 
+find_program(MEMORYCHECK_COMMAND valgrind)
+set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full" )
+
+find_program(VALGRIND "valgrind")
+if(VALGRIND)
+    add_custom_target(valgrind-tunage-nodetest
+            COMMAND "${VALGRIND}" --tool=memcheck --leak-check=full --show-reachable=yes --num-callers=20 --track-fds=yes $<TARGET_FILE:NodeTest>)
+endif()
 
 
 add_library(tuna_ge STATIC tuna-ge.cpp
