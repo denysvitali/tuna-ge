@@ -1,6 +1,6 @@
 #include "../stdafx.h"
 #include <gtest/gtest.h>
-#include "../structure/TunaNode.h"
+#include "../structure/node/Node.h"
 
 using namespace tunage;
 namespace {
@@ -35,14 +35,14 @@ class NodeTest : public ::testing::Test {
     };
 
     TEST(NodeTest, node_creation){
-        TunaNode node{"Node 1"};
+        Node node{"Node 1"};
         ASSERT_EQ("Node 1", node.getName());
     }
 
     TEST(NodeTest, node_id){
-        TunaNode node{"Node A"};
+        Node node{"Node A"};
         int id1 = node.getId();
-        TunaNode node2{"Node B"};
+        Node node2{"Node B"};
         int id2 = node2.getId();
 
         ASSERT_NE(id1, id2);
@@ -50,9 +50,9 @@ class NodeTest : public ::testing::Test {
     }
 
     TEST(NodeTest, node_hierarchy){
-        TunaNode node_a{"Node A"};
-        TunaNode node_b{"Node B"};
-        TunaNode node_c{"Node C"};
+        Node node_a{"Node A"};
+        Node node_b{"Node B"};
+        Node node_c{"Node C"};
 
         /*      A
          *  B       C
@@ -74,7 +74,7 @@ class NodeTest : public ::testing::Test {
         ASSERT_EQ(&node_b, node_a.getChildren()[0]);
         ASSERT_EQ(&node_c, node_a.getChildren()[1]);
 
-        TunaNode* p = node_a.unlinkById(node_b.getId());
+        Node* p = node_a.unlinkById(node_b.getId());
         ASSERT_EQ(&node_b, p);
 
         ASSERT_EQ(1, node_a.getChildren().size());
@@ -82,7 +82,7 @@ class NodeTest : public ::testing::Test {
     }
 
     TEST(NodeTest, node_matrix){
-        TunaNode n{"Node 1"};
+        Node n{"Node 1"};
         glm::mat4 m{1.2f};
         n.setMatrix(m);
 
@@ -90,7 +90,7 @@ class NodeTest : public ::testing::Test {
     }
 
     TEST(NodeTest, node_render){
-        TunaNode n{"Node 1"};
+        Node n{"Node 1"};
         ASSERT_THROW(n.render(), std::runtime_error);
     }
 

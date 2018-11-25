@@ -2,7 +2,6 @@
 // Created by dvitali on 17.11.18.
 //
 
-#include "stdafx.h"
 #include "RGBColor.h"
 #include <cstring>
 #include <cstdio>

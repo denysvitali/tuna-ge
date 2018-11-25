@@ -1,7 +1,6 @@
 //
 // Created by dvitali on 17.11.18.
 //
-#include <stdafx.h>
 #include "Point.h"
 
 using namespace tunage;

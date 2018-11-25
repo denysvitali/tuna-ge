@@ -1,4 +1,3 @@
-#include <stdafx.h>
 #include <stdexcept>
 #include "Node.h"
 namespace tunage{
