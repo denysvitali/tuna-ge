@@ -1,12 +1,11 @@
 #pragma once
-
 #include "../color/RGBColor.h"
 
 namespace tunage {
-    class Material {
+    class Light {
     public:
-        Material(RGBColor color) : m_color{color} {};
-        RGBColor color();
+        Light(RGBColor color) : m_color{color} {}
+        const RGBColor color();
     private:
         RGBColor m_color;
     };

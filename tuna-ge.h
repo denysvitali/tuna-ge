@@ -21,8 +21,9 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include <structure/material/Material.h>
-#include "RGBColor.h"
+#include "structure/material/Material.h"
+#include "structure/light/Light.h"
+#include "structure/color/RGBColor.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -70,6 +71,9 @@ namespace tunage {
         static RGBColor color;
 
         static Material material;
+
+        // Lights
+        static Light ambient_light;
 
         static glm::mat4 camera;
         static glm::mat4 worldRotation;

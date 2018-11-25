@@ -163,30 +163,34 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="RGBColor.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="structure\TunaNode.h" />
-    <ClInclude Include="structure\TunaObject.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="tuna-ge.h" />
-    <ClInclude Include="version.hh" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="RGBColor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="structure\TunaNode.cpp" />
-    <ClCompile Include="structure\TunaObject.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="structure\color\RGBColor.cpp" />
+    <ClCompile Include="structure\light\Light.cpp" />
+    <ClCompile Include="structure\material\Material.cpp" />
+    <ClCompile Include="structure\node\Node.cpp" />
+    <ClCompile Include="structure\object\Object.cpp" />
+    <ClCompile Include="structure\point\Point.cpp" />
     <ClCompile Include="tuna-ge.cpp" />
     <ClCompile Include="version.cc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="structure\color\RGBColor.h" />
+    <ClInclude Include="structure\light\Light.h" />
+    <ClInclude Include="structure\material\Material.h" />
+    <ClInclude Include="structure\node\Node.h" />
+    <ClInclude Include="structure\object\Object.h" />
+    <ClInclude Include="structure\point\Point.h" />
+    <ClInclude Include="tuna-ge.h" />
+    <ClInclude Include="version.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

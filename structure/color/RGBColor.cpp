@@ -54,14 +54,22 @@ RGBColor RGBColor::getColor(const char *color){
     return rgbColor;
 }
 
-const float RGBColor::r() {
+float RGBColor::r() const {
     return m_r;
 }
 
-const float RGBColor::g() {
+float RGBColor::g() const {
     return m_g;
 }
 
-const float RGBColor::b() {
+float RGBColor::b() const {
     return m_b;
+}
+
+glm::vec3 RGBColor::vec() const {
+    return glm::vec3{m_r*1.0f/255.0f, m_g*1.0f/255.0f, m_b*1.0f/255.0f};
+}
+
+glm::vec3 RGBColor::operator*(const float f) {
+    return vec()*f;
 }

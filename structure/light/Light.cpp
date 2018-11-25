@@ -1,10 +1,8 @@
 #include "stdafx.h"
-#include "Material.h"
+#include "Light.h"
 
 using namespace tunage;
 
-RGBColor Material::color() {
+const RGBColor Light::color() {
     return m_color;
 }
-
-

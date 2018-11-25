@@ -4,11 +4,11 @@
 #include <glm/glm.hpp>
 
 namespace tunage {
-    class TunaObject {
+    class Object {
 
     public:
-        TunaObject();
-        TunaObject(std::string name);
+        Object();
+        Object(std::string name);
 
         virtual void render() = 0;
         int getId();

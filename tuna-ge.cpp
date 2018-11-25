@@ -11,15 +11,15 @@
 // FreeGLUT:
 #include <GL/freeglut.h>
 
-#include "RGBColor.h"
-#include "Point.h"
+#include "structure/color/RGBColor.h"
+#include "structure/point/Point.h"
 
 using namespace tunage;
 
 bool TunaGE::wireframe = false;
 bool TunaGE::originMarker = false;
 bool TunaGE::debug = true;
-bool TunaGE::culling = true;
+bool TunaGE::culling = false;
 bool TunaGE::lighting = true;
 
 RGBColor TunaGE::color = RGBColor(0,0,0);
@@ -43,6 +43,9 @@ float TunaGE::wr_z= 0.0;
 // Screen size
 int TunaGE::screen_w= 0;
 int TunaGE::screen_h= 0;
+
+// Lights
+Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}};
 
 TunaGE TunaGE::init() {
     TunaGE engine{};
@@ -92,12 +95,9 @@ void TunaGE::initGlut() {
     }
 
     if(TunaGE::lighting){
+        glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-
-        glm::vec4 gAmbient(0.2f, 0.2f, 0.2f, 1.0f);
-        glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0f); // default 0.0
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, glm::value_ptr(gAmbient));
     }
 
     glShadeModel(GL_SMOOTH);
@@ -124,6 +124,7 @@ void TunaGE::setColor(RGBColor color){
 
 void TunaGE::drawCube(float width){
     glBegin(GL_TRIANGLE_STRIP);
+    // Front Face (facing the camera)
     glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(width/2, -width/2, width/2);
     glVertex3f(-width/2, -width/2, width/2);
@@ -132,6 +133,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    // Back Face
     glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(width/2, -width/2, -width/2);
     glVertex3f(-width/2, -width/2, -width/2);
@@ -140,6 +142,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    // Right Face
     glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(width/2, -width/2, -width/2);
     glVertex3f(width/2, width/2, -width/2);
@@ -148,6 +151,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    // Left Face
     glNormal3f(-1.0f, 0.0f, 0.0f);
     glVertex3f(-width/2, -width/2, -width/2);
     glVertex3f(-width/2, width/2, -width/2);
@@ -156,6 +160,7 @@ void TunaGE::drawCube(float width){
     glEnd();
 
     glBegin(GL_TRIANGLE_STRIP);
+    // Bottom Face
     glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(-width/2, -width/2, -width/2);
     glVertex3f(width/2, -width/2, -width/2);
@@ -165,6 +170,7 @@ void TunaGE::drawCube(float width){
 
 
     glBegin(GL_TRIANGLE_STRIP);
+    // Top Face
     glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(-width/2, width/2, -width/2);
     glVertex3f(width/2, width/2, -width/2);
@@ -233,8 +239,9 @@ void TunaGE::drawPlane(float width){
 
     glBegin(GL_TRIANGLE_STRIP);
     RGBColor color = RGBColor::getColor("#8e44ad");
+    setColor(color);
     setMaterial(Material{color});
-    glNormal3f(0.0f, 0.0f, 1.0f);
+    glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(width, 0, 0);
     glVertex3f(0, 0, -width);
     glVertex3f(0, 0, width);
@@ -249,7 +256,9 @@ void TunaGE::renderString(float x, float y, void* font, const char* string){
 
 void TunaGE::drawOriginMarkers(float width){
     // X arrow - Red
-    setColor(RGBColor::getColor("#c0392b"));
+    RGBColor redColor = RGBColor::getColor("#c0392b");
+    setColor(redColor);
+    setMaterial(redColor);
 
     glMatrixMode(GL_MODELVIEW);
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0));
@@ -262,7 +271,9 @@ void TunaGE::drawOriginMarkers(float width){
 
 
     // Y arrow - Green
-    setColor(RGBColor::getColor("#27ae60"));
+    RGBColor greenColor = RGBColor::getColor("#27ae60");
+    setColor(greenColor);
+    setMaterial(greenColor);
 
     glMatrixMode(GL_MODELVIEW);
     translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0));
@@ -273,7 +284,10 @@ void TunaGE::drawOriginMarkers(float width){
     drawCube(1.0);
 
     // Z arrow - Blue
-    setColor(RGBColor::getColor("#2980b9"));
+    RGBColor blueColor = RGBColor::getColor("#2980b9");
+    setColor(blueColor);
+    setMaterial(blueColor);
+
     glMatrixMode(GL_MODELVIEW);
     translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0, 0.5f));
     scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 0.02, 1));
@@ -290,6 +304,7 @@ void TunaGE::displayCB() {
 
     if(TunaGE::debug){
         setColor(RGBColor(255, 255, 0));
+        glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D); //added this
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -310,6 +325,9 @@ void TunaGE::displayCB() {
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
         glEnable(GL_TEXTURE_2D);
+        if(TunaGE::lighting){
+            glEnable(GL_LIGHTING);
+        }
     }
 
 
@@ -401,11 +419,16 @@ void TunaGE::setWorldRotation(glm::mat4 worldRotation) {
 
 void TunaGE::setMaterial(Material material){
     TunaGE::material = material;
-    glm::vec4 ambient{0.2f, 0.2f, 0.2f, 1.0f};
-    glm::vec4 diffuse{0.8f, 0.8f, 0.8f, 1.0f};
-    glm::vec4 specular{0.5f, 0.5f, 0.5f, 1.0f};
 
-    int shininess = 128;
+    float ambientStrength = 1.0f;
+    auto ambientLight = TunaGE::ambient_light.color().vec();
+
+    glm::vec3 ambient = ambientLight;
+    glm::vec3 diffuse{0.8f, 0.8f, 0.8f};
+    glm::vec3 specular{0.5f, 0.5f, 0.5f};
+
+    int shininess = 2;
+    setColor(material.color());
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
                  glm::value_ptr(ambient));
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
@@ -413,5 +436,4 @@ void TunaGE::setMaterial(Material material){
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,
                  glm::value_ptr(specular));
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-    setColor(material.color());
 }

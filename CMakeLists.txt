@@ -38,7 +38,7 @@ find_package(OpenGL REQUIRED)
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_executable(NodeTest structure/TunaObject.cpp structure/TunaNode.cpp test/NodeTest.cpp)
+add_executable(NodeTest structure/object/Object.cpp structure/node/Node.cpp test/NodeTest.cpp)
 target_link_libraries(NodeTest ${GTEST_BOTH_LIBRARIES})
 add_test(NodeTest NodeTest)
 
@@ -53,15 +53,12 @@ endif()
 
 
 add_library(tuna_ge STATIC tuna-ge.cpp
-        RGBColor.h
-        RGBColor.cpp
-        Point.cpp
-        Point.h
+        structure/color/RGBColor.cpp
+        structure/light/Light.cpp
+        structure/point/Point.cpp
         structure/material/Material.cpp
-        structure/TunaNode.h
-        structure/TunaObject.h
-        structure/TunaNode.cpp
-        structure/TunaObject.cpp)
+        structure/node/Node.cpp
+        structure/object/Object.cpp)
 include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
 target_sources(tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/version.hh ${CMAKE_CURRENT_BINARY_DIR}/version.cc)
