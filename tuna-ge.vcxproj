@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="structure\camera\Camera.cpp" />
     <ClCompile Include="structure\color\RGBColor.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
     <ClCompile Include="structure\material\Material.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="version.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="structure\camera\Camera.h" />
     <ClInclude Include="structure\color\RGBColor.h" />
     <ClInclude Include="structure\light\Light.h" />
     <ClInclude Include="structure\material\Material.h" />

@@ -45,7 +45,7 @@ int TunaGE::screen_w= 0;
 int TunaGE::screen_h= 0;
 
 // Lights
-Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}};
+Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}, " "};
 
 TunaGE TunaGE::init() {
     TunaGE engine{};
@@ -236,9 +236,8 @@ void TunaGE::drawPlane(float width){
     glm::mat4 Model = glm::mat4(1.0f);
     glm::mat4 vp = TunaGE::camera * TunaGE::worldRotation * Model;
     glLoadMatrixf(glm::value_ptr(vp));
-
+	RGBColor color = RGBColor::getColor("#8e44ad");
     glBegin(GL_TRIANGLE_STRIP);
-    RGBColor color = RGBColor::getColor("#8e44ad");
     setColor(color);
     setMaterial(Material{color});
     glNormal3f(0.0f, 1.0f, 0.0f);
@@ -247,6 +246,15 @@ void TunaGE::drawPlane(float width){
     glVertex3f(0, 0, width);
     glVertex3f(-width, 0, 0);
     glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	setColor(color);
+	setMaterial(Material{ color });
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(width, -0.01, 0);
+	glVertex3f(0, -0.01, -width);
+	glVertex3f(0, -0.01, width);
+	glVertex3f(-width, -0.01, 0);
+	glEnd();
 }
 
 void TunaGE::renderString(float x, float y, void* font, const char* string){
@@ -421,7 +429,7 @@ void TunaGE::setMaterial(Material material){
     TunaGE::material = material;
 
     float ambientStrength = 1.0f;
-    auto ambientLight = TunaGE::ambient_light.color().vec();
+    auto ambientLight = TunaGE::ambient_light.getColor().vec();
 
     glm::vec3 ambient = ambientLight;
     glm::vec3 diffuse{0.8f, 0.8f, 0.8f};
