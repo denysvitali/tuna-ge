@@ -19,7 +19,7 @@ using namespace tunage;
 bool TunaGE::wireframe = false;
 bool TunaGE::originMarker = false;
 bool TunaGE::debug = true;
-bool TunaGE::culling = false;
+bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 
 RGBColor TunaGE::color = RGBColor(0,0,0);
@@ -122,61 +122,92 @@ void TunaGE::setColor(RGBColor color){
     glColor3f(color.r(), color.g(), color.b());
 }
 
+void TunaGE::c_PA(float width){
+	glVertex3f(-width/2, width/2, width/2);
+}
+
+void TunaGE::c_PB(float width){
+	glVertex3f(width/2, width/2, width/2);
+}
+
+void TunaGE::c_PC(float width){
+	glVertex3f(-width/2, -width/2, width/2);
+}
+
+void TunaGE::c_PD(float width){
+	glVertex3f(width/2, -width/2, width/2);
+}
+
+void TunaGE::c_PE(float width){
+	glVertex3f(width/2, -width/2, -width/2);
+}
+
+void TunaGE::c_PF(float width){
+	glVertex3f(-width/2, -width/2, -width/2);
+}
+
+void TunaGE::c_PG(float width){
+	glVertex3f(width/2, width/2, -width/2);
+}
+
+void TunaGE::c_PH(float width){
+	glVertex3f(-width/2, width/2, -width/2);
+}
+
 void TunaGE::drawCube(float width){
-    glBegin(GL_TRIANGLE_STRIP);
-    // Front Face (facing the camera)
-    glNormal3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(width/2, -width/2, width/2);
-    glVertex3f(-width/2, -width/2, width/2);
-    glVertex3f(width/2, width/2, width/2);
-    glVertex3f(-width/2, width/2, width/2);
-    glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	// Front Face (facing the camera)
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	TunaGE::c_PB(width);
+    TunaGE::c_PA(width);
+    TunaGE::c_PD(width);
+    TunaGE::c_PC(width);
+	glEnd();
 
-    glBegin(GL_TRIANGLE_STRIP);
-    // Back Face
-    glNormal3f(0.0f, 0.0f, -1.0f);
-    glVertex3f(width/2, -width/2, -width/2);
-    glVertex3f(-width/2, -width/2, -width/2);
-    glVertex3f(width/2, width/2, -width/2);
-    glVertex3f(-width/2, width/2, -width/2);
-    glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	// Back Face
+	glNormal3f(0.0f, 0.0f, -1.0f);
+    TunaGE::c_PH(width);
+    TunaGE::c_PG(width);
+    TunaGE::c_PF(width);
+    TunaGE::c_PE(width);
+	glEnd();
 
-    glBegin(GL_TRIANGLE_STRIP);
-    // Right Face
-    glNormal3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(width/2, -width/2, -width/2);
-    glVertex3f(width/2, width/2, -width/2);
-    glVertex3f(width/2, -width/2, width/2);
-    glVertex3f(width/2, width/2, width/2);
-    glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	// Right Face
+	glNormal3f(1.0f, 0.0f, 0.0f);
+    TunaGE::c_PG(width);
+    TunaGE::c_PB(width);
+    TunaGE::c_PE(width);
+    TunaGE::c_PD(width);
+	glEnd();
 
-    glBegin(GL_TRIANGLE_STRIP);
-    // Left Face
-    glNormal3f(-1.0f, 0.0f, 0.0f);
-    glVertex3f(-width/2, -width/2, -width/2);
-    glVertex3f(-width/2, width/2, -width/2);
-    glVertex3f(-width/2, -width/2, width/2);
-    glVertex3f(-width/2, width/2, width/2);
-    glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	// Left Face
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+    TunaGE::c_PA(width);
+    TunaGE::c_PH(width);
+    TunaGE::c_PC(width);
+    TunaGE::c_PF(width);
+	glEnd();
 
-    glBegin(GL_TRIANGLE_STRIP);
-    // Bottom Face
-    glNormal3f(0.0f, -1.0f, 0.0f);
-    glVertex3f(-width/2, -width/2, -width/2);
-    glVertex3f(width/2, -width/2, -width/2);
-    glVertex3f(-width/2, -width/2, width/2);
-    glVertex3f(width/2, -width/2, width/2);
-    glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	// Bottom Face
+    TunaGE::c_PD(width);
+    TunaGE::c_PC(width);
+    TunaGE::c_PE(width);
+    TunaGE::c_PF(width);
+	glEnd();
 
 
-    glBegin(GL_TRIANGLE_STRIP);
-    // Top Face
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(-width/2, width/2, -width/2);
-    glVertex3f(width/2, width/2, -width/2);
-    glVertex3f(-width/2, width/2, width/2);
-    glVertex3f(width/2, width/2, width/2);
-    glEnd();
+	glBegin(GL_TRIANGLE_STRIP);
+	// Top Face
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	c_PB(width);
+	c_PG(width);
+	c_PA(width);
+	c_PH(width);
+	glEnd();
 }
 
 void TunaGE::drawMultiColorCube(float width){

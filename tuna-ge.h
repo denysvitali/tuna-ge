@@ -62,6 +62,17 @@ namespace tunage {
         static void setProjectionMatrix();
         static void set2DTextProjectionMatrix();
 
+
+        // Auxiliary Functions
+		static void c_PA(float w);
+		static void c_PB(float w);
+		static void c_PC(float w);
+		static void c_PD(float w);
+		static void c_PE(float w);
+		static void c_PF(float w);
+		static void c_PG(float w);
+		static void c_PH(float w);
+
         static bool wireframe;
         static bool originMarker;
         static bool debug;
