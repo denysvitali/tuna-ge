@@ -5,19 +5,16 @@
 
 using namespace tunage;
 
-RGBColor Light::getColor() const{
-    return m_color;
+RGBColor Light::getColor() const {
+	return m_color;
 }
 
-void tunage::Light::setColor(RGBColor color)
-{
+void Light::setColor(RGBColor color) {
 	this->m_color = color;
 }
 
 
-void tunage::Light::render()
-{
-	
+void Light::render() {
 	//TODO: implement various light modes
 
 	glm::mat4 composedMatrix = getRenderMatrix();
@@ -30,51 +27,80 @@ void tunage::Light::render()
 
 	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
 	glm::vec4 objectCoordPosition(0.0f, 0.0f, 0.0f, 1.0f);
-	glLightfv(light + GL_LIGHT0, GL_POSITION, glm::value_ptr(objectCoordPosition));
-	glLightfv(light + GL_LIGHT0, GL_AMBIENT, glm::value_ptr(lightAmbient));
-	glLightfv(light + GL_LIGHT0, GL_DIFFUSE, glm::value_ptr(lightDiffuse));
-	glLightfv(light + GL_LIGHT0, GL_SPECULAR, glm::value_ptr(lightSpecular));
-	
+
+	glm::vec4 ambient_wi = glm::vec4(
+			lightAmbient[0] * intensity,
+			lightAmbient[1] * intensity,
+			lightAmbient[2] * intensity,
+			1.0f);
+
+	glm::vec4 diffuse_wi = glm::vec4(
+			lightDiffuse[0] * intensity,
+			lightDiffuse[1] * intensity,
+			lightDiffuse[2] * intensity,
+			1.0f);
+
+	glm::vec4 specular_wi = glm::vec4(
+			lightSpecular[0] * intensity,
+			lightSpecular[1] * intensity,
+			lightSpecular[2] * intensity,
+			1.0f);
+
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(objectCoordPosition));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
+
 }
 
-void tunage::Light::enableLight()
-{
-	glEnable(light + GL_LIGHT0);
+void Light::enable() {
+	glEnable(static_cast<GLenum>(light + GL_LIGHT0));
 }
 
-void tunage::Light::setLightPosition(glm::vec3 lightPosition)
-{
-	this->lightPosition = lightPosition;
+void Light::disable() {
+	glDisable(static_cast<GLenum>(light + GL_LIGHT0));
 }
 
-void tunage::Light::setLightAmbient(glm::vec3 lightAmbient)
-{
+void Light::setIntensity(float f) {
+	if(f >= 1.0f){
+		intensity = 1.0f;
+		return;
+	}
+
+	if(f < 0.0f){
+		intensity = 0.0f;
+		return;
+	}
+
+	intensity = f;
+}
+
+void Light::setLightAmbient(glm::vec3 lightAmbient) {
 	this->lightAmbient = glm::vec4(lightAmbient, 1.0f);
 }
 
-void tunage::Light::setLightDiffuse(glm::vec3 lightDiffuse)
-{
+void Light::setLightDiffuse(glm::vec3 lightDiffuse) {
 	this->lightDiffuse = glm::vec4(lightDiffuse, 1.0f);
 }
 
-void tunage::Light::setLightSpecular(glm::vec3 lightSpecular)
-{
+void Light::setLightSpecular(glm::vec3 lightSpecular) {
 	this->lightSpecular = glm::vec4(lightSpecular, 1.0f);
 }
 
-void tunage::Light::setLightDirection(glm::vec3 lightDirection)
-{
+void Light::setLightDirection(glm::vec3 lightDirection) {
 	this->lightDirection = lightDirection;
 }
 
-void tunage::Light::setLightCutoff(float lightCutoff)
-{
+void Light::setLightCutoff(float lightCutoff) {
 	this->lightCutoff = lightCutoff;
 }
 
-void tunage::Light::setLight(int light)
-{
+void Light::setLight(int light) {
 	if (light >= 0 && light <= 7) {
 		this->light = light;
 	}
+}
+
+void Light::setMatrix(glm::mat4 matrix) {
+	Node::setMatrix(matrix);
 }

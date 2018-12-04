@@ -61,6 +61,7 @@ namespace tunage {
         static void computeRotationMatrix();
         static void setProjectionMatrix();
         static void set2DTextProjectionMatrix();
+        static void drawLight();
 
 
         // Auxiliary Functions
@@ -80,7 +81,6 @@ namespace tunage {
         static bool lighting;
 
         static RGBColor color;
-
         static Material material;
 
         // Lights

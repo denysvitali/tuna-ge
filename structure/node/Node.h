@@ -22,6 +22,6 @@ namespace tunage {
 		void setParent(Node *parent);
 		std::vector<Node*> m_hierarchy;
 		Node *m_parent = nullptr;
-		glm::mat4 m_matrix;
+		glm::mat4 m_matrix = glm::mat4(1.0f);
 	};
 }
