@@ -33,9 +33,6 @@
     <ClCompile Include="structure\material\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="structure\point\Point.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +43,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="structure\camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structure\mesh\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structure\vertex\Vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,9 +68,6 @@
     <ClInclude Include="structure\material\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="structure\point\Point.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tuna-ge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,6 +75,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="structure\camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\mesh\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\vertex\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

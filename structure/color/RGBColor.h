@@ -4,6 +4,7 @@
 namespace tunage {
     class RGBColor {
         public:
+			RGBColor() {}
             RGBColor(float r, float g, float b);
             static RGBColor getColor(const char *color);
             float r() const;

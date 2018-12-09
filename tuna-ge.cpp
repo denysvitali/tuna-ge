@@ -12,7 +12,7 @@
 #include <GL/freeglut.h>
 
 #include "structure/color/RGBColor.h"
-#include "structure/point/Point.h"
+#include "structure/vertex/Vertex.h"
 
 using namespace tunage;
 
@@ -45,7 +45,7 @@ int TunaGE::screen_w= 0;
 int TunaGE::screen_h= 0;
 
 // Lights
-Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}, " "};
+Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}};
 
 TunaGE TunaGE::init() {
     TunaGE engine{};

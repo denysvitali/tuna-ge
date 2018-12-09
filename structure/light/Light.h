@@ -5,7 +5,8 @@
 namespace tunage {
     class Light : Node{
     public:
-		Light(RGBColor color, std::string name) : m_color{color}, Node{ name }{}
+//		Light(RGBColor color, std::string name) : m_color{color}, Node{ name }{}
+		Light(RGBColor color) : m_color{ color }{}
 		void render() override;
 		void enableLight();
 		void setLightPosition(glm::vec3 lightPosition);

@@ -7,7 +7,7 @@ namespace tunage {
 	class Node : public Object {
 
 	public:
-	    Node(std::string name) : Object(name) {};
+//	    Node(std::string name) : Object(name) {};
 		void render() override;
 		void setMatrix(glm::mat4 matrix);
 		glm::mat4 getMatrix() const;

@@ -6,4 +6,8 @@ RGBColor Material::color() {
     return m_color;
 }
 
+void tunage::Material::render()
+{
+}
+
 
