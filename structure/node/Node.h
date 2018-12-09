@@ -7,7 +7,8 @@ namespace tunage {
 	class Node : public Object {
 
 	public:
-//	    Node(std::string name) : Object(name) {};
+		Node() : Object() {}
+	    Node(std::string name) : Object(name) {};
 		void render() override;
 		void setMatrix(glm::mat4 matrix);
 		glm::mat4 getMatrix() const;
@@ -22,6 +23,6 @@ namespace tunage {
 		void setParent(Node *parent);
 		std::vector<Node*> m_hierarchy;
 		Node *m_parent = nullptr;
-		glm::mat4 m_matrix;
+		glm::mat4 m_matrix = glm::mat4(1.0f);
 	};
 }

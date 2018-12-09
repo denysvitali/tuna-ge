@@ -4,13 +4,13 @@
 using namespace tunage;
 
 int Object::idGenCount = 0;
-/*
+
 Object::Object()
 {
 	m_id = idGenCount;
 	idGenCount++;
 }
-*/
+
 Object::Object(std::string name) : m_name{std::move(name)} {
     m_id = idGenCount;
     idGenCount++;

@@ -8,7 +8,8 @@ namespace tunage {
     class Object {
 
     public:
-        Object(std::string name="");
+		Object();
+        Object(std::string name);
 
         virtual void render() = 0;
         int getId();

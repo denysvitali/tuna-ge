@@ -66,7 +66,7 @@ float RGBColor::b() const {
 }
 
 glm::vec3 RGBColor::vec() const {
-    return glm::vec3{m_r*1.0f/255.0f, m_g*1.0f/255.0f, m_b*1.0f/255.0f};
+    return glm::vec3{m_r*1.0f, m_g*1.0f, m_b*1.0f};
 }
 
 glm::vec3 RGBColor::operator*(const float f) {

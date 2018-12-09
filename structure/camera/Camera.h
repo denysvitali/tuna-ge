@@ -4,7 +4,7 @@
 namespace tunage {
 	class Camera : Node{
 	public:
-//		Camera(std::string name) : Node{name} {}
+		Camera(std::string name) : Node{name} {}
 		glm::mat4 getInverseMatrix() const;
 		glm::mat4 getProjectionMatrix() const;
 		void setFOV(float FOVangle);

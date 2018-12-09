@@ -6,7 +6,7 @@
 namespace tunage {
 	class Mesh : Node {
 	public:
-//		Mesh(std::string name) : Node{ name }{}
+		Mesh(std::string name) : Node{ name }{}
 		void render() override;
 		void addVertex(Vertex vertex);
 		void setMaterial(Material material);
