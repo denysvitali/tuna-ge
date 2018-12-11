@@ -3,6 +3,10 @@
 
 using namespace tunage;
 
+void tunage::Material::render()
+{
+}
+
 void Material::setAmbient(glm::vec3 light) {
     ambient = glm::vec4(light[0], light[1], light[2], 1.0f);
 }

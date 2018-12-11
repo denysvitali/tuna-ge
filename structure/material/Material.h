@@ -1,11 +1,13 @@
 #pragma once
 
 #include "../color/RGBColor.h"
+#include "../node/Node.h"
 
 namespace tunage {
-    class Material {
+    class Material : Node{
     public:
-        Material(){};
+		Material() : Node() {};
+		void render() override;
         void setAmbient(glm::vec3 light);
         void setDiffuse(glm::vec3 light);
         void setSpecular(glm::vec3 light);

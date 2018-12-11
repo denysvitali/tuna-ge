@@ -171,9 +171,10 @@
     <ClCompile Include="structure\color\RGBColor.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
     <ClCompile Include="structure\material\Material.cpp" />
+    <ClCompile Include="structure\mesh\Mesh.cpp" />
     <ClCompile Include="structure\node\Node.cpp" />
     <ClCompile Include="structure\object\Object.cpp" />
-    <ClCompile Include="structure\point\Point.cpp" />
+    <ClCompile Include="structure\vertex\Vertex.cpp" />
     <ClCompile Include="tuna-ge.cpp" />
     <ClCompile Include="version.cc" />
   </ItemGroup>
@@ -182,9 +183,10 @@
     <ClInclude Include="structure\color\RGBColor.h" />
     <ClInclude Include="structure\light\Light.h" />
     <ClInclude Include="structure\material\Material.h" />
+    <ClInclude Include="structure\mesh\Mesh.h" />
     <ClInclude Include="structure\node\Node.h" />
     <ClInclude Include="structure\object\Object.h" />
-    <ClInclude Include="structure\point\Point.h" />
+    <ClInclude Include="structure\vertex\Vertex.h" />
     <ClInclude Include="tuna-ge.h" />
     <ClInclude Include="version.hh" />
   </ItemGroup>

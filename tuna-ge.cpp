@@ -12,7 +12,7 @@
 #include <GL/freeglut.h>
 
 #include "structure/color/RGBColor.h"
-#include "structure/point/Point.h"
+#include "structure/vertex/Vertex.h"
 
 using namespace tunage;
 
