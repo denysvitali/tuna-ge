@@ -55,7 +55,8 @@ endif()
 add_library(tuna_ge STATIC tuna-ge.cpp
         structure/color/RGBColor.cpp
         structure/light/Light.cpp
-        structure/point/Point.cpp
+        structure/mesh/Mesh.cpp
+        structure/vertex/Vertex.cpp
         structure/material/Material.cpp
         structure/node/Node.cpp
         structure/object/Object.cpp)
