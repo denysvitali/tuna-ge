@@ -55,8 +55,9 @@ TunaGE TunaGE::init() {
 	glutInitWindowPosition(100, 100);
 
 	// FreeGLUT can parse command-line params, in case:
-	int *argc = new int{0};
-	glutInit(argc, nullptr);
+	int argc = 1;
+	char* argv[1] = {(char*) "Tuna"};
+	glutInit(&argc, argv);
 
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
@@ -75,11 +76,6 @@ void TunaGE::loop() {
 }
 
 void TunaGE::initGlut() {
-	// The OpenGL context is now initialized...
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-
-
 	// Set callback functions:
 	/*glutDisplayFunc(displayCallback);
 	glutReshapeFunc(reshapeCallback);
@@ -99,8 +95,8 @@ void TunaGE::initGlut() {
 
 	if (TunaGE::lighting) {
 		glEnable(GL_LIGHTING);
-		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+		//glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	}
 
 	glShadeModel(GL_SMOOTH);
@@ -270,7 +266,6 @@ void TunaGE::drawPlane(float width) {
 	glm::mat4 Model = glm::mat4(1.0f);
 	glm::mat4 vp = TunaGE::camera * TunaGE::worldRotation * Model;
 	glLoadMatrixf(glm::value_ptr(vp));
-	glutSolidCone(5,5,5,5);
 	RGBColor color = RGBColor::getColor("#8e44ad");
 	Material m{};
 	m.setAmbient(color.vec());
@@ -368,15 +363,45 @@ void TunaGE::drawOriginMarkers(float width) {
 
 }
 
+void drawGrid(float size, int tesselation)
+{
+	// Compute starting coordinates and step size:
+	float startX = -size / 2.0f;
+	float startZ = size / 2.0f;
+	float triangleSize = size / (float) tesselation;
+
+	// Normal is just one, set it now:
+	glNormal3f(0.0f, 1.0f, 0.0f);
+
+	// Go over XZ and draw triangles:
+	for (int curZ = 0; curZ < tesselation; curZ++)
+	{
+		for (int curX = 0; curX < tesselation; curX++)
+		{
+			glBegin(GL_TRIANGLE_STRIP);
+			glVertex3f(startX, 0.0f, startZ);
+			glVertex3f(startX + triangleSize, 0.0f, startZ);
+			glVertex3f(startX, 0.0f, startZ - triangleSize);
+			glVertex3f(startX + triangleSize, 0.0f, startZ - triangleSize);
+			glEnd();
+
+			startX += triangleSize;
+		}
+		startX = -size / 2.0f;
+		startZ -= triangleSize;
+	}
+}
+
+
 void TunaGE::drawLight() {
-	Light l{RGBColor{255, 255, 255}, "Light 0"};
+	Light l{RGBColor{100, 255, 255}, "Light 1"};
 
-	// Position
-	l.setMatrix(glm::translate(TunaGE::camera * glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-
+	glm::mat4 Model = glm::mat4(1.0f);
+	glm::mat4 vp = TunaGE::camera * TunaGE::worldRotation * Model;
+	vp = glm::translate(vp, glm::vec3(0.0f, 1.0f, 0.0f));
+	l.setMatrix(vp);
 	l.setLight(1);
-//	l.setMatrix(glm::mat4(1.0f));
-	l.setIntensity(0.8);
+	l.setIntensity(1.0);
 	l.setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
 	l.setLightDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
 	l.setLightSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -387,7 +412,10 @@ void TunaGE::drawLight() {
 void TunaGE::displayCB() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	/*
+
+	if(TunaGE::lighting){
+		drawLight();
+	}
 	if (TunaGE::debug) {
 		setColor(RGBColor(255, 255, 0));
 		glDisable(GL_LIGHTING);
@@ -415,13 +443,6 @@ void TunaGE::displayCB() {
 		if (TunaGE::lighting) {
 			glEnable(GL_LIGHTING);
 		}
-	}*/
-	if (TunaGE::lighting) {
-			glEnable(GL_LIGHTING);
-		}
-
-	if (TunaGE::lighting) {
-		drawLight();
 	}
 
 	if (TunaGE::wireframe) {
