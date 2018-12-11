@@ -2,6 +2,8 @@
 
 // FreeGLUT:
 #include <GL/freeglut.h>
+#include <structure/material/Material.h>
+#include <tuna-ge.h>
 
 using namespace tunage;
 
@@ -16,18 +18,25 @@ void Light::setColor(RGBColor color) {
 
 void Light::render() {
 	//TODO: implement various light modes
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(glm::value_ptr(getMatrix()));
 
-	glm::mat4 composedMatrix = getRenderMatrix();
-	glLoadMatrixf(glm::value_ptr(composedMatrix));
 
-	// Draw a small emissive sphere to show light position:   
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(glm::vec4(1.0f)));
-	glutSolidSphere(0.5f, 8, 8);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(glm::vec4(0.0f)));
+	// Draw a small emissive sphere to show light position:
+	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
+
+	Material m{};
+	m.setAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
+	m.setSpecular(glm::vec3(0.6f, 0.6f, 0.6f));
+	m.setShininess(120);
+	m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
+	m.setEmission(glm::vec3(1.0f, 1.0f, 1.0f));
+
+	TunaGE::setMaterial(m);
+
+	glutSolidSphere(0.1f, 40, 40);
 
 	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
-	glm::vec4 objectCoordPosition(0.0f, 0.0f, 0.0f, 1.0f);
-
 	glm::vec4 ambient_wi = glm::vec4(
 			lightAmbient[0] * intensity,
 			lightAmbient[1] * intensity,
@@ -46,7 +55,7 @@ void Light::render() {
 			lightSpecular[2] * intensity,
 			1.0f);
 
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(objectCoordPosition));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0, 0, 0, 1.0f)));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
