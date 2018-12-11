@@ -13,6 +13,7 @@
 
 #include "structure/color/RGBColor.h"
 #include "structure/vertex/Vertex.h"
+#include "structure/mesh/Mesh.h"
 
 using namespace tunage;
 
@@ -262,6 +263,34 @@ void TunaGE::drawMultiColorCube(float width) {
 
 void TunaGE::drawPlane(float width) {
 	// Draws a plane on XZ
+	Mesh mesh{ "plane" };
+	Material material{};
+	RGBColor color = RGBColor::getColor("#8e44ad");
+	material.setAmbient(color.vec());
+	material.setShininess(120);
+	material.setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
+	material.setDiffuse(glm::vec3(1, 1, 1));
+	mesh.setMaterial(material);
+	glm::mat4 model = glm::mat4(1.0f);
+	mesh.setMatrix(camera * TunaGE::worldRotation * model);
+	Vertex v1{ -width, 0, 0, 0, 1, 0 };
+	Vertex v2{ width, 0, 0, 0, 1, 0 };
+	Vertex v3{ 0, 0, -width, 0, 1, 0 };
+
+	Vertex v4{ 0, 0, width, 0, 1, 0 };
+	Vertex v5{ width, 0, 0, 0, 1, 0 };
+	Vertex v6{ -width, 0, 0, 0, 1, 0 };
+
+	mesh.addVertex(v1);
+	mesh.addVertex(v2);
+	mesh.addVertex(v3);
+	mesh.addVertex(v4);
+	mesh.addVertex(v5);
+	mesh.addVertex(v6);
+
+	mesh.render();
+
+	/*
 	glMatrixMode(GL_MODELVIEW);
 	glm::mat4 Model = glm::mat4(1.0f);
 	glm::mat4 vp = TunaGE::camera * TunaGE::worldRotation * Model;
@@ -282,13 +311,12 @@ void TunaGE::drawPlane(float width) {
 	glVertex3f(-width, 0, 0);
 	glEnd();
 	glBegin(GL_TRIANGLE_STRIP);
-	setMaterial(m);
 	glNormal3f(0.0f, -1.0f, 0.0f);
 	glVertex3f(width, -0.01, 0);
 	glVertex3f(0, -0.01, -width);
 	glVertex3f(0, -0.01, width);
 	glVertex3f(-width, -0.01, 0);
-	glEnd();
+	glEnd();*/
 }
 
 void TunaGE::renderString(float x, float y, void *font, const char *string) {

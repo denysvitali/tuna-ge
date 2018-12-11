@@ -4,7 +4,7 @@
 #include "../node/Node.h"
 
 namespace tunage {
-    class Material : Node{
+    class Material : public Node{
     public:
 		Material() : Node() {};
 		void render() override;
