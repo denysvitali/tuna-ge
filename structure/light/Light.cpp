@@ -22,7 +22,7 @@ void Light::render() {
 
 	// Draw a small emissive sphere to show light position:   
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(glm::vec4(1.0f)));
-	glutSolidSphere(0.5f, 8, 8);
+	glutSolidSphere(5, 8, 8);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(glm::vec4(0.0f)));
 
 	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):

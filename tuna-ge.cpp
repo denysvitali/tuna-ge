@@ -270,6 +270,7 @@ void TunaGE::drawPlane(float width) {
 	glm::mat4 Model = glm::mat4(1.0f);
 	glm::mat4 vp = TunaGE::camera * TunaGE::worldRotation * Model;
 	glLoadMatrixf(glm::value_ptr(vp));
+	glutSolidCone(5,5,5,5);
 	RGBColor color = RGBColor::getColor("#8e44ad");
 	Material m{};
 	m.setAmbient(color.vec());
@@ -371,10 +372,10 @@ void TunaGE::drawLight() {
 	Light l{RGBColor{255, 255, 255}, "Light 0"};
 
 	// Position
-	l.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+	l.setMatrix(glm::translate(TunaGE::camera * glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 
-	l.setLight(0);
-	l.setMatrix(glm::mat4(1.0f));
+	l.setLight(1);
+//	l.setMatrix(glm::mat4(1.0f));
 	l.setIntensity(0.8);
 	l.setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
 	l.setLightDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
@@ -386,7 +387,7 @@ void TunaGE::drawLight() {
 void TunaGE::displayCB() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-
+	/*
 	if (TunaGE::debug) {
 		setColor(RGBColor(255, 255, 0));
 		glDisable(GL_LIGHTING);
@@ -410,18 +411,24 @@ void TunaGE::displayCB() {
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
 		glEnable(GL_TEXTURE_2D);
+
 		if (TunaGE::lighting) {
 			glEnable(GL_LIGHTING);
 		}
-	}
+	}*/
+	if (TunaGE::lighting) {
+			glEnable(GL_LIGHTING);
+		}
 
+	if (TunaGE::lighting) {
+		drawLight();
+	}
 
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	} else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-
 	drawPlane(1);
 
 	if (TunaGE::originMarker) {
@@ -433,10 +440,6 @@ void TunaGE::displayCB() {
 		setMaterial(mat);
 		drawArrow(0, 0, 0, 0, 0, 0);*/
 		drawOriginMarkers(1.0);
-	}
-
-	if(TunaGE::lighting){
-		drawLight();
 	}
 
 	glutPostWindowRedisplay(windowId);
