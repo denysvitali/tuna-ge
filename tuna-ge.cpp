@@ -55,8 +55,9 @@ TunaGE TunaGE::init() {
 	glutInitWindowPosition(100, 100);
 
 	// FreeGLUT can parse command-line params, in case:
-	int *argc = new int{0};
-	glutInit(argc, nullptr);
+	int argc = 0;
+	char* argv[1] = {(char*) "aaa"};
+	glutInit(&argc, argv);
 
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
@@ -75,11 +76,6 @@ void TunaGE::loop() {
 }
 
 void TunaGE::initGlut() {
-	// The OpenGL context is now initialized...
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-
-
 	// Set callback functions:
 	/*glutDisplayFunc(displayCallback);
 	glutReshapeFunc(reshapeCallback);
