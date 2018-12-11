@@ -2,8 +2,8 @@
 
 // FreeGLUT:
 #include <GL/freeglut.h>
-#include <structure/material/Material.h>
-#include <tuna-ge.h>
+#include "../material/Material.h"
+#include "../../tuna-ge.h"
 
 using namespace tunage;
 
