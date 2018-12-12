@@ -2,11 +2,12 @@
 #include "../node/Node.h"
 
 namespace tunage {
-	class Camera : Node{
+	class Camera : public Node{
 	public:
 		Camera(std::string name) : Node{name} {}
 		glm::mat4 getInverseMatrix() const;
 		glm::mat4 getProjectionMatrix() const;
+		void loadProjectionMatrix();
 		void setFOV(float FOVangle);
 		float getFOV() const;
 		void setNearPlane(float nearPlane);

@@ -24,6 +24,7 @@
 #include "structure/material/Material.h"
 #include "structure/light/Light.h"
 #include "structure/color/RGBColor.h"
+#include "structure/camera/Camera.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -86,7 +87,7 @@ namespace tunage {
         // Lights
         static Light ambient_light;
 
-        static glm::mat4 camera;
+		static Camera camera;
         static glm::mat4 worldRotation;
 
         static float wr_x;

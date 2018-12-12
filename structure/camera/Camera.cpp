@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include <GL/freeglut.h>
 
 glm::mat4 tunage::Camera::getInverseMatrix() const
 {
@@ -7,8 +8,15 @@ glm::mat4 tunage::Camera::getInverseMatrix() const
 
 glm::mat4 tunage::Camera::getProjectionMatrix() const
 {
-	//TODO: perspective or orthoganl matrix
-	return glm::perspective(glm::radians(FOVangle), (float)(screen_w) / (float)(screen_h), 0.1f, 100.0f);;
+	return glm::perspective(glm::radians(FOVangle), (float)(screen_w) / (float)(screen_h), nearPlane, farPlane);
+}
+
+void tunage::Camera::loadProjectionMatrix()
+{
+	glMatrixMode(GL_PROJECTION);
+	glm::mat4 Projection = glm::perspective(glm::radians(FOVangle), (float)(screen_w) / (float)(screen_h), nearPlane, farPlane);
+	glLoadMatrixf(glm::value_ptr(Projection));
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void tunage::Camera::setFOV(float FOVangle)
@@ -69,5 +77,5 @@ void tunage::Camera::setCameraUp(glm::vec3 cameraUp)
 
 void tunage::Camera::updateCamera()
 {
-	this->setMatrix(glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
+	this->setMatrix(glm::lookAt(cameraPos, cameraFront, cameraUp));
 }
