@@ -65,9 +65,19 @@ void tunage::Camera::setCameraPos(glm::vec3 cameraPos)
 	this->cameraPos = cameraPos;
 }
 
+glm::vec3 tunage::Camera::getCameraPos() const
+{
+	return cameraPos;
+}
+
 void tunage::Camera::setCameraFront(glm::vec3 cameraFront)
 {
 	this->cameraFront = cameraFront;
+}
+
+glm::vec3 tunage::Camera::getCameraFront() const
+{
+	return cameraFront;
 }
 
 void tunage::Camera::setCameraUp(glm::vec3 cameraUp)
@@ -75,7 +85,21 @@ void tunage::Camera::setCameraUp(glm::vec3 cameraUp)
 	this->cameraUp = cameraUp;
 }
 
+glm::vec3 tunage::Camera::getCameraUp() const
+{
+	return cameraUp;
+}
+
+void tunage::Camera::setCameraSpeed(float cameraSpeed)
+{
+	this->cameraSpeed = cameraSpeed;
+}
+
+float tunage::Camera::getCameraSpeed() const
+{
+	return cameraSpeed;
+}
 void tunage::Camera::updateCamera()
 {
-	this->setMatrix(glm::lookAt(cameraPos, cameraFront, cameraUp));
+	this->setMatrix(glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
 }

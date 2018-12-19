@@ -6,6 +6,9 @@ using namespace tunage;
 
 void tunage::Material::render()
 {
+	if (texture != nullptr) {
+		texture->render();
+	}
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
 		glm::value_ptr(ambient));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
@@ -57,4 +60,9 @@ glm::vec4 Material::getSpecular() const {
 
 int Material::getShininess() const {
     return this->shininess;
+}
+
+void tunage::Material::setTexture(Texture* texture)
+{
+	this->texture = texture;
 }

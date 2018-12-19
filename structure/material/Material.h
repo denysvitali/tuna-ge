@@ -1,12 +1,13 @@
 #pragma once
 
 #include "../color/RGBColor.h"
-#include "../node/Node.h"
+#include "../object/Object.h"
+#include "../texture/Texture.h"
 
 namespace tunage {
-    class Material : public Node{
+    class Material : public Object{
     public:
-		Material() : Node() {};
+		Material() : Object() {};
 		void render() override;
         void setAmbient(glm::vec3 light);
         void setDiffuse(glm::vec3 light);
@@ -18,7 +19,9 @@ namespace tunage {
         glm::vec4 getSpecular() const;
         glm::vec4 getEmission() const;
         int getShininess() const;
+		void setTexture(Texture* texture);
     private:
+		Texture* texture;
         int shininess;
         glm::vec4 ambient = glm::vec4{0,0,0,1};
         glm::vec4 diffuse = glm::vec4{0,0,0,1};
