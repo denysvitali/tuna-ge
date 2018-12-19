@@ -24,11 +24,12 @@
 #include "structure/material/Material.h"
 #include "structure/light/Light.h"
 #include "structure/color/RGBColor.h"
+#include "structure/camera/Camera.h"
 
 namespace tunage {
     class LIB_API TunaGE {
     public:
-        static TunaGE init();
+		static TunaGE init();
         static void loop();
         static bool free();
 
@@ -58,7 +59,9 @@ namespace tunage {
         static void reshapeCB(int w, int h);
         static void specialFuncCB(int key, int mouseX, int mouseY);
         static void kbdCB(unsigned char c, int mouseX, int mouseY);
-        static void computeRotationMatrix();
+		static void mouseCallback(int button, int state, int mouseX, int mouseY);
+		static void motionCallback(int mouseX, int mouseY);
+		static void computeRotationMatrix();
         static void setProjectionMatrix();
         static void set2DTextProjectionMatrix();
         static void drawLight();
@@ -82,11 +85,13 @@ namespace tunage {
 
         static RGBColor color;
         static Material material;
+		static Light light;
+		static Texture tex;
 
         // Lights
         static Light ambient_light;
 
-        static glm::mat4 camera;
+		static Camera camera;
         static glm::mat4 worldRotation;
 
         static float wr_x;

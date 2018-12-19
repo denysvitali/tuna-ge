@@ -21,10 +21,8 @@ void Light::render() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(getMatrix()));
 
-
 	// Draw a small emissive sphere to show light position:
 	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
-
 	Material m{};
 	m.setAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
 	m.setSpecular(glm::vec3(0.6f, 0.6f, 0.6f));
@@ -32,7 +30,7 @@ void Light::render() {
 	m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
 	m.setEmission(glm::vec3(1.0f, 1.0f, 1.0f));
 
-	TunaGE::setMaterial(m);
+	m.render();
 
 	glutSolidSphere(0.1f, 40, 40);
 
@@ -59,7 +57,6 @@ void Light::render() {
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
-
 }
 
 void Light::enable() {

@@ -4,7 +4,7 @@
 #include "../vertex/Vertex.h"
 
 namespace tunage {
-	class Mesh : Node {
+	class Mesh : public Node {
 	public:
 		Mesh(std::string name) : Node{ name }{}
 		void render() override;

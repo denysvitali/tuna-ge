@@ -1,10 +1,22 @@
 #include <glm/vec4.hpp>
 #include "Material.h"
+#include <GL/freeglut.h>
 
 using namespace tunage;
 
 void tunage::Material::render()
 {
+	if (texture != nullptr) {
+		texture->render();
+	}
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
+		glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
+		glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,
+		glm::value_ptr(specular));
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,
+		shininess);
 }
 
 void Material::setAmbient(glm::vec3 light) {
@@ -48,4 +60,9 @@ glm::vec4 Material::getSpecular() const {
 
 int Material::getShininess() const {
     return this->shininess;
+}
+
+void tunage::Material::setTexture(Texture* texture)
+{
+	this->texture = texture;
 }
