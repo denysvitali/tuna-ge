@@ -67,8 +67,7 @@ void TunaGE::mouseCallback(int button, int state, int mouseX, int mouseY) {
 }
 void TunaGE::motionCallback(int mouseX, int mouseY){
 
-	if (firstMouse)
-	{
+	if (firstMouse) {
 		lastX = mouseX;
 		lastY = mouseY;
 		firstMouse = false;
@@ -86,10 +85,12 @@ void TunaGE::motionCallback(int mouseX, int mouseY){
 	yaw += xoffset;
 	pitch += yoffset;
 
-	if (pitch > 89.0f)
+	if (pitch > 89.0f) {
 		pitch = 89.0f;
-	if (pitch < -89.0f)
+	}
+	if (pitch < -89.0f) {
 		pitch = -89.0f;
+	}
 
 	glm::vec3 front;
 	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -507,7 +508,26 @@ void TunaGE::displayCB() {
 	glEnable(GL_DEPTH_TEST);
 
 	camera.updateCamera();
-	
+
+	if (TunaGE::wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	if (TunaGE::lighting) {
+		drawLight();
+	}
+
+	drawPlane(1);
+
+	if (TunaGE::originMarker) {
+		drawOriginMarkers(1.0);
+	}
+
+
+	// Keep me as last rendering item
 	if (TunaGE::debug) {
 		setColor(RGBColor(255, 255, 0));
 		glDisable(GL_LIGHTING);
@@ -534,23 +554,6 @@ void TunaGE::displayCB() {
 		if (TunaGE::lighting) {
 			glEnable(GL_LIGHTING);
 		}
-	}
-
-	if (TunaGE::wireframe) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-
-	if (TunaGE::lighting) {
-		drawLight();
-	}
-
-	drawPlane(1);
-
-	if (TunaGE::originMarker) {
-		drawOriginMarkers(1.0);
 	}
 
 	glutPostWindowRedisplay(windowId);

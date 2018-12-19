@@ -5,28 +5,24 @@ using namespace tunage;
 
 int Object::idGenCount = 0;
 
-Object::Object()
-{
+Object::Object() {
 	m_id = idGenCount;
-	//idGenCount++;
+	idGenCount++;
 }
 
 Object::Object(std::string name) : m_name{std::move(name)} {
-    m_id = idGenCount;
-   // idGenCount++;
+	m_id = idGenCount;
+	idGenCount++;
 }
 
-int Object::getId()
-{
+int Object::getId() {
 	return m_id;
 }
 
-std::string Object::getName()
-{
+std::string Object::getName() {
 	return m_name;
 }
 
-void Object::setName(std::string newName)
-{
+void Object::setName(std::string newName) {
 	m_name = newName;
 }
