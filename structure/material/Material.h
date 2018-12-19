@@ -21,7 +21,7 @@ namespace tunage {
         int getShininess() const;
 		void setTexture(Texture* texture);
     private:
-		Texture* texture;
+		Texture* texture = nullptr;
         int shininess;
         glm::vec4 ambient = glm::vec4{0,0,0,1};
         glm::vec4 diffuse = glm::vec4{0,0,0,1};

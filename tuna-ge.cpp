@@ -329,11 +329,11 @@ void TunaGE::drawPlane(float width) {
 	Mesh mesh{ "plane" };
 	Material material{};
 	
-	RGBColor color = RGBColor::getColor("#ffffff");
+	RGBColor color = RGBColor::getColor("#1a1a1a");
 	material.setAmbient(color.vec());
-	material.setShininess(120);
+	material.setShininess(200);
 	material.setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
-	material.setDiffuse(glm::vec3(1, 1, 1));
+	material.setDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
 
 	material.setTexture(&tex);
 

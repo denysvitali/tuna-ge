@@ -57,6 +57,8 @@ add_library(tuna_ge STATIC tuna-ge.cpp
         structure/light/Light.cpp
         structure/mesh/Mesh.cpp
         structure/vertex/Vertex.cpp
+        structure/texture/Texture.cpp
+        structure/camera/Camera.cpp
         structure/material/Material.cpp
         structure/node/Node.cpp
         structure/object/Object.cpp)
