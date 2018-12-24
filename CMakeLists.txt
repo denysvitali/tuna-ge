@@ -30,9 +30,34 @@ execute_process(COMMAND
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cc.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cc" @ONLY)
 list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/version.cc" version.hh)
 
+
+# Dependencies
+
 find_package(glm REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
+
+# look for freeimage
+FIND_PATH(FREEIMAGE_INCLUDE_DIR FreeImage.h
+        /usr/local/include
+        /usr/include
+        /opt/local/include
+        )
+FIND_LIBRARY(FREEIMAGE_LIBRARY freeimage
+        /usr/lib
+        /usr/local/lib
+        /opt/local/lib
+        )
+
+IF(FREEIMAGE_INCLUDE_DIR)
+    IF(FREEIMAGE_LIBRARY)
+        SET( FREEIMAGE_FOUND "YES" )
+        SET( FREEIMAGE_LIBRARIES ${FREEIMAGE_LIBRARY} )
+    ENDIF(FREEIMAGE_LIBRARY)
+ENDIF(FREEIMAGE_INCLUDE_DIR)
+
+message("FreeImage: ${STATUS_FREEIMG}")
+
 
 # Testing Framework
 enable_testing()
@@ -64,6 +89,12 @@ add_library(tuna_ge STATIC tuna-ge.cpp
         structure/object/Object.cpp)
 include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
+
+IF(FREEIMAGE_FOUND)
+    INCLUDE_DIRECTORIES(${FREEIMAGE_INCLUDE_DIR})
+    TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})
+ENDIF(FREEIMAGE_FOUND)
+
 target_sources(tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/version.hh ${CMAKE_CURRENT_BINARY_DIR}/version.cc)
 
 target_include_directories (tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

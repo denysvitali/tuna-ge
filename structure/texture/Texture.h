@@ -4,11 +4,10 @@
 namespace tunage {
 	class Texture : public Object {
 	public:
-
 		~Texture();
 		Texture(std::string name) : Object{ name }{}
 		void render() override;
-		void loadTextureFromFile();
+		void loadFromFile(std::string path);
 		void loadTexture(unsigned char *texture);
 		void setAnisotropic(bool anisotropic);
 		void setMipmap(bool useMipmaps);

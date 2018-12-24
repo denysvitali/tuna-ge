@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "Object.h"
 #include <utility>
 
@@ -24,5 +26,5 @@ std::string Object::getName() {
 }
 
 void Object::setName(std::string newName) {
-	m_name = newName;
+	m_name = std::move(newName);
 }
