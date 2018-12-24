@@ -108,6 +108,7 @@ TunaGE TunaGE::init() {
 	camera.setCameraPos(glm::vec3(0.0f, 4.0f, 10.0f));  // Camera is at (0,2,10), in World Space
 	camera.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f)); // looks in the direction
 	camera.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f)); // Head is up (set to 0,-1,0 to look upside-down)
+	camera.setCameraSpeed(0.1f);
 	camera.updateCamera();
 
 	TunaGE engine{};
