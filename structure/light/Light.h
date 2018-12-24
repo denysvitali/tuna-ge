@@ -29,7 +29,7 @@ namespace tunage {
 		glm::vec4 lightSpecular = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 lightDirection = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		float lightCutoff;
-		float intensity = 0.1;
+		float intensity = 0.5;
 		bool enabled;
     };
 }

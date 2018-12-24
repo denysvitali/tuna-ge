@@ -170,6 +170,7 @@
     <ClCompile Include="structure\camera\Camera.cpp" />
     <ClCompile Include="structure\color\RGBColor.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
+    <ClCompile Include="structure\list\List.cpp" />
     <ClCompile Include="structure\material\Material.cpp" />
     <ClCompile Include="structure\mesh\Mesh.cpp" />
     <ClCompile Include="structure\node\Node.cpp" />
@@ -182,7 +183,9 @@
   <ItemGroup>
     <ClInclude Include="structure\camera\Camera.h" />
     <ClInclude Include="structure\color\RGBColor.h" />
+    <ClInclude Include="structure\element\Element.h" />
     <ClInclude Include="structure\light\Light.h" />
+    <ClInclude Include="structure\list\List.h" />
     <ClInclude Include="structure\material\Material.h" />
     <ClInclude Include="structure\mesh\Mesh.h" />
     <ClInclude Include="structure\node\Node.h" />

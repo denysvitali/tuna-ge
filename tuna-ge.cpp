@@ -107,6 +107,7 @@ TunaGE TunaGE::init() {
 	camera.setCameraPos(glm::vec3(0.0f, 4.0f, 10.0f));  // Camera is at (0,2,10), in World Space
 	camera.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f)); // looks in the direction
 	camera.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f)); // Head is up (set to 0,-1,0 to look upside-down)
+	camera.setCameraSpeed(0.1f);
 	camera.updateCamera();
 
 	TunaGE engine{};
@@ -329,11 +330,11 @@ void TunaGE::drawPlane(float width) {
 	Mesh mesh{ "plane" };
 	Material material{};
 	
-	RGBColor color = RGBColor::getColor("#ffffff");
-	material.setAmbient(color.vec());
+	//RGBColor color = RGBColor::getColor("#ffffff");
+	material.setAmbient(glm::vec3(0.2, 0.2, 0.2));
 	material.setShininess(120);
-	material.setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
-	material.setDiffuse(glm::vec3(1, 1, 1));
+	material.setSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
+	material.setDiffuse(glm::vec3(0.5, 0.5, 0.5));
 
 	material.setTexture(&tex);
 

@@ -65,10 +65,10 @@ void tunage::Texture::init()
 	}
 
 	glGenTextures(1, &texId);
-	texture = new unsigned char[256 * 256 * 3];
+	texture = new unsigned char[256 * 256 * 4];
 	
-	for (int i = 0; i < 256*256*3; i += 3) {
-		texture[i] = 255;
+	for (int i = 0; i < 256*256*4; i++) {
+		texture[i] = rand() % 255;
 	}
 
 	// Update texture content:
@@ -93,14 +93,14 @@ void tunage::Texture::init()
 				0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, // FreeImage uses BGR
 				(void*)FreeImage_GetBits(abitmap));
 				*/
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
 	}
 	else
 	{
 		// Using mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, FreeImage_GetWidth(abitmap), FreeImage_GetHeight(abitmap), GL_BGRA_EXT, GL_UNSIGNED_BYTE, (void*)FreeImage_GetBits(abitmap));
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, 256, 256, GL_BGR_EXT, GL_UNSIGNED_BYTE, texture);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, 256, 256, GL_BGRA_EXT, GL_UNSIGNED_BYTE, texture);
 	}
 	
 }
