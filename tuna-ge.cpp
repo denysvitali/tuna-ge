@@ -67,8 +67,7 @@ void TunaGE::mouseCallback(int button, int state, int mouseX, int mouseY) {
 }
 void TunaGE::motionCallback(int mouseX, int mouseY){
 
-	if (firstMouse)
-	{
+	if (firstMouse) {
 		lastX = mouseX;
 		lastY = mouseY;
 		firstMouse = false;
@@ -86,10 +85,12 @@ void TunaGE::motionCallback(int mouseX, int mouseY){
 	yaw += xoffset;
 	pitch += yoffset;
 
-	if (pitch > 89.0f)
+	if (pitch > 89.0f) {
 		pitch = 89.0f;
-	if (pitch < -89.0f)
+	}
+	if (pitch < -89.0f) {
 		pitch = -89.0f;
+	}
 
 	glm::vec3 front;
 	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -330,11 +331,11 @@ void TunaGE::drawPlane(float width) {
 	Mesh mesh{ "plane" };
 	Material material{};
 	
-	//RGBColor color = RGBColor::getColor("#ffffff");
-	material.setAmbient(glm::vec3(0.2, 0.2, 0.2));
-	material.setShininess(120);
-	material.setSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
-	material.setDiffuse(glm::vec3(0.5, 0.5, 0.5));
+	RGBColor color = RGBColor::getColor("#1a1a1a");
+	material.setAmbient(color.vec());
+	material.setShininess(200);
+	material.setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
+	material.setDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
 
 	material.setTexture(&tex);
 
@@ -508,7 +509,26 @@ void TunaGE::displayCB() {
 	glEnable(GL_DEPTH_TEST);
 
 	camera.updateCamera();
-	
+
+	if (TunaGE::wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	if (TunaGE::lighting) {
+		drawLight();
+	}
+
+	drawPlane(1);
+
+	if (TunaGE::originMarker) {
+		drawOriginMarkers(1.0);
+	}
+
+
+	// Keep me as last rendering item
 	if (TunaGE::debug) {
 		setColor(RGBColor(255, 255, 0));
 		glDisable(GL_LIGHTING);
@@ -535,23 +555,6 @@ void TunaGE::displayCB() {
 		if (TunaGE::lighting) {
 			glEnable(GL_LIGHTING);
 		}
-	}
-
-	if (TunaGE::wireframe) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-
-	if (TunaGE::lighting) {
-		drawLight();
-	}
-
-	drawPlane(1);
-
-	if (TunaGE::originMarker) {
-		drawOriginMarkers(1.0);
 	}
 
 	glutPostWindowRedisplay(windowId);

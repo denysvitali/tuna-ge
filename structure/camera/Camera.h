@@ -35,7 +35,7 @@ namespace tunage {
 		float nearPlane = 0.1f;
 		float farPlane = 100.0f;
 		bool projMode = false;
-		float cameraSpeed = 1;
+		float cameraSpeed = 0.1f;
 		glm::vec3 cameraPos;
 		glm::vec3 cameraFront;
 		glm::vec3 cameraUp;
