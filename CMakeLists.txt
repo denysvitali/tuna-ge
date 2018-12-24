@@ -90,6 +90,8 @@ add_library(tuna_ge STATIC tuna-ge.cpp
 include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/ DESTINATION ${CMAKE_BINARY_DIR}/tuna-gui)
+
 IF(FREEIMAGE_FOUND)
     INCLUDE_DIRECTORIES(${FREEIMAGE_INCLUDE_DIR})
     TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})

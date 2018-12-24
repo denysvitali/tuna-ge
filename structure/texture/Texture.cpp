@@ -6,6 +6,9 @@
 // FreeGLUT:
 #include <GL/freeglut.h>
 #include <FreeImage.h>
+#include <zconf.h>
+#include <iostream>
+#include <regex>
 
 
 tunage::Texture::~Texture() {
@@ -25,7 +28,23 @@ void tunage::Texture::render() {
 }
 
 void tunage::Texture::loadFromFile(std::string path) {
-	//TODO: implement freeimage
+	char dir[FILENAME_MAX];
+	getcwd(dir, FILENAME_MAX);
+	std::cout << "Current dir: " << dir << std::endl;
+
+	std::regex jpg(".*\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
+	std::regex bmp(".*\.bmp", std::regex_constants::ECMAScript | std::regex_constants::icase);
+
+	FREE_IMAGE_FORMAT format = FIF_BMP;
+
+	if(std::regex_search(path, jpg)){
+		format = FIF_JPEG;
+	} else if (std::regex_search(path, bmp)){
+		format = FIF_BMP;
+	}
+
+	this->bitmap = FreeImage_Load(format, path.c_str(), 0);
+
 }
 
 void tunage::Texture::loadTexture(unsigned char* texture) {
@@ -72,8 +91,6 @@ void tunage::Texture::init() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	FIBITMAP* bitmap = (FIBITMAP*) malloc(sizeof(FIBITMAP));
-
 	if (!useMipmaps) {
 		// Without mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -81,12 +98,12 @@ void tunage::Texture::init() {
 				FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap),
 				0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, // FreeImage uses BGR
 				(void*)FreeImage_GetBits(bitmap));
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)FreeImage_GetBits(bitmap));
 	} else {
 		// Using mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), GL_BGRA_EXT, GL_UNSIGNED_BYTE, (void*)FreeImage_GetBits(bitmap));
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, 256, 256, GL_BGR_EXT, GL_UNSIGNED_BYTE, texture);
+		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, 256, 256, GL_BGR_EXT, GL_UNSIGNED_BYTE, bitmap->data);
 	}
 
 }

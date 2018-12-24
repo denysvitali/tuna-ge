@@ -1,4 +1,6 @@
 #pragma once
+
+#include <FreeImage.h>
 #include "../object/Object.h"
 
 namespace tunage {
@@ -19,6 +21,7 @@ namespace tunage {
 
 		bool initialized = false;
 		unsigned char *texture;
+		FIBITMAP* bitmap;
 		unsigned int texId = 0;
 		bool useMipmaps = false;
 		bool isAnisotropicSupported = false;

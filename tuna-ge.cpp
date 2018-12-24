@@ -122,6 +122,8 @@ TunaGE TunaGE::init() {
 	char* argv[1] = {(char*) "Tuna"};
 	glutInit(&argc, argv);
 
+
+	tex.loadFromFile("./textures/paving_stones.bmp");
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
@@ -129,6 +131,7 @@ TunaGE TunaGE::init() {
 	TunaGE::color = RGBColor(0, 0, 0);
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
+
 
 	return engine;
 }
