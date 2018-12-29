@@ -12,10 +12,11 @@ namespace tunage {
 	public:
 		List() : Object() {}
 	    List(std::string name) : Object(name) {};
-		void render() override;
 		void pass(Node& element);
 
 	private:
+		Material defaultMaterial;
 		std::vector<Element> renderSequenceElements;
+		std::vector<Element> renderSequenceLightElements;
 	};
 }

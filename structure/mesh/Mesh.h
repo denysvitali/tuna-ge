@@ -13,7 +13,9 @@ namespace tunage {
 
 		void addVertex(Vertex vertex);
 
-		void setMaterial(Material material);
+		void setMaterial(Material& material);
+
+		Material getMaterial() const;
 
 	private:
 		Material material;

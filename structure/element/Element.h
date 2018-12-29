@@ -6,7 +6,12 @@
 namespace tunage {
     class Element{
     public:
+		Element() {};
 		Element(Node& elem, Material& mat, glm::mat4 mtx) : node{elem}, material{mat}, matrix{mtx} {};
+
+		void setNode(Node& node);
+		void setMaterial(Material& material);
+		void setMatrix(glm::mat4 matrix);
 		
     private:
 		Node node;

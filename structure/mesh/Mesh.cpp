@@ -23,6 +23,12 @@ void tunage::Mesh::addVertex(Vertex vertex) {
 	faces.push_back(vertex);
 }
 
-void tunage::Mesh::setMaterial(Material material) {
+void tunage::Mesh::setMaterial(Material& material) {
 	this->material = std::move(material);
 }
+
+Material tunage::Mesh::getMaterial() const
+{
+	return material;
+}
+

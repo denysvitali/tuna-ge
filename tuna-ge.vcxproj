@@ -169,6 +169,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="structure\camera\Camera.cpp" />
     <ClCompile Include="structure\color\RGBColor.cpp" />
+    <ClCompile Include="structure\element\Element.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
     <ClCompile Include="structure\list\List.cpp" />
     <ClCompile Include="structure\material\Material.cpp" />
