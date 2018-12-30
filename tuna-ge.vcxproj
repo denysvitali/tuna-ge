@@ -23,7 +23,7 @@
     <ProjectGuid>{AEF94EA7-0B7D-4E3B-93E4-60626104A469}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>tunage</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -203,6 +203,7 @@
     <Import Project="packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets" Condition="Exists('packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" />
     <Import Project="packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
     <Import Project="packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('packages\glm.0.9.9.300\build\native\glm.targets')" />
+    <Import Project="packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
