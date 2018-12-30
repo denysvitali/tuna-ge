@@ -21,10 +21,12 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include "structure/material/Material.h"
 #include "structure/light/Light.h"
 #include "structure/color/RGBColor.h"
 #include "structure/camera/Camera.h"
+#include "structure/mesh/Mesh.h"
+#include "structure/list/List.h"
+#include "structure/element/Element.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -35,6 +37,8 @@ namespace tunage {
 
         static std::string version();
 
+		static Camera camera;
+		static List renderList;
 
         // Draw Functions
         static void drawCube(float width);
@@ -48,6 +52,7 @@ namespace tunage {
         static void setWorldRotation(glm::mat4 worldRotation);
 
         // Rendering Methods
+		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, const char* string);
 
         ~TunaGE() {}
@@ -90,8 +95,6 @@ namespace tunage {
 
         // Lights
         static Light ambient_light;
-
-		static Camera camera;
         static glm::mat4 worldRotation;
 
         static float wr_x;

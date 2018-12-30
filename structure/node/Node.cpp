@@ -6,6 +6,11 @@ namespace tunage {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
+	void Node::render(glm::mat4 pos, Material mat)
+	{
+		throw std::runtime_error("render() called on a pure Node object");
+	}
+
 	void Node::setMatrix(glm::mat4 matrix) {
 		m_matrix = matrix;
 	}

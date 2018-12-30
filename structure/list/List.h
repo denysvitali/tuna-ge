@@ -13,10 +13,15 @@ namespace tunage {
 		List() : Object() {}
 	    List(std::string name) : Object(name) {};
 		void pass(Node& element);
+		void render() override;
+		void setCameraMatrix(glm::mat4 camera);
+		std::vector<Element> getRenderElements() const;
+		std::vector<Element> getRenderLights() const;
 
 	private:
+		glm::mat4 camera;
 		Material defaultMaterial;
 		std::vector<Element> renderSequenceElements;
-		std::vector<Element> renderSequenceLightElements;
+		std::vector<Element> renderSequenceLights;
 	};
 }

@@ -30,6 +30,8 @@ Material TunaGE::material = Material{};
 
 Camera TunaGE::camera = Camera{ "camera 1" };
 
+List TunaGE::renderList = List{ "render list" };
+
 Texture TunaGE::tex = Texture{ "texture 1" };
 
 glm::mat4 TunaGE::worldRotation = glm::mat4(1.0f);
@@ -105,11 +107,6 @@ void TunaGE::motionCallback(int mouseX, int mouseY){
 
 TunaGE TunaGE::init() {
 
-	camera.setCameraPos(glm::vec3(0.0f, 4.0f, 10.0f));  // Camera is at (0,2,10), in World Space
-	camera.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f)); // looks in the direction
-	camera.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f)); // Head is up (set to 0,-1,0 to look upside-down)
-	camera.setCameraSpeed(0.1f);
-	camera.updateCamera();
 
 	TunaGE engine{};
 	std::cout << "TunaGE::init()" << std::endl;
@@ -391,6 +388,12 @@ void TunaGE::drawPlane(float width) {
 	glEnd();*/
 }
 
+void tunage::TunaGE::render(glm::mat4 camera, List& list)
+{
+	list.setCameraMatrix(camera);
+	list.render();
+}
+
 void TunaGE::renderString(float x, float y, void *font, const char *string) {
 	glRasterPos2d(x, y);
 	glutBitmapString(font, reinterpret_cast<const unsigned char *>(string));
@@ -520,16 +523,19 @@ void TunaGE::displayCB() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	renderList.setCameraMatrix(camera.getMatrix());
+	renderList.render();
+	/*
 	if (TunaGE::lighting) {
 		drawLight();
 	}
 
 	drawPlane(1);
-
+	
 	if (TunaGE::originMarker) {
 		drawOriginMarkers(1.0);
 	}
-
+	*/
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
