@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Linkage-freeglut>static</Linkage-freeglut>
+    <Linkage-freeimage>
+    </Linkage-freeimage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Linkage-freeglut>static</Linkage-freeglut>
@@ -197,9 +199,6 @@
     <ClInclude Include="tuna-ge.h" />
     <ClInclude Include="version.hh" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="tuna-ge.rc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets" Condition="Exists('packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets')" />
@@ -208,6 +207,7 @@
     <Import Project="packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
     <Import Project="packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('packages\glm.0.9.9.300\build\native\glm.targets')" />
     <Import Project="packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
+    <Import Project="packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets" Condition="Exists('packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -219,5 +219,6 @@
     <Error Condition="!Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
     <Error Condition="!Exists('packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\glm.0.9.9.300\build\native\glm.targets'))" />
     <Error Condition="!Exists('packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
+    <Error Condition="!Exists('packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets'))" />
   </Target>
 </Project>

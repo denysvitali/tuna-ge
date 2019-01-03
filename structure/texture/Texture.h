@@ -1,6 +1,8 @@
 #pragma once
 
-#include <FreeImage.h>
+#ifdef _WINDOWS
+	#include <Windows.h>
+#endif
 #include "../object/Object.h"
 
 namespace tunage {
@@ -21,11 +23,13 @@ namespace tunage {
 
 		bool initialized = false;
 		unsigned char *texture;
-		FIBITMAP* bitmap;
 		unsigned int texId = 0;
 		bool useMipmaps = false;
 		bool isAnisotropicSupported = false;
 		bool anisotropic = false;
 		int anisotropicLevel = 1;
+		void* bitmap = NULL;
+		int bmp_w = 0;
+		int bmp_h = 0;
 	};
 }

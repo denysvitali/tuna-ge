@@ -9,19 +9,11 @@
 #define LIB_PATCH	0
 
 
-#ifdef _WINDOWS 
-	#include <windows.h>
-	#ifdef TUNAGE_EXPORTS
-		#define LIB_API __declspec(dllexport)
-	#else
-		#define LIB_API __declspec(dllimport)
-  #endif
-#else // Under Linux
-	#define LIB_API  // Dummy declaration
-#endif
+#include "libapi.h"
 
 #include <string>
 #include <glm/glm.hpp>
+
 #include "structure/light/Light.h"
 #include "structure/color/RGBColor.h"
 #include "structure/camera/Camera.h"
@@ -47,10 +39,10 @@ namespace tunage {
         static void drawPlane(float width);
         static void drawOriginMarkers(float width);
         static void setColor(RGBColor color);
-        static void setMaterial(Material material);
         static void enableOriginMarker();
         static void setCameraMatrix(glm::mat4 view);
         static void setWorldRotation(glm::mat4 worldRotation);
+		static void setMaterial(Material material);
 
         // Rendering Methods
 		static void render(glm::mat4 camera, List& list);
@@ -71,7 +63,6 @@ namespace tunage {
         static void setProjectionMatrix();
         static void set2DTextProjectionMatrix();
         static void drawLight();
-
 
         // Auxiliary Functions
 		static void c_PA(float w);

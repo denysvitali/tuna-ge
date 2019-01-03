@@ -6,9 +6,17 @@
 // FreeGLUT:
 #include <GL/freeglut.h>
 #include <FreeImage.h>
-#include <zconf.h>
 #include <iostream>
 #include <regex>
+#include <stdio.h>
+
+#ifdef _WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
 
 tunage::Texture::~Texture() {
@@ -29,7 +37,7 @@ void tunage::Texture::render() {
 
 void tunage::Texture::loadFromFile(std::string path) {
 	char dir[FILENAME_MAX];
-	getcwd(dir, FILENAME_MAX);
+	GetCurrentDir(dir, FILENAME_MAX);
 	std::cout << "Current dir: " << dir << std::endl;
 
 	std::regex jpg(".*\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
@@ -43,7 +51,10 @@ void tunage::Texture::loadFromFile(std::string path) {
 		format = FIF_BMP;
 	}
 
-	this->bitmap = FreeImage_Load(format, path.c_str(), 0);
+	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str(), 0);
+	this->bmp_h = FreeImage_GetHeight(bitmap);
+	this->bmp_w = FreeImage_GetWidth(bitmap);
+	this->bitmap = FreeImage_GetBits(bitmap);
 
 }
 
@@ -91,18 +102,20 @@ void tunage::Texture::init() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	FIBITMAP* bitmap;
+
 	if (!useMipmaps) {
 		// Without mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-				FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap),
+				this->bmp_w, this->bmp_h,
 				0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, // FreeImage uses BGR
-				(void*)FreeImage_GetBits(bitmap));
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)FreeImage_GetBits(bitmap));
+				this->bitmap);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bitmap);
 	} else {
 		// Using mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), GL_BGRA_EXT, GL_UNSIGNED_BYTE, (void*)FreeImage_GetBits(bitmap));
+		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, this->bmp_w, this->bmp_h, GL_BGRA_EXT, GL_UNSIGNED_BYTE, this->bitmap);
 		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, 256, 256, GL_BGR_EXT, GL_UNSIGNED_BYTE, bitmap->data);
 	}
 
