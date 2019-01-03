@@ -182,6 +182,7 @@
     <ClCompile Include="version.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="structure\camera\Camera.h" />
     <ClInclude Include="structure\color\RGBColor.h" />
     <ClInclude Include="structure\element\Element.h" />
@@ -195,6 +196,9 @@
     <ClInclude Include="structure\vertex\Vertex.h" />
     <ClInclude Include="tuna-ge.h" />
     <ClInclude Include="version.hh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tuna-ge.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -214,5 +218,6 @@
     <Error Condition="!Exists('packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets'))" />
     <Error Condition="!Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
     <Error Condition="!Exists('packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\glm.0.9.9.300\build\native\glm.targets'))" />
+    <Error Condition="!Exists('packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
   </Target>
 </Project>

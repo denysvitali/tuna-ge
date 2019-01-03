@@ -19,7 +19,7 @@ void Light::setColor(RGBColor color) {
 void Light::render() {
 	//TODO: implement various light modes
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(glm::value_ptr(getMatrix()));
+	glLoadMatrixf(glm::value_ptr(getRenderMatrix()));
 
 	// Draw a small emissive sphere to show light position:
 	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
@@ -52,6 +52,43 @@ void Light::render() {
 			lightSpecular[1] * intensity,
 			lightSpecular[2] * intensity,
 			1.0f);
+
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0, 0, 0, 1.0f)));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
+}
+
+void tunage::Light::render(glm::mat4 pos, Material mat)
+{
+	//TODO: implement various light modes
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(glm::value_ptr(pos));
+
+	// Draw a small emissive sphere to show light position:
+	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
+	mat.render();
+
+	glutSolidSphere(0.1f, 40, 40);
+
+	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
+	glm::vec4 ambient_wi = glm::vec4(
+		lightAmbient[0] * intensity,
+		lightAmbient[1] * intensity,
+		lightAmbient[2] * intensity,
+		1.0f);
+
+	glm::vec4 diffuse_wi = glm::vec4(
+		lightDiffuse[0] * intensity,
+		lightDiffuse[1] * intensity,
+		lightDiffuse[2] * intensity,
+		1.0f);
+
+	glm::vec4 specular_wi = glm::vec4(
+		lightSpecular[0] * intensity,
+		lightSpecular[1] * intensity,
+		lightSpecular[2] * intensity,
+		1.0f);
 
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0, 0, 0, 1.0f)));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));

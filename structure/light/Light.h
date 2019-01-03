@@ -7,6 +7,7 @@ namespace tunage {
     public:
 		Light(RGBColor color, std::string name) : m_color{color}, Node{ name }{}
 		void render() override;
+		void render(glm::mat4 pos, Material mat) override;
 		void setLightAmbient(glm::vec3 lightAmbient);
 		void setLightDiffuse(glm::vec3 lightDiffuse);
 		void setLightSpecular(glm::vec3 lightSpecular);

@@ -1,7 +1,4 @@
-#include <utility>
-
 #pragma once
-
 #include "../node/Node.h"
 #include "../material/Material.h"
 #include "../element/Element.h"
@@ -10,18 +7,21 @@
 #include <iostream>
 
 namespace tunage {
-	class List : public Object {
+	class List: public Object {
 
 	public:
 		List() : Object() {}
-
-		explicit List(std::string name) : Object(std::move(name)) {};
-
-		void pass(Node &element);
+	    List(std::string name) : Object(name) {};
+		void pass(Node& element);
+		void render() override;
+		void setCameraMatrix(glm::mat4 camera);
+		std::vector<Element> getRenderElements() const;
+		std::vector<Element> getRenderLights() const;
 
 	private:
+		glm::mat4 camera;
 		Material defaultMaterial;
 		std::vector<Element> renderSequenceElements;
-		std::vector<Element> renderSequenceLightElements;
+		std::vector<Element> renderSequenceLights;
 	};
 }

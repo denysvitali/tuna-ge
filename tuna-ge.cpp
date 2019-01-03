@@ -28,12 +28,14 @@ int TunaGE::windowId = -1;
 
 Material TunaGE::material = Material{};
 
-Camera TunaGE::camera = Camera{"camera 1"};
+Camera TunaGE::camera = Camera{ "camera 1" };
 
-Texture TunaGE::tex = Texture{"texture 1"};
+List TunaGE::renderList = List{ "render list" };
+
+Texture TunaGE::tex = Texture{ "texture 1" };
 
 glm::mat4 TunaGE::worldRotation = glm::mat4(1.0f);
-Light TunaGE::light = Light{RGBColor{100, 255, 255}, "Light 1"};
+Light TunaGE::light = Light{ RGBColor{100, 255, 255}, "Light 1" };
 // World Rotation in degrees, for X, Y and Z
 float TunaGE::wr_x = 0.0;
 float TunaGE::wr_y = 0.0;
@@ -55,24 +57,24 @@ Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}, " "};
 
 void TunaGE::mouseCallback(int button, int state, int mouseX, int mouseY) {
 
-	switch (state) {
+	switch (state)
+	{
 
-		case GLUT_UP:
-			firstMouse = true;
-			break;
-		default:
-			break;
+	case GLUT_UP:
+		firstMouse = true;
+		break;
+	default:
+		break;
 	}
 }
-
-void TunaGE::motionCallback(int mouseX, int mouseY) {
+void TunaGE::motionCallback(int mouseX, int mouseY){
 
 	if (firstMouse) {
 		lastX = mouseX;
 		lastY = mouseY;
 		firstMouse = false;
 	}
-
+	
 	float xoffset = mouseX - lastX;
 	float yoffset = lastY - mouseY;
 	lastX = mouseX;
@@ -102,13 +104,9 @@ void TunaGE::motionCallback(int mouseX, int mouseY) {
 }
 
 
+
 TunaGE TunaGE::init() {
 
-	camera.setCameraPos(glm::vec3(0.0f, 4.0f, 10.0f));  // Camera is at (0,2,10), in World Space
-	camera.setCameraFront(glm::vec3(0.0f, 0.0f, -1.0f)); // looks in the direction
-	camera.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f)); // Head is up (set to 0,-1,0 to look upside-down)
-	camera.setCameraSpeed(0.1f);
-	camera.updateCamera();
 
 	TunaGE engine{};
 	std::cout << "TunaGE::init()" << std::endl;
@@ -118,7 +116,7 @@ TunaGE TunaGE::init() {
 
 	// FreeGLUT can parse command-line params, in case:
 	int argc = 1;
-	char *argv[1] = {(char *) "Tuna"};
+	char* argv[1] = {(char*) "Tuna"};
 	glutInit(&argc, argv);
 
 
@@ -330,9 +328,9 @@ void TunaGE::drawMultiColorCube(float width) {
 void TunaGE::drawPlane(float width) {
 	// Draws a plane on XZ
 
-	Mesh mesh{"plane"};
+	Mesh mesh{ "plane" };
 	Material material{};
-
+	
 	RGBColor color = RGBColor::getColor("#1a1a1a");
 	material.setAmbient(color.vec());
 	material.setShininess(200);
@@ -345,13 +343,13 @@ void TunaGE::drawPlane(float width) {
 	glm::mat4 model = glm::mat4(1.0f);
 	mesh.setMatrix(TunaGE::camera.getMatrix() * TunaGE::worldRotation * model);
 
-	Vertex v1{-width, 0, 0, 0, 1, 0, 0, 0};
-	Vertex v2{width, 0, 0, 0, 1, 0, 1, 1};
-	Vertex v3{0, 0, -width, 0, 1, 0, 1, 0};
+	Vertex v1{ -width, 0, 0, 0, 1, 0, 0, 0 };
+	Vertex v2{ width, 0, 0, 0, 1, 0, 1, 1};
+	Vertex v3{ 0, 0, -width, 0, 1, 0 , 1, 0};
 
-	Vertex v4{0, 0, width, 0, 1, 0, 0, 1};
-	Vertex v5{width, 0, 0, 0, 1, 0, 1, 1};
-	Vertex v6{-width, 0, 0, 0, 1, 0, 0, 0};
+	Vertex v4{ 0, 0, width, 0, 1, 0 , 0, 1 };
+	Vertex v5{ width, 0, 0, 0, 1, 0 , 1, 1};
+	Vertex v6{ -width, 0, 0, 0, 1, 0 , 0 , 0};
 
 	mesh.addVertex(v1);
 	mesh.addVertex(v2);
@@ -390,12 +388,18 @@ void TunaGE::drawPlane(float width) {
 	glEnd();*/
 }
 
+void tunage::TunaGE::render(glm::mat4 camera, List& list)
+{
+	list.setCameraMatrix(camera);
+	list.render();
+}
+
 void TunaGE::renderString(float x, float y, void *font, const char *string) {
 	glRasterPos2d(x, y);
 	glutBitmapString(font, reinterpret_cast<const unsigned char *>(string));
 }
 
-Material generateOriginMarkerMaterial(RGBColor color) {
+Material generateOriginMarkerMaterial(RGBColor color){
 	Material m{};
 	m.setAmbient(color.vec());
 	m.setSpecular(glm::vec3(0.6f, 0.6f, 0.6f));
@@ -404,7 +408,7 @@ Material generateOriginMarkerMaterial(RGBColor color) {
 	return m;
 }
 
-void drawArrow(float x, float y, float z, float rx, float ry, float rz) {
+void drawArrow(float x, float y, float z, float rx, float ry, float rz){
 	double arrow_length = 0.3;
 	glPushMatrix();
 	glRotatef(rx, 1, 0, 0);
@@ -413,7 +417,7 @@ void drawArrow(float x, float y, float z, float rx, float ry, float rz) {
 	glTranslated(x, y, z);
 	glutSolidCylinder(0.02, arrow_length, 50, 50);
 	glTranslated(0, 0, arrow_length);
-	glutSolidCone(0.05, arrow_length * 0.85, 50, 50);
+	glutSolidCone(0.05, arrow_length*0.85, 50, 50);
 	glPopMatrix();
 }
 
@@ -462,7 +466,8 @@ void TunaGE::drawOriginMarkers(float width) {
 
 }
 
-void drawGrid(float size, int tesselation) {
+void drawGrid(float size, int tesselation)
+{
 	// Compute starting coordinates and step size:
 	float startX = -size / 2.0f;
 	float startZ = size / 2.0f;
@@ -472,8 +477,10 @@ void drawGrid(float size, int tesselation) {
 	glNormal3f(0.0f, 1.0f, 0.0f);
 
 	// Go over XZ and draw triangles:
-	for (int curZ = 0; curZ < tesselation; curZ++) {
-		for (int curX = 0; curX < tesselation; curX++) {
+	for (int curZ = 0; curZ < tesselation; curZ++)
+	{
+		for (int curX = 0; curX < tesselation; curX++)
+		{
 			glBegin(GL_TRIANGLE_STRIP);
 			glVertex3f(startX, 0.0f, startZ);
 			glVertex3f(startX + triangleSize, 0.0f, startZ);
@@ -511,20 +518,24 @@ void TunaGE::displayCB() {
 
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	} else {
+	}
+	else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	renderList.setCameraMatrix(camera.getMatrix());
+	renderList.render();
+	/*
 	if (TunaGE::lighting) {
 		drawLight();
 	}
 
 	drawPlane(1);
-
+	
 	if (TunaGE::originMarker) {
 		drawOriginMarkers(1.0);
 	}
-
+	*/
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
@@ -605,21 +616,17 @@ void TunaGE::kbdCB(unsigned char c, int mouseX, int mouseY) {
 			camera.setCameraPos(camera.getCameraPos() - (camera.getCameraSpeed() * camera.getCameraFront()));
 			break;
 		case 'd':
-			camera.setCameraPos(camera.getCameraPos() +
-								(glm::normalize(glm::cross(camera.getCameraFront(), camera.getCameraUp())) *
-								 camera.getCameraSpeed()));
+			camera.setCameraPos(camera.getCameraPos() + (glm::normalize(glm::cross(camera.getCameraFront(), camera.getCameraUp()))*camera.getCameraSpeed()));
 			break;
 		case 'a':
-			camera.setCameraPos(camera.getCameraPos() -
-								(glm::normalize(glm::cross(camera.getCameraFront(), camera.getCameraUp())) *
-								 camera.getCameraSpeed()));
+			camera.setCameraPos(camera.getCameraPos() - (glm::normalize(glm::cross(camera.getCameraFront(), camera.getCameraUp()))*camera.getCameraSpeed()));
 			break;
 	}
 }
 
 
 void TunaGE::setProjectionMatrix() {
-
+	
 	camera.setFOV(45);
 	camera.setScreenSize(screen_w, screen_h);
 	camera.setNearPlane(0.1f);
@@ -649,5 +656,6 @@ void TunaGE::setWorldRotation(glm::mat4 worldRotation) {
 
 void TunaGE::setMaterial(Material material) {
 	TunaGE::material = material;
+
 	TunaGE::material.render();
 }
