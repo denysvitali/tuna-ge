@@ -84,21 +84,33 @@ void TunaGE::motionCallback(int mouseX, int mouseY){
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
-	yaw += xoffset;
-	pitch += yoffset;
+	glm::vec3 front = camera.getCameraFront();
 
-	if (pitch > 89.0f) {
-		pitch = 89.0f;
+	/*double m_pitch = asin(front.y); // in radians
+	double m_yaw = acos(front.x / cos(m_pitch));*/
+
+	glm::vec3 f2 = glm::normalize(front);
+	double m_pitch = asin(f2.y);
+	double m_yaw = atan2(front.z/cos(m_pitch), front.x/cos(m_pitch)) ;
+
+
+	m_yaw += glm::radians(xoffset);
+	m_pitch += glm::radians(yoffset);
+
+	if (m_pitch > glm::radians(89.0f)) {
+		m_pitch = glm::radians(89.0f);
 	}
-	if (pitch < -89.0f) {
-		pitch = -89.0f;
+	if (m_pitch < glm::radians(-89.0f)) {
+		m_pitch = glm::radians(-89.0f);
 	}
 
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	camera.setCameraFront(glm::normalize(front));
+
+	front.x = cos(m_yaw) * cos(m_pitch);
+	front.y = sin(m_pitch);
+	front.z = sin(m_yaw) * cos(m_pitch);
+
+	std::cout << "Front: " << front.x << ", " << front.y << ", " << front.z << std::endl;
+	camera.setCameraFront(front);
 
 	glutPostWindowRedisplay(windowId);
 }
@@ -553,6 +565,17 @@ void TunaGE::displayCB() {
 		std::string s = TunaGE::version();
 		void *font = GLUT_BITMAP_9_BY_15;
 		for (char c : s) {
+			glutBitmapCharacter(font, c);
+		}
+
+		glRasterPos2i(200, 10);
+		std::stringstream ss;
+		glm::vec3 cp = TunaGE::camera.getCameraPos();
+		glm::vec3 cf = TunaGE::camera.getCameraFront();
+		ss << cp[0] << ", "  << cp[1] << ", " << cp[2] << "    ";
+		ss << "CF: " << cf[0] << "," << cf[1] << cf[2];
+		std::string s2 = ss.str();
+		for (char c : s2) {
 			glutBitmapCharacter(font, c);
 		}
 
