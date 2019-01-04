@@ -16,7 +16,7 @@ void tunage::List::pass(Node* element){
 	}
 	else if (dynamic_cast<Light*>(element) != nullptr)
 	{
-	    Light* light = dynamic_cast<Light*>(&element);
+	    Light* light = dynamic_cast<Light*>(element);
         lightMaterial.setEmission(light->getLightAmbient());
 		listElement.setMaterial(lightMaterial);
 		renderSequenceLights.push_back(listElement);
