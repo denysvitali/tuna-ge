@@ -54,7 +54,10 @@ void tunage::Texture::loadFromFile(std::string path) {
 	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str(), 0);
 	this->bmp_h = FreeImage_GetHeight(bitmap);
 	this->bmp_w = FreeImage_GetWidth(bitmap);
-	this->bitmap = FreeImage_GetBits(bitmap);
+
+
+	this->bitmap = FreeImage_GetBits(FreeImage_ConvertTo32Bits(bitmap));
+
 
 }
 
@@ -111,7 +114,6 @@ void tunage::Texture::init() {
 				this->bmp_w, this->bmp_h,
 				0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, // FreeImage uses BGR
 				this->bitmap);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bitmap);
 	} else {
 		// Using mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
