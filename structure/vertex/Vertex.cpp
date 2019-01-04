@@ -5,17 +5,14 @@
 
 using namespace tunage;
 
-glm::vec3 tunage::Vertex::getPos() const
-{
+glm::vec3 tunage::Vertex::getPos() const {
 	return pos;
 }
 
-glm::vec3 tunage::Vertex::getNorm() const
-{
+glm::vec3 tunage::Vertex::getNorm() const {
 	return normal;
 }
 
-glm::vec2 tunage::Vertex::getUV() const
-{
+glm::vec2 tunage::Vertex::getUV() const {
 	return uv;
 }

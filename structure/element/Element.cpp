@@ -1,10 +1,10 @@
 #include "Element.h"
 
-void tunage::Element::setNode(Node &node) {
+void tunage::Element::setNode(Node* node) {
 	this->node = node;
 }
 
-tunage::Node &tunage::Element::getNode() const {
+tunage::Node* tunage::Element::getNode() const {
 	return node;
 }
 

@@ -1,12 +1,10 @@
 #pragma once
 
-#ifdef _WINDOWS
-	#include <Windows.h>
-#endif
+#include "../../libapi.h"
 #include "../object/Object.h"
 
 namespace tunage {
-	class Texture : public Object {
+	class LIB_API Texture : public Object {
 	public:
 		~Texture();
 		Texture(std::string name) : Object{ name }{}

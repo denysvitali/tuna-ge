@@ -1,8 +1,10 @@
 #pragma once
+
+#include "../../libapi.h"
 #include "../node/Node.h"
 
 namespace tunage {
-	class Camera : public Node{
+	class LIB_API Camera : public Node{
 	public:
 		Camera(std::string name) : Node{name} {}
 		glm::mat4 getInverseMatrix() const;

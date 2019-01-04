@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../../libapi.h"
 #include "../object/Object.h"
 #include "../material/Material.h"
 #include <vector>
 #include <iostream>
 
 namespace tunage {
-	class Node : public Object {
+	class LIB_API Node : public Object {
 
 	public:
 		Node() : Object() {}
