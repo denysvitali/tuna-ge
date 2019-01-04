@@ -1,8 +1,10 @@
 #pragma once
+
+#include "../../libapi.h"
 #include <glm/vec3.hpp>
 
 namespace tunage {
-    class RGBColor {
+    class LIB_API RGBColor {
         public:
 			RGBColor() {}
             RGBColor(float r, float g, float b);

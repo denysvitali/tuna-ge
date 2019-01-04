@@ -3,12 +3,14 @@
 //
 
 #pragma once
+
+#include "../../libapi.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace tunage {
-    class Vertex {
+    class LIB_API Vertex {
     public:
 //		Vertex() {};
         Vertex(float posx = 0, float posy = 0, float posz = 0,

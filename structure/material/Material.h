@@ -1,11 +1,12 @@
 #pragma once
 
+#include "../../libapi.h"
 #include "../color/RGBColor.h"
 #include "../object/Object.h"
 #include "../texture/Texture.h"
 
 namespace tunage {
-    class Material : public Object{
+    class LIB_API Material : public Object{
     public:
 		Material() : Object() {};
 		void render() override;

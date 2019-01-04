@@ -1,11 +1,13 @@
 #pragma once
 
+#include "../../libapi.h"
 #include "../node/Node.h"
 #include "../material/Material.h"
 #include "../vertex/Vertex.h"
 
+
 namespace tunage {
-	class Mesh : public Node {
+	class LIB_API Mesh : public Node {
 	public:
 		Mesh(std::string name) : Node{name} {}
 

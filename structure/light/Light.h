@@ -3,7 +3,7 @@
 #include "../node/Node.h"
 
 namespace tunage {
-    class Light : public Node{
+    class LIB_API Light : public Node{
     public:
 		Light(RGBColor color, std::string name) : m_color{color}, Node{ name }{}
 		void render() override;
