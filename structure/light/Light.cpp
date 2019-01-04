@@ -94,6 +94,7 @@ void tunage::Light::render(glm::mat4 pos, Material mat)
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
+
 }
 
 void Light::enable() {
@@ -146,4 +147,16 @@ void Light::setLight(int light) {
 
 void Light::setMatrix(glm::mat4 matrix) {
 	Node::setMatrix(matrix);
+}
+
+glm::vec3 Light::getLightAmbient() const {
+    return lightAmbient;
+}
+
+glm::vec3 Light::getLightDiffuse() const {
+	return lightDiffuse;
+}
+
+glm::vec3 Light::getLightSpecular() const {
+	return lightSpecular;
 }

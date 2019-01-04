@@ -20,7 +20,7 @@ namespace tunage {
 
 	private:
 		glm::mat4 camera;
-		Material defaultMaterial;
+		Material lightMaterial;
 		std::vector<Element> renderSequenceElements;
 		std::vector<Element> renderSequenceLights;
 	};

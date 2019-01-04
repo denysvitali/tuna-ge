@@ -9,8 +9,11 @@ namespace tunage {
 		void render() override;
 		void render(glm::mat4 pos, Material mat) override;
 		void setLightAmbient(glm::vec3 lightAmbient);
+        glm::vec3 getLightAmbient() const;
 		void setLightDiffuse(glm::vec3 lightDiffuse);
+        glm::vec3 getLightDiffuse() const;
 		void setLightSpecular(glm::vec3 lightSpecular);
+        glm::vec3 getLightSpecular() const;
 		void setLightDirection(glm::vec3 lightDirection);
 		void setLightCutoff(float lightCutoff);
 		void setLight(int light);

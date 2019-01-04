@@ -16,12 +16,9 @@ void tunage::List::pass(Node& element){
 	}
 	else if (dynamic_cast<Light*>(&element) != nullptr)
 	{
-        defaultMaterial.setAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
-        defaultMaterial.setSpecular(glm::vec3(0.6f, 0.6f, 0.6f));
-        defaultMaterial.setShininess(120);
-        defaultMaterial.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-        defaultMaterial.setEmission(glm::vec3(1.0f, 1.0f, 1.0f));
-		listElement.setMaterial(defaultMaterial);
+	    Light* light = dynamic_cast<Light*>(&element);
+        lightMaterial.setEmission(light->getLightAmbient());
+		listElement.setMaterial(lightMaterial);
 		renderSequenceLights.push_back(listElement);
 	}
 

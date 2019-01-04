@@ -49,7 +49,7 @@ bool firstMouse = true;
 int lastX = 0;
 int lastY = 0;
 float yaw = -90;
-float pitch = 0;
+float pitch = -45;
 
 // Lights
 Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}, " "};
@@ -114,6 +114,7 @@ TunaGE TunaGE::init() {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
 
+
 	// FreeGLUT can parse command-line params, in case:
 	int argc = 1;
 	char* argv[1] = {(char*) "Tuna"};
@@ -166,6 +167,7 @@ void TunaGE::initGlut() {
 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_NORMALIZE);
+	//glDisable(GL_COLOR_MATERIAL);
 }
 
 void TunaGE::enableOriginMarker() {
