@@ -19,7 +19,7 @@ namespace tunage {
 		this->m_parent = parent;
 	}
 
-	Node *Node::getParent() {
+	Node *Node::getParent() const{
 		return m_parent;
 	}
 
@@ -61,7 +61,6 @@ namespace tunage {
 			composedMatrix = m_matrix * m_parent->getRenderMatrix();
 			return composedMatrix;
 		}
-		composedMatrix = m_matrix;
-		return composedMatrix;
+		return m_matrix;
 	}
 };

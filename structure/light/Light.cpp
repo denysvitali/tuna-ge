@@ -69,7 +69,7 @@ void tunage::Light::render(glm::mat4 pos, Material mat)
 	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
 	mat.render();
 
-	glutSolidSphere(0.1f, 40, 40);
+	glutSolidSphere(0.05f, 40, 40);
 
 	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
 	glm::vec4 ambient_wi = glm::vec4(
@@ -90,7 +90,7 @@ void tunage::Light::render(glm::mat4 pos, Material mat)
 		lightSpecular[2] * intensity,
 		1.0f);
 
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0, 0, 0, 1.0f)));
+	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));

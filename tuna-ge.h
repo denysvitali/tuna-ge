@@ -30,17 +30,21 @@ namespace tunage {
 
         static std::string version();
 
-		static Camera camera;
 		static List renderList;
+
+		static Camera& getCurrentCamera();
+
+		// Setting Callbacks
+		static void setMotionCallback(void (* motion_callback)( int, int ));
+		static void setMouseCallback(void (* mouse_callback)( int, int, int, int ));
+		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 
         // Draw Functions
         static void drawCube(float width);
-        static void drawMultiColorCube(float width);
         static void drawPlane(float width);
         static void drawOriginMarkers(float width);
         static void setColor(RGBColor color);
         static void enableOriginMarker();
-        static void setCameraMatrix(glm::mat4 view);
         static void setWorldRotation(glm::mat4 worldRotation);
 		static void setMaterial(Material material);
 
@@ -56,9 +60,9 @@ namespace tunage {
         static void displayCB();
         static void reshapeCB(int w, int h);
         static void specialFuncCB(int key, int mouseX, int mouseY);
-        static void kbdCB(unsigned char c, int mouseX, int mouseY);
-		static void mouseCallback(int button, int state, int mouseX, int mouseY);
-		static void motionCallback(int mouseX, int mouseY);
+        //static void kbdCB(unsigned char c, int mouseX, int mouseY);
+		//static void mouseCallback(int button, int state, int mouseX, int mouseY);
+		//static void motionCallback(int mouseX, int mouseY);
 		static void computeRotationMatrix();
         static void setProjectionMatrix();
         static void set2DTextProjectionMatrix();
@@ -74,7 +78,13 @@ namespace tunage {
 		static void c_PG(float w);
 		static void c_PH(float w);
 
-        static bool wireframe;
+		//callbacks
+		static void (* motion_callback)( int, int );
+		static void (* mouse_callback)( int, int, int, int );
+		static void (* special_callback)( int, int, int );
+		static void (* keyboard_callback)( unsigned char, int, int );
+
+		static bool wireframe;
         static bool originMarker;
         static bool debug;
         static bool culling;

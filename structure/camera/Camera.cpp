@@ -103,3 +103,12 @@ void tunage::Camera::updateCamera()
 {
 	this->setMatrix(glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
 }
+
+glm::mat4 tunage::Camera::getRenderMatrix() const {
+	glm::mat4 composedMatrix;
+	if (getParent() != nullptr) {
+		composedMatrix = getMatrix() * glm::inverse(getParent()->getRenderMatrix());
+		return composedMatrix;
+	}
+	return getMatrix();
+}

@@ -21,9 +21,9 @@ namespace tunage {
 
 		glm::mat4 getMatrix() const;
 
-		glm::mat4 getRenderMatrix() const;
+		virtual glm::mat4 getRenderMatrix() const;
 
-		Node *getParent();
+		Node *getParent() const;
 
 		void link(Node *child);
 
@@ -35,7 +35,6 @@ namespace tunage {
 
 	private:
 		void setParent(Node *parent);
-
 		std::vector<Node*> m_hierarchy;
 		Node *m_parent = nullptr;
 		glm::mat4 m_matrix = glm::mat4(1.0f);

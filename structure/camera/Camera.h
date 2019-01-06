@@ -28,6 +28,8 @@ namespace tunage {
 		float getCameraSpeed() const;
 		
 		void updateCamera();
+
+		glm::mat4 getRenderMatrix() const override;
 		
 
 	private:
