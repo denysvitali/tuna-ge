@@ -18,8 +18,9 @@ namespace tunage {
 		void setLightDirection(glm::vec3 lightDirection);
 		void setLightCutoff(float lightCutoff);
 		void setLight(int light);
-		void setMatrix(glm::mat4 matrix);
+		void setRadius(float radius);
 		void setIntensity(float f);
+		void setType(unsigned int lightType);
 		void enable();
 		void disable();
 
@@ -34,7 +35,9 @@ namespace tunage {
 		glm::vec4 lightSpecular = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 lightDirection = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		float lightCutoff;
-		float intensity = 0.5;
-		bool enabled;
+		float radius;
+		float intensity = 1;
+		unsigned int lightType = 0;
+		float sphereRadius = 1.0f;
     };
 }

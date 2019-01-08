@@ -32,7 +32,7 @@ void Light::render() {
 
 	m.render();
 
-	glutSolidSphere(0.1f, 40, 40);
+	glutSolidSphere(sphereRadius, 40, 40);
 
 	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
 	glm::vec4 ambient_wi = glm::vec4(
@@ -53,7 +53,23 @@ void Light::render() {
 			lightSpecular[2] * intensity,
 			1.0f);
 
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0, 0, 0, 1.0f)));
+	switch (lightType){
+		case 0:
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+			break;
+		case 1:
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
+			break;
+		case 2:
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_DIRECTION, glm::value_ptr(lightDirection));
+			break;
+		default:
+			break;
+	}
+
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
@@ -69,7 +85,7 @@ void tunage::Light::render(glm::mat4 pos, Material mat)
 	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
 	mat.render();
 
-	glutSolidSphere(0.05f, 40, 40);
+	glutSolidSphere(sphereRadius, 40, 40);
 
 	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
 	glm::vec4 ambient_wi = glm::vec4(
@@ -90,7 +106,23 @@ void tunage::Light::render(glm::mat4 pos, Material mat)
 		lightSpecular[2] * intensity,
 		1.0f);
 
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+	switch (lightType){
+		case 0:
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+			break;
+		case 1:
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
+			break;
+		case 2:
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
+			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_DIRECTION, glm::value_ptr(lightDirection));
+			break;
+		default:
+			break;
+	}
+
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
@@ -145,10 +177,6 @@ void Light::setLight(int light) {
 	}
 }
 
-void Light::setMatrix(glm::mat4 matrix) {
-	Node::setMatrix(matrix);
-}
-
 glm::vec3 Light::getLightAmbient() const {
     return lightAmbient;
 }
@@ -159,4 +187,12 @@ glm::vec3 Light::getLightDiffuse() const {
 
 glm::vec3 Light::getLightSpecular() const {
 	return lightSpecular;
+}
+
+void Light::setRadius(float radius) {
+	this->radius = radius;
+}
+
+void Light::setType(unsigned int lightType) {
+	this->lightType = lightType;
 }

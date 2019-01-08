@@ -26,7 +26,7 @@ void (* TunaGE::special_callback)(int, int, int) = nullptr;
 
 void (* TunaGE::keyboard_callback)(unsigned char, int, int) = nullptr;
 
-bool TunaGE::wireframe = false;
+bool TunaGE::wireframe = true;
 bool TunaGE::originMarker = false;
 bool TunaGE::debug = true;
 bool TunaGE::culling = true;
@@ -415,8 +415,6 @@ void TunaGE::displayCB() {
     }
 
 
-    TunaGE::getCurrentCamera().updateCamera();
-    // TunaGE::renderList.setCameraMatrix(getCurrentCamera().getMatrix());
     TunaGE::renderList.render();
     /*
     if (TunaGE::lighting) {
@@ -553,6 +551,11 @@ Camera& TunaGE::getCurrentCamera() {
     return TunaGE::renderList.getRenderCameras().front();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////OVO READER IMPLEMENTATION////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 // Stripped-down redefinition of OvObject (just for the chunk IDs):
 class OvObject {
 public:
@@ -682,11 +685,12 @@ Node* TunaGE::loadOVO(const char* path) {
                 Node* node = new Node();
                 if (root == nullptr) root = node;
 
-                if (!nodeStack.empty()) {
+                while (!nodeStack.empty()) {
                     Node* parent = nodeStack.top();
                     if (nodeChildrenCount[parent] > 0) {
                         parent->link(node);
                         nodeChildrenCount[parent]--;
+                        break;
                     }
                     if (nodeChildrenCount[parent] <= 0) {
                         nodeStack.pop();
@@ -764,7 +768,19 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Albedo texture filename, or [none] if not used:
                 char textureName[FILENAME_MAX];
                 strcpy(textureName, data + position);
-                mat->setTexture(new Texture(textureName));
+
+                Texture *texture = new Texture(textureName);
+#if _WINDOWS
+                stringstream ss;
+                ss << "../tuna-ge/assets/textures/" << textureName;
+                texture->loadFromFile(ss.str());
+#else
+                stringstream ss;
+                ss << "../../tuna-ge/assets/textures/" << textureName;
+                texture->loadFromFile(ss.str());
+#endif
+                mat->setTexture(texture);
+
                 position += (unsigned int) strlen(textureName) + 1;
 
                 // Normal map filename, or [none] if not used:
@@ -797,11 +813,12 @@ Node* TunaGE::loadOVO(const char* path) {
 
                 Mesh* mesh = new Mesh();
 
-                if (!nodeStack.empty()) {
+                while (!nodeStack.empty()) {
                     Node* parent = nodeStack.top();
                     if (nodeChildrenCount[parent] > 0) {
                         parent->link(mesh);
                         nodeChildrenCount[parent]--;
+                        break;
                     }
                     if (nodeChildrenCount[parent] <= 0) {
                         nodeStack.pop();
@@ -1008,12 +1025,13 @@ Node* TunaGE::loadOVO(const char* path) {
 
                 Light* light = new Light();
 
-                if (!nodeStack.empty()) {
 
+                while (!nodeStack.empty()) {
                     Node* parent = nodeStack.top();
                     if (nodeChildrenCount[parent] > 0) {
                         parent->link(light);
                         nodeChildrenCount[parent]--;
+                        break;
                     }
                     if (nodeChildrenCount[parent] <= 0) {
                         nodeStack.pop();
@@ -1053,29 +1071,34 @@ Node* TunaGE::loadOVO(const char* path) {
                 switch ((OvLight::Subtype) subtype) {
                     case OvLight::Subtype::DIRECTIONAL:
                         strcpy(subtypeName, "directional");
+                        light->setType(0);
                         break;
                     case OvLight::Subtype::OMNI:
                         strcpy(subtypeName, "omni");
+                        light->setType(1);
                         break;
                     case OvLight::Subtype::SPOT:
                         strcpy(subtypeName, "spot");
+                        light->setType(2);
                         break;
                     default:
                         strcpy(subtypeName, "UNDEFINED");
+                        light->setType(0);
                 }
                 position += sizeof(unsigned char);
 
                 // Light color:
                 glm::vec3 color;
                 memcpy(&color, data + position, sizeof(glm::vec3));
-                light->setColor(RGBColor(color.r, color.g, color.b));
+                light->setLightAmbient(color);
+                light->setLightDiffuse(color);
+                light->setLightSpecular(color);
                 position += sizeof(glm::vec3);
 
                 // Influence radius:
                 float radius;
                 memcpy(&radius, data + position, sizeof(float));
-//                light->setIntensity(radius);
-                // TODO: this shit
+                light->setRadius(radius);
                 position += sizeof(float);
 
                 // Direction:
@@ -1108,9 +1131,6 @@ Node* TunaGE::loadOVO(const char* path) {
 
                 light->setLight(lightCount++);
                 light->setIntensity(1.0f);
-                light->setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
-                light->setLightDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
-                light->setLightSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
                 light->enable();
             }
                 break;

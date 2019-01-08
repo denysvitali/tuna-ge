@@ -58,7 +58,7 @@ namespace tunage {
 	glm::mat4 Node::getRenderMatrix() const {
 		glm::mat4 composedMatrix;
 		if (m_parent != nullptr) {
-			composedMatrix = m_matrix * m_parent->getRenderMatrix();
+			composedMatrix = m_parent->getRenderMatrix() * m_matrix;
 			return composedMatrix;
 		}
 		return m_matrix;

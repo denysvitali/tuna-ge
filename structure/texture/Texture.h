@@ -7,6 +7,7 @@ namespace tunage {
 	class LIB_API Texture : public Object {
 	public:
 		~Texture();
+		Texture() : Object{}{}
 		Texture(std::string name) : Object{ name }{}
 		void render() override;
 		void loadFromFile(std::string path);

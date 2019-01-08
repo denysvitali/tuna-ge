@@ -43,6 +43,7 @@ void tunage::Texture::loadFromFile(std::string path) {
 	std::regex jpg(".*\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
 	std::regex bmp(".*\.bmp", std::regex_constants::ECMAScript | std::regex_constants::icase);
 	std::regex png(".*\.png", std::regex_constants::ECMAScript | std::regex_constants::icase);
+	std::regex dds(".*\.dds", std::regex_constants::ECMAScript | std::regex_constants::icase);
 
 	FREE_IMAGE_FORMAT format = FIF_BMP;
 
@@ -52,6 +53,8 @@ void tunage::Texture::loadFromFile(std::string path) {
 		format = FIF_BMP;
 	} else if (std::regex_search(path, png)){
 		format = FIF_PNG;
+	} else if (std::regex_search(path, dds)){
+		format = FIF_DDS;
 	}
 
 	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str(), 0);
