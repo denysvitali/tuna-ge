@@ -52,6 +52,8 @@ namespace tunage {
 		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, const char* string);
 
+        static Node* loadOVO(const char* path);
+
         ~TunaGE() {}
     private:
 

@@ -5,6 +5,7 @@
 namespace tunage {
     class LIB_API Light : public Node{
     public:
+    	Light() : Node{} {};
 		Light(RGBColor color, std::string name) : m_color{color}, Node{ name }{}
 		void render() override;
 		void render(glm::mat4 pos, Material mat) override;
