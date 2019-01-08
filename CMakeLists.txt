@@ -3,6 +3,8 @@ project(tuna_ge)
 
 set(CMAKE_CXX_STANDARD 14)
 set(GIT_EXECUTABLE git)
+set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_CXX_FLAGS -fsanitize=address)
 
 # the commit's SHA1, and whether the building workspace was dirty or not
 execute_process(COMMAND
@@ -65,6 +67,7 @@ find_package(GTest REQUIRED)
 
 add_executable(NodeTest structure/object/Object.cpp structure/node/Node.cpp test/NodeTest.cpp)
 target_link_libraries(NodeTest ${GTEST_BOTH_LIBRARIES})
+
 add_test(NodeTest NodeTest)
 
 find_program(MEMORYCHECK_COMMAND valgrind)
@@ -94,6 +97,10 @@ include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/ DESTINATION ${CMAKE_BINARY_DIR}/tuna-gui)
+
+add_executable(GeTest test/GeTest.cpp)
+add_test(GeTest test/GeTest.cpp)
+target_link_libraries(GeTest tuna_ge ${GTEST_BOTH_LIBRARIES})
 
 IF(FREEIMAGE_FOUND)
     INCLUDE_DIRECTORIES(${FREEIMAGE_INCLUDE_DIR})

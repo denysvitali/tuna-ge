@@ -26,7 +26,8 @@ namespace tunage {
     public:
 		static TunaGE init();
         static void loop();
-        static bool free();
+		static void renderSingleFrame(unsigned char*& p, int& width, int& height);
+		static bool free();
 
         static std::string version();
 
@@ -51,6 +52,10 @@ namespace tunage {
         // Rendering Methods
 		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, const char* string);
+
+        // Get Parameters
+        static int getScreenW();
+        static int getScreenH();
 
         ~TunaGE() {}
     private:

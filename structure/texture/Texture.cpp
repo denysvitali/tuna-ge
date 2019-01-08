@@ -89,11 +89,11 @@ void tunage::Texture::init() {
 	}
 
 	glGenTextures(1, &texId);
-	texture = new unsigned char[256 * 256 * 4];
+	/*texture = new unsigned char[256 * 256 * 4];
 	
 	for (int i = 0; i < 256*256*4; i++) {
 		texture[i] = rand() % 255;
-	}
+	}*/
 
 	// Update texture content:
 	glBindTexture(GL_TEXTURE_2D, texId);
