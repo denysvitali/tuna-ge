@@ -23,15 +23,17 @@ namespace tunage {
 
 		virtual glm::mat4 getRenderMatrix() const;
 
-		Node *getParent() const;
+		Node* getParent() const;
 
 		void link(Node *child);
 
 		std::vector<Node *> getChildren();
 
-		Node *unlinkById(int id);
+		Node* unlinkById(int id);
 
-		Node *unlink();
+		Node* unlink();
+
+		Node* getSceneElementByName(std::string name);
 
 	private:
 		void setParent(Node *parent);

@@ -67,8 +67,8 @@ void tunage::Texture::loadFromFile(std::string path) {
 
 }
 
-void tunage::Texture::loadTexture(unsigned char* texture) {
-	this->texture = texture;
+void tunage::Texture::loadTexture(void* bitmap) {
+	this->bitmap = bitmap;
 }
 
 void tunage::Texture::setAnisotropic(bool anisotropic) {
@@ -92,11 +92,6 @@ void tunage::Texture::init() {
 	}
 
 	glGenTextures(1, &texId);
-	texture = new unsigned char[256 * 256 * 4];
-	
-	for (int i = 0; i < 256*256*4; i++) {
-		texture[i] = rand() % 255;
-	}
 
 	// Update texture content:
 	glBindTexture(GL_TEXTURE_2D, texId);
