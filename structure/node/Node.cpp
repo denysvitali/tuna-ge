@@ -51,6 +51,18 @@ namespace tunage {
 		return nullptr;
 	}
 
+	Node * Node::getSceneElementByName(std::string name)
+	{
+		if (this->getName() == name) return this;
+
+		for (Node* node : m_hierarchy) {
+			Node* returnOfBranch = node->getSceneElementByName(name);
+			if (returnOfBranch != nullptr) return returnOfBranch;
+		}
+		return nullptr;
+		
+	}
+
 	glm::mat4 Node::getMatrix() const {
 		return m_matrix;
 	}

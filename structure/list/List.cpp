@@ -2,9 +2,13 @@
 #include "../mesh/Mesh.h"
 #include "../light/Light.h"
 
-void tunage::List::pass(Node* element){
+void tunage::List::pass(Node* element) {
 
-	Element listElement{element};
+	if (sceneRoot == nullptr) {
+		sceneRoot = element;
+	}
+
+	Element listElement{ element };
 	listElement.setMatrix((*element).getRenderMatrix());
 
 	if (dynamic_cast<Mesh*>(element) != nullptr)
@@ -17,29 +21,26 @@ void tunage::List::pass(Node* element){
 	}
 	else if (dynamic_cast<Light*>(element) != nullptr)
 	{
-	    auto light = dynamic_cast<Light*>(element);
-        lightMaterial.setEmission(light->getLightAmbient());
+		auto light = dynamic_cast<Light*>(element);
+		lightMaterial.setEmission(light->getLightAmbient());
 		listElement.setMaterial(lightMaterial);
 		renderSequenceLights.push_back(listElement);
 	}
 	else if (dynamic_cast<Camera*>(element) != nullptr)
 	{
 		auto camera = dynamic_cast<Camera*>(element);
-		renderCameras.push_back(*camera);
+		renderCameras.push_back(camera);
 	}
 	for (auto i : (*element).getChildren()) {
 		pass(i);
 	}
-
-
-
 }
 
 void tunage::List::render()
 {
 	if(!renderCameras.empty()){
-		renderCameras.front().updateCamera();
-		cameraMatrix = renderCameras.front().getRenderMatrix();
+		renderCameras.front()->updateCamera();
+		cameraMatrix = renderCameras.front()->getRenderMatrix();
 	}
 	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
 		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
@@ -62,11 +63,12 @@ const std::vector<tunage::Element>& tunage::List::getRenderLights() const {
 	return renderSequenceLights;
 }
 
-std::vector<tunage::Camera>& tunage::List::getRenderCameras() {
+std::vector<tunage::Camera*>& tunage::List::getRenderCameras() {
     return renderCameras;
 }
 
 void tunage::List::clear() {
+	sceneRoot = nullptr;
 	renderCameras.clear();
 	renderSequenceLights.clear();
 	renderSequenceElements.clear();
@@ -76,5 +78,9 @@ void tunage::List::switchCamera() {
 	assert(!renderCameras.empty());
 	renderCameras.push_back(renderCameras.front());
 	renderCameras.erase(renderCameras.begin());
+}
+
+tunage::Node* tunage::List::getSceneRoot() const{
+	return sceneRoot;
 }
 

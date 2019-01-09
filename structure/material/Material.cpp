@@ -9,6 +9,7 @@ void tunage::Material::render()
 	if (texture != nullptr) {
 		texture->render();
 	}
+	
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
 		glm::value_ptr(ambient));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
@@ -22,19 +23,19 @@ void tunage::Material::render()
 }
 
 void Material::setAmbient(glm::vec3 light) {
-    ambient = glm::vec4(light[0], light[1], light[2], 1.0f);
+    ambient = glm::vec4(light[0], light[1], light[2], alpha);
 }
 
 void Material::setDiffuse(glm::vec3 light) {
-    diffuse = glm::vec4(light[0], light[1], light[2], 1.0f);
+    diffuse = glm::vec4(light[0], light[1], light[2], alpha);
 }
 
 void Material::setSpecular(glm::vec3 light) {
-    specular = glm::vec4(light[0], light[1], light[2], 1.0f);
+    specular = glm::vec4(light[0], light[1], light[2], alpha);
 }
 
 void Material::setEmission(glm::vec3 light) {
-    emission = glm::vec4(light[0], light[1], light[2], 1.0f);
+    emission = glm::vec4(light[0], light[1], light[2], alpha);
 }
 
 void Material::setShininess(int intensity) {

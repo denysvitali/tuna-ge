@@ -24,6 +24,7 @@ namespace tunage {
     private:
 		Texture* texture = nullptr;
         int shininess;
+		float alpha = 1.0f;
         glm::vec4 ambient = glm::vec4{0,0,0,1};
         glm::vec4 diffuse = glm::vec4{0,0,0,1};
         glm::vec4 specular = glm::vec4{0,0,0,1};
