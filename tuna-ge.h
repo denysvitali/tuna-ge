@@ -58,6 +58,8 @@ namespace tunage {
         static int getScreenW();
         static int getScreenH();
 
+        static Node* loadOVO(const char* path);
+
         ~TunaGE() {}
     private:
 

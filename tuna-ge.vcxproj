@@ -23,7 +23,7 @@
     <ProjectGuid>{AEF94EA7-0B7D-4E3B-93E4-60626104A469}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>tunage</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -201,24 +201,24 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets" Condition="Exists('packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets')" />
-    <Import Project="packages\freeglut.2.8.1.15\build\native\freeglut.targets" Condition="Exists('packages\freeglut.2.8.1.15\build\native\freeglut.targets')" />
-    <Import Project="packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets" Condition="Exists('packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" />
-    <Import Project="packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
-    <Import Project="packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('packages\glm.0.9.9.300\build\native\glm.targets')" />
-    <Import Project="packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
-    <Import Project="packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets" Condition="Exists('packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" />
+    <Import Project="$(SolutionDir)packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets" Condition="Exists('$(SolutionDir)packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets')" />
+    <Import Project="$(SolutionDir)packages\freeglut.2.8.1.15\build\native\freeglut.targets" Condition="Exists('$(SolutionDir)packages\freeglut.2.8.1.15\build\native\freeglut.targets')" />
+    <Import Project="$(SolutionDir)packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets" Condition="Exists('$(SolutionDir)packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" />
+    <Import Project="$(SolutionDir)packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('$(SolutionDir)packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
+    <Import Project="$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" />
+    <Import Project="$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
+    <Import Project="$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets'))" />
-    <Error Condition="!Exists('packages\freeglut.2.8.1.15\build\native\freeglut.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\freeglut.2.8.1.15\build\native\freeglut.targets'))" />
-    <Error Condition="!Exists('packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets'))" />
-    <Error Condition="!Exists('packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
-    <Error Condition="!Exists('packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\glm.0.9.9.300\build\native\glm.targets'))" />
-    <Error Condition="!Exists('packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
-    <Error Condition="!Exists('packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\freeglut.redist.2.8.1.15\build\native\freeglut.redist.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\freeglut.2.8.1.15\build\native\freeglut.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\freeglut.2.8.1.15\build\native\freeglut.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets'))" />
   </Target>
 </Project>

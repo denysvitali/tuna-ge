@@ -43,6 +43,7 @@ void tunage::Texture::loadFromFile(std::string path) {
 	std::regex jpg(".*\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
 	std::regex bmp(".*\.bmp", std::regex_constants::ECMAScript | std::regex_constants::icase);
 	std::regex png(".*\.png", std::regex_constants::ECMAScript | std::regex_constants::icase);
+	std::regex dds(".*\.dds", std::regex_constants::ECMAScript | std::regex_constants::icase);
 
 	FREE_IMAGE_FORMAT format = FIF_BMP;
 
@@ -52,6 +53,8 @@ void tunage::Texture::loadFromFile(std::string path) {
 		format = FIF_BMP;
 	} else if (std::regex_search(path, png)){
 		format = FIF_PNG;
+	} else if (std::regex_search(path, dds)){
+		format = FIF_DDS;
 	}
 
 	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str(), 0);
@@ -64,8 +67,8 @@ void tunage::Texture::loadFromFile(std::string path) {
 
 }
 
-void tunage::Texture::loadTexture(unsigned char* texture) {
-	this->texture = texture;
+void tunage::Texture::loadTexture(void* bitmap) {
+	this->bitmap = bitmap;
 }
 
 void tunage::Texture::setAnisotropic(bool anisotropic) {
@@ -89,11 +92,6 @@ void tunage::Texture::init() {
 	}
 
 	glGenTextures(1, &texId);
-	/*texture = new unsigned char[256 * 256 * 4];
-	
-	for (int i = 0; i < 256*256*4; i++) {
-		texture[i] = rand() % 255;
-	}*/
 
 	// Update texture content:
 	glBindTexture(GL_TEXTURE_2D, texId);
