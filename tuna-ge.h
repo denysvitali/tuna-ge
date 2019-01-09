@@ -52,6 +52,7 @@ namespace tunage {
         // Rendering Methods
 		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, const char* string);
+		static void reshapeCB(int w, int h);
 
         // Get Parameters
         static int getScreenW();
@@ -63,7 +64,6 @@ namespace tunage {
         static int windowId;
         static void initGlut();
         static void displayCB();
-        static void reshapeCB(int w, int h);
         static void specialFuncCB(int key, int mouseX, int mouseY);
         //static void kbdCB(unsigned char c, int mouseX, int mouseY);
 		//static void mouseCallback(int button, int state, int mouseX, int mouseY);
@@ -110,6 +110,7 @@ namespace tunage {
 
         static int screen_w;
         static int screen_h;
+        static bool reshapeAlreadyCalled;
 
         TunaGE(){};
     };

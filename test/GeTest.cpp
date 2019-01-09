@@ -144,10 +144,12 @@ class GeTest : public ::testing::Test {
 		TunaGE::renderList.pass(&root);
 
 		std::cout << "Library Version: " << TunaGE::version() << std::endl;
-		int w = 800;
-		int h = 400;
+		int w = 600;
+		int h = 600;
 
 		auto pixels = new uint8_t(w  * h * 3);
+
+		//TunaGE::loop();
 
 		TunaGE::renderSingleFrame(pixels, w, h);
 		delete pixels;

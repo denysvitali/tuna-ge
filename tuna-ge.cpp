@@ -31,6 +31,7 @@ bool TunaGE::originMarker = false;
 bool TunaGE::debug = true;
 bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
+bool TunaGE::reshapeAlreadyCalled = false;
 
 RGBColor TunaGE::color = RGBColor(0, 0, 0);
 int TunaGE::windowId = -1;
@@ -103,14 +104,24 @@ int TunaGE::getScreenW() {
 }
 
 void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
+
+	int old_w = TunaGE::screen_w;
+	int old_h = TunaGE::screen_h;
+
+	TunaGE::screen_w = width;
+	TunaGE::screen_h = height;
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+	glReadBuffer(GL_FRONT);
+
+	bool debug = TunaGE::debug;
+
+	TunaGE::debug = false;
+
 	TunaGE::displayCB();
 
-	width = glutGet(GLUT_WINDOW_WIDTH);
-	height = glutGet(GLUT_WINDOW_HEIGHT);
-
-	glReadBuffer(GL_BACK);
 	GLubyte seed[width * height * 3];
-	glReadPixels(0, height, width, height, GL_RGB, GL_UNSIGNED_BYTE, &seed);
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &seed);
 
 	FIBITMAP* dib = FreeImage_Allocate(width, height, 24);
 	int bytespp = FreeImage_GetLine(dib) / FreeImage_GetWidth(dib);
@@ -120,13 +131,14 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 			bits[x*3 + 2] = seed[y * 3 * width + x * 3];
 			bits[x*3 + 1] = seed[y * 3 * width + x * 3 + 1];
 			bits[x*3 + 0] = seed[y * 3 * width + x * 3 + 2];
-			//printf("%d %d %d\n", bits[FI_RGBA_RED], bits[FI_RGBA_GREEN], bits[FI_RGBA_BLUE]);
-			//bits[FI_RGBA_ALPHA] = 255;
 		}
 	}
 
-	FreeImage_Save(FIF_JPEG, dib, "/tmp/out.jpg");
+	FreeImage_Save(FIF_JPEG, dib, "/tmp/out.bmp");
 
+	TunaGE::debug = debug;
+	TunaGE::screen_w = old_w;
+	TunaGE::screen_h = old_h;
 
 	auto err = glGetError();
 	if (err) {
@@ -452,6 +464,11 @@ void TunaGE::drawLight() {
 }
 
 void TunaGE::displayCB() {
+
+	if(!TunaGE::reshapeAlreadyCalled){
+		TunaGE::reshapeCB(TunaGE::screen_w, TunaGE::screen_h);
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (TunaGE::wireframe) {
@@ -462,19 +479,7 @@ void TunaGE::displayCB() {
 
 
 	TunaGE::getCurrentCamera().updateCamera();
-	// TunaGE::renderList.setCameraMatrix(getCurrentCamera().getMatrix());
 	TunaGE::renderList.render();
-	/*
-	if (TunaGE::lighting) {
-		drawLight();
-	}
-
-	drawPlane(1);
-
-	if (TunaGE::originMarker) {
-		drawOriginMarkers(1.0);
-	}
-	*/
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
@@ -555,6 +560,10 @@ void TunaGE::set2DTextProjectionMatrix() {
 }
 
 void TunaGE::reshapeCB(int w, int h) {
+	if(!TunaGE::reshapeAlreadyCalled){
+		TunaGE::reshapeAlreadyCalled = true;
+	}
+
 	glViewport(0, 0, w, h);
 	TunaGE::screen_w = w;
 	TunaGE::screen_h = h;
