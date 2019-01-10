@@ -30,38 +30,20 @@ void (* TunaGE::special_callback)( int, int, int ) = nullptr;
 void (* TunaGE::keyboard_callback)( unsigned char, int, int ) = nullptr;
 
 bool TunaGE::wireframe = false;
-bool TunaGE::originMarker = false;
 bool TunaGE::debug = true;
 bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
 
-RGBColor TunaGE::color = RGBColor(0, 0, 0);
 int TunaGE::windowId = -1;
-
-Material TunaGE::material = Material{};
 
 //Camera TunaGE::getCurrentCamera() = Camera{"default getCurrentCamera()"};
 
 List TunaGE::renderList = List{ "render list" };
 
-Texture TunaGE::tex = Texture{ "texture 1" };
-
-glm::mat4 TunaGE::worldRotation = glm::mat4(1.0f);
-Light TunaGE::light = Light{ RGBColor{100, 255, 255}, "Light 1" };
-// World Rotation in degrees, for X, Y and Z
-float TunaGE::wr_x = 0.0;
-float TunaGE::wr_y = 0.0;
-// FreeGLUT:
-
-float TunaGE::wr_z = 0.0;
 // Screen size
 int TunaGE::screen_w = 0;
-
 int TunaGE::screen_h = 0;
-
-// Lights
-Light TunaGE::ambient_light = Light{RGBColor{255, 255, 255}, " "};
 
 TunaGE TunaGE::init() {
 
@@ -83,9 +65,6 @@ TunaGE TunaGE::init() {
 
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-
-	TunaGE::wireframe = false;
-	TunaGE::color = RGBColor(0, 0, 0);
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
 
@@ -181,7 +160,6 @@ void TunaGE::initGlut() {
 }
 
 void TunaGE::enableOriginMarker() {
-	TunaGE::originMarker = true;
 }
 
 std::string TunaGE::version() {
@@ -191,43 +169,6 @@ std::string TunaGE::version() {
 		ss << "-" << Version::GIT_SHA1;
 	}
 	return ss.str();
-}
-
-void TunaGE::setColor(RGBColor color) {
-	TunaGE::color = color;
-	glColor3f(color.r(), color.g(), color.b());
-}
-
-void TunaGE::c_PA(float width) {
-	glVertex3f(-width / 2, width / 2, width / 2);
-}
-
-void TunaGE::c_PB(float width) {
-	glVertex3f(width / 2, width / 2, width / 2);
-}
-
-void TunaGE::c_PC(float width) {
-	glVertex3f(-width / 2, -width / 2, width / 2);
-}
-
-void TunaGE::c_PD(float width) {
-	glVertex3f(width / 2, -width / 2, width / 2);
-}
-
-void TunaGE::c_PE(float width) {
-	glVertex3f(width / 2, -width / 2, -width / 2);
-}
-
-void TunaGE::c_PF(float width) {
-	glVertex3f(-width / 2, -width / 2, -width / 2);
-}
-
-void TunaGE::c_PG(float width) {
-	glVertex3f(width / 2, width / 2, -width / 2);
-}
-
-void TunaGE::c_PH(float width) {
-	glVertex3f(-width / 2, width / 2, -width / 2);
 }
 
 void tunage::TunaGE::render(glm::mat4 camera, List &list) {
@@ -266,7 +207,6 @@ void TunaGE::displayCB() {
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		setColor(RGBColor(255, 255, 0));
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D); //added this
 		glMatrixMode(GL_PROJECTION);
@@ -277,6 +217,7 @@ void TunaGE::displayCB() {
 		glPushMatrix();
 		glLoadIdentity();
 		glRasterPos2i(10, 10);
+		glColor3f(0.0, 1.0, 0.0);
 		std::string s = TunaGE::version();
 		void* font = GLUT_BITMAP_9_BY_15;
 		for (char c : s) {
@@ -308,38 +249,8 @@ void TunaGE::displayCB() {
 	glutSwapBuffers();
 }
 
-void TunaGE::computeRotationMatrix() {
-	TunaGE::worldRotation = glm::mat4(1.0f);
-	TunaGE::worldRotation *= glm::rotate(glm::mat4(1.0f), glm::radians(TunaGE::wr_x), glm::vec3(1.0f, 0, 0));
-	TunaGE::worldRotation *= glm::rotate(glm::mat4(1.0f), glm::radians(TunaGE::wr_y), glm::vec3(0, 1.0f, 0));
-	TunaGE::worldRotation *= glm::rotate(glm::mat4(1.0f), glm::radians(TunaGE::wr_z), glm::vec3(0, 0, 1.0f));
-}
-
 void TunaGE::specialFuncCB(int key, int mouseX, int mouseY) {
-	switch (key) {
-		case GLUT_KEY_LEFT:
-			wr_y += 1;
-			TunaGE::computeRotationMatrix();
-			break;
-		case GLUT_KEY_RIGHT:
-			wr_y -= 1;
-			TunaGE::computeRotationMatrix();
-			break;
-		case GLUT_KEY_UP:
-			wr_x += 1;
-			TunaGE::computeRotationMatrix();
-			break;
-		case GLUT_KEY_DOWN:
-			wr_x -= 1;
-			TunaGE::computeRotationMatrix();
-			break;
-	}
-}
 
-void TunaGE::set2DTextProjectionMatrix() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
-	glMatrixMode(GL_MODELVIEW);
 }
 
 void TunaGE::reshapeCB(int w, int h) {
@@ -873,7 +784,6 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Exponent:
                 float spotExponent;
                 memcpy(&spotExponent, data + position, sizeof(float));
-                // TODO: this shit too
                 position += sizeof(float);
 
                 // Cast shadow flag:

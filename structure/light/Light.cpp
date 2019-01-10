@@ -7,14 +7,6 @@
 
 using namespace tunage;
 
-RGBColor Light::getColor() const {
-	return m_color;
-}
-
-void Light::setColor(RGBColor color) {
-	this->m_color = color;
-}
-
 void Light::render() {
 
 	glMatrixMode(GL_MODELVIEW);

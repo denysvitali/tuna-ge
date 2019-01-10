@@ -40,13 +40,11 @@ namespace tunage {
 		static void setMouseCallback(void (* mouse_callback)( int, int, int, int ));
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 
-		static void setColor(RGBColor color);
         static void enableOriginMarker();
 
 		// Rendering Methods
 		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, const char* string);
-		static void reshapeCB(int w, int h);
 		static void redisplay();
 
 
@@ -62,23 +60,13 @@ namespace tunage {
         static int windowId;
         static void initGlut();
         static void displayCB();
-        static void specialFuncCB(int key, int mouseX, int mouseY);
+		static void reshapeCB(int w, int h);
+		static void specialFuncCB(int key, int mouseX, int mouseY);
         //static void kbdCB(unsigned char c, int mouseX, int mouseY);
 		//static void mouseCallback(int button, int state, int mouseX, int mouseY);
 		//static void motionCallback(int mouseX, int mouseY);
 		static void computeRotationMatrix();
         static void setProjectionMatrix();
-        static void set2DTextProjectionMatrix();
-
-		// Auxiliary Functions
-		static void c_PA(float w);
-		static void c_PB(float w);
-		static void c_PC(float w);
-		static void c_PD(float w);
-		static void c_PE(float w);
-		static void c_PF(float w);
-		static void c_PG(float w);
-		static void c_PH(float w);
 
 		//callbacks
 		static void (* motion_callback)( int, int );
@@ -87,23 +75,9 @@ namespace tunage {
 		static void (* keyboard_callback)( unsigned char, int, int );
 
 		static bool wireframe;
-        static bool originMarker;
-        static bool debug;
+		static bool debug;
         static bool culling;
         static bool lighting;
-
-        static RGBColor color;
-        static Material material;
-		static Light light;
-		static Texture tex;
-
-        // Lights
-        static Light ambient_light;
-        static glm::mat4 worldRotation;
-
-        static float wr_x;
-        static float wr_y;
-        static float wr_z;
 
         static int screen_w;
         static int screen_h;

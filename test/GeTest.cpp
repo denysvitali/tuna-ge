@@ -96,7 +96,7 @@ class GeTest : public ::testing::Test {
 		root.link(&mesh);
 		root.link(&camera1);
 
-		Light light{ RGBColor{100, 255, 255}, "Light 1" };
+		Light light{ "Light 1" };
 		light.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f)));
 		light.setLight(1);
 		light.setIntensity(1);
@@ -107,7 +107,7 @@ class GeTest : public ::testing::Test {
 
 		mesh.link(&light);
 
-		Light light2{ RGBColor{100, 255, 255}, "Light 2" };
+		Light light2{"Light 2" };
 		light2.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f)));
 		light2.setLight(2);
 		light2.setIntensity(1.0);
@@ -119,7 +119,7 @@ class GeTest : public ::testing::Test {
 		light.link(&light2);
 		light2.link(&camera2);
 
-		Light light3{ RGBColor{100, 255, 255}, "Light 3" };
+		Light light3{"Light 3" };
 		light3.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, -2.0f)));
 		light3.setLight(3);
 		light3.setIntensity(1.0);
@@ -130,7 +130,7 @@ class GeTest : public ::testing::Test {
 
 		light.link(&light3);
 
-		Light light4{ RGBColor{100, 255, 255}, "Light 4" };
+		Light light4{"Light 4" };
 		light4.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-0.8f, -0.8f, 0.4f)));
 		light4.setLight(4);
 		light4.setIntensity(1.0);

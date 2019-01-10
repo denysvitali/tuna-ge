@@ -6,7 +6,7 @@
 namespace tunage {
 	class LIB_API Camera : public Node{
 	public:
-		Camera(std::string name) : Node{name} {}
+		explicit Camera(std::string name) : Node{name} {}
 		glm::mat4 getInverseMatrix() const;
 		glm::mat4 getProjectionMatrix() const;
 		void loadProjectionMatrix();
@@ -33,16 +33,16 @@ namespace tunage {
 		
 
 	private:
-		int screen_w;
-		int screen_h;
+		int screen_w = 100;
+		int screen_h = 100;
 		float FOVangle = 45.0f;
 		float nearPlane = 0.1f;
 		float farPlane = 100.0f;
 		bool projMode = false;
 		float cameraSpeed = 0.1f;
-		glm::vec3 cameraPos;
-		glm::vec3 cameraFront;
-		glm::vec3 cameraUp;
+		glm::vec3 cameraPos = glm::vec3(0,0,0);
+		glm::vec3 cameraFront = glm::vec3(0,0,-1);
+		glm::vec3 cameraUp = glm::vec3(0,1,0);
 
 	};
 }

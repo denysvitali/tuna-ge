@@ -5,8 +5,8 @@
 namespace tunage {
     class LIB_API Light : public Node{
     public:
-    	Light() : Node{} {};
-		Light(RGBColor color, std::string name) : m_color{color}, Node{ name }{}
+    	explicit Light() : Node{} {};
+		explicit Light(std::string name) : Node{ name }{}
 		void render() override;
 		void render(glm::mat4 pos, Material mat) override;
 		void setLightAmbient(glm::vec3 lightAmbient);
@@ -24,10 +24,7 @@ namespace tunage {
 		void enable();
 		void disable();
 
-        RGBColor getColor() const;
-		void setColor(RGBColor color);
-    private:
-        RGBColor m_color;
+	private:
 		int light = 0;
 		glm::vec3 lightPosition = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec4 lightAmbient = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

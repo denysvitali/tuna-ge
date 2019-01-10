@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "Element.h"
 
 void tunage::Element::setNode(Node* node) {
@@ -9,7 +11,7 @@ tunage::Node* tunage::Element::getNode() const {
 }
 
 void tunage::Element::setMaterial(Material material) {
-	this->material = material;
+	this->material = std::move(material);
 }
 
 tunage::Material tunage::Element::getMaterial() const {

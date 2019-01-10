@@ -7,7 +7,7 @@
 namespace tunage {
     class LIB_API Element{
     public:
-		Element(Node* elem) : node{ elem }{};
+		explicit Element(Node* elem) : node{ elem }{};
 
 	
 		void setNode(Node* node);
@@ -20,6 +20,6 @@ namespace tunage {
     private:
 		Node* node;
 		Material material;
-		glm::mat4 matrix;
+		glm::mat4 matrix = glm::mat4(1.0);
     };
 }
