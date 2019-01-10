@@ -24,6 +24,7 @@ tunage::Texture::~Texture() {
 }
 
 void tunage::Texture::render() {
+	glEnable(GL_TEXTURE_2D);
 	if (!initialized) {
 		initialized = true;
 		init();

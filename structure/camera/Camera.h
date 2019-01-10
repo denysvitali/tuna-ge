@@ -37,7 +37,7 @@ namespace tunage {
 		int screen_h = 100;
 		float FOVangle = 45.0f;
 		float nearPlane = 0.1f;
-		float farPlane = 100.0f;
+		float farPlane = 500.0f;
 		bool projMode = false;
 		float cameraSpeed = 0.1f;
 		glm::vec3 cameraPos = glm::vec3(0,0,0);

@@ -100,7 +100,7 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	TunaGE::displayCB();
 
-	GLubyte seed[width * height * 3];
+	std::vector<GLubyte> seed;
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &seed);
 
 	FIBITMAP* dib = FreeImage_Allocate(width, height, 24);
@@ -155,6 +155,8 @@ void TunaGE::initGlut() {
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
     glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void TunaGE::enableOriginMarker() {
@@ -255,20 +257,12 @@ void TunaGE::reshapeCB(int w, int h) {
 	glViewport(0, 0, w, h);
 	TunaGE::screen_w = w;
 	TunaGE::screen_h = h;
-	setProjectionMatrix();
+	TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
+	TunaGE::getCurrentCamera()->loadProjectionMatrix();
 	glutPostWindowRedisplay(windowId);
 	glutSwapBuffers();
 }
 
-void TunaGE::setProjectionMatrix() {
-
-    TunaGE::getCurrentCamera()->setFOV(45);
-    TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
-    TunaGE::getCurrentCamera()->setNearPlane(0.1f);
-    TunaGE::getCurrentCamera()->setFarPlane(500);
-    TunaGE::getCurrentCamera()->loadProjectionMatrix();
-
-}
 
 void TunaGE::setMotionCallback(void (* motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
@@ -428,24 +422,25 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Transparency factor:
                 float alpha;
                 memcpy(&alpha, data + position, sizeof(float));
+				mat->setAlpha(alpha);			
                 position += sizeof(float);
 
                 // Albedo texture filename, or [none] if not used:
                 char textureName[FILENAME_MAX];
                 strcpy(textureName, data + position);
-
-                Texture *texture = new Texture(textureName);
+				if (std::string(textureName) != "[none]") {
+					Texture* texture = new Texture(textureName);
 #if _WINDOWS
-                stringstream ss;
-                ss << "../tuna-ge/assets/textures/" << textureName;
-                texture->loadFromFile(ss.str());
+					std::stringstream ss;
+					ss << "../tuna-ge/assets/textures/" << textureName;
+					texture->loadFromFile(ss.str());
 #else
-                std::stringstream ss;
-                ss << "../../tuna-ge/assets/textures/" << textureName;
-                texture->loadFromFile(ss.str());
+					std::stringstream ss;
+					ss << "../../tuna-ge/assets/textures/" << textureName;
+					texture->loadFromFile(ss.str());
 #endif
-                mat->setTexture(texture);
-
+					mat->setTexture(texture);
+				}
                 position += (unsigned int) strlen(textureName) + 1;
 
                 // Normal map filename, or [none] if not used:

@@ -15,6 +15,16 @@ namespace tunage {
 		m_matrix = matrix;
 	}
 
+	void Node::setFlipScene(bool flipScene)
+	{
+		this->flipScene = flipScene;
+	}
+
+	bool Node::getFlipScene() const
+	{
+		return flipScene;
+	}
+
 	void Node::setParent(Node *parent) {
 		this->m_parent = parent;
 	}
@@ -51,7 +61,7 @@ namespace tunage {
 		return nullptr;
 	}
 
-	Node * Node::getSceneElementByName(std::string name)
+	Node * Node::getSceneElementByName(const char* name)
 	{
 		if (this->getName() == name) return this;
 

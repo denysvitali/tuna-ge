@@ -15,19 +15,20 @@ namespace tunage {
         void setSpecular(glm::vec3 light);
         void setEmission(glm::vec3 light);
         void setShininess(int intensity);
-        glm::vec4 getAmbient() const;
-        glm::vec4 getDiffuse() const;
-        glm::vec4 getSpecular() const;
-        glm::vec4 getEmission() const;
+		void setAlpha(float alpha);
+        glm::vec3 getAmbient() const;
+        glm::vec3 getDiffuse() const;
+        glm::vec3 getSpecular() const;
+        glm::vec3 getEmission() const;
         int getShininess() const;
 		void setTexture(Texture* texture);
     private:
 		Texture* texture = nullptr;
         int shininess;
 		float alpha = 1.0f;
-        glm::vec4 ambient = glm::vec4{0,0,0,1};
-        glm::vec4 diffuse = glm::vec4{0,0,0,1};
-        glm::vec4 specular = glm::vec4{0,0,0,1};
-        glm::vec4 emission = glm::vec4{0,0,0,1};
+        glm::vec3 ambient = glm::vec3{0,0,0};
+        glm::vec3 diffuse = glm::vec3{0,0,0};
+        glm::vec3 specular = glm::vec3{0,0,0};
+        glm::vec3 emission = glm::vec3{0,0,0};
     };
 }

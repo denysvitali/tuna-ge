@@ -24,7 +24,7 @@ void tunage::Mesh::render(glm::mat4 pos, Material mat)
 	mat.render();
 	glLoadMatrixf(glm::value_ptr(pos));
 
-	glEnable(GL_TEXTURE_2D);
+	
 	glBegin(GL_TRIANGLES);
 	for (auto& face : faces) {
 		glNormal3f(face.getNorm().x, face.getNorm().y, face.getNorm().z);
@@ -32,7 +32,7 @@ void tunage::Mesh::render(glm::mat4 pos, Material mat)
 		glVertex3f(face.getPos().x, face.getPos().y, face.getPos().z);
 	}
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
+	
 }
 
 void tunage::Mesh::addVertex(Vertex vertex) {

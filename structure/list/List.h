@@ -30,7 +30,9 @@ namespace tunage {
 		glm::mat4 cameraMatrix;
 		Material lightMaterial;
 		std::vector<Element> renderSequenceElements;
+		std::vector<Element> renderSequenceMirrored;
 		std::vector<Element> renderSequenceLights;
+		std::vector<Element> renderSequenceLightsMirrored;
         std::vector<Camera*> renderCameras;
 	};
 }

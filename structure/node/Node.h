@@ -14,10 +14,14 @@ namespace tunage {
 
 		Node(std::string name) : Object(name) {};
 
-		virtual void render() override;
+		void render() override;
 		virtual void render(glm::mat4 pos, Material mat);
 
 		void setMatrix(glm::mat4 matrix);
+
+		void setFlipScene(bool flipScene);
+
+		bool getFlipScene() const;
 
 		glm::mat4 getMatrix() const;
 
@@ -33,12 +37,13 @@ namespace tunage {
 
 		Node* unlink();
 
-		Node* getSceneElementByName(std::string name);
+		Node* getSceneElementByName(const char* name);
 
 	private:
 		void setParent(Node *parent);
 		std::vector<Node*> m_hierarchy;
 		Node *m_parent = nullptr;
 		glm::mat4 m_matrix = glm::mat4(1.0f);
+		bool flipScene = false;
 	};
 }
