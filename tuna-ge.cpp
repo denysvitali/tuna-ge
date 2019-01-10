@@ -400,6 +400,12 @@ Node* TunaGE::loadOVO(const char* path) {
     std::map<Node*, int> nodeChildrenCount;
     unsigned int lightCount = 0;
 
+    // Create default materials
+
+    Material* nullMaterial = new Material{};
+    nullMaterial->setName("[none]");
+    mats["[none]"] = nullMaterial;
+
     /////////////////
     // Parse chunks:
     unsigned int chunkId, chunkSize;
@@ -637,7 +643,8 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Material name, or [none] if not used:
                 char materialName[FILENAME_MAX];
                 strcpy(materialName, data + position);
-                mesh->setMaterial(*mats.find(std::string(materialName))->second);
+                std::string matName = std::string(materialName);
+                mesh->setMaterial(*mats.find(matName)->second);
                 position += (unsigned int) strlen(materialName) + 1;
 
                 // Mesh bounding sphere radius:
