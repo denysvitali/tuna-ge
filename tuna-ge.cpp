@@ -100,7 +100,7 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	TunaGE::displayCB();
 
-	GLubyte seed[width * height * 3];
+	std::vector<GLubyte> seed;
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &seed);
 
 	FIBITMAP* dib = FreeImage_Allocate(width, height, 24);
@@ -436,7 +436,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
                 Texture *texture = new Texture(textureName);
 #if _WINDOWS
-                stringstream ss;
+                std::stringstream ss;
                 ss << "../tuna-ge/assets/textures/" << textureName;
                 texture->loadFromFile(ss.str());
 #else
