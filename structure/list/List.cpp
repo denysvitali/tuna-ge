@@ -3,6 +3,11 @@
 #include "../light/Light.h"
 #include <GL/freeglut.h>
 
+//	Recursive method to save an entire scene in the render lists by passing the root as paramether. 
+//	Meshes, Lights, and Cameras are separated in different lists to order the rendering process (lights must be rendered before meshes).
+//	The Camera list is used to determinate the current Camera in use.
+//	If the mirrored flag is set, the current node will be saved in a "renderMirrored" list to simulate a reflection plane on the y=0 axis; 
+//	all his childrens mirrored flag will be set before calling the pass method on them.
 void tunage::List::pass(Node* element) {
 
 	if (sceneRoot == nullptr) {
@@ -29,15 +34,17 @@ void tunage::List::pass(Node* element) {
 	else if (dynamic_cast<Light*>(element) != nullptr)
 	{
 		Light* light = dynamic_cast<Light*>(element);
+
 		lightMaterial.setEmission(light->getLightAmbient());
 		if (element->getFlipScene()) {
 			Light* mirroredLight = new Light();
 			*mirroredLight = *light;
-			Element flipElement{ mirroredLight };
-			flipElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1,-1,1)) * element->getRenderMatrix());
-			flipElement.setMaterial(lightMaterial);
-			renderSequenceLightsMirrored.push_back(flipElement);
+			Element mirrorElement{ mirroredLight };
+			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1,-1,1)) * element->getRenderMatrix());
+			mirrorElement.setMaterial(lightMaterial);
+			renderSequenceLightsMirrored.push_back(mirrorElement);
 		}
+
 		listElement.setMaterial(lightMaterial);
 		renderSequenceLights.push_back(listElement);
 	}
@@ -46,6 +53,7 @@ void tunage::List::pass(Node* element) {
 		auto camera = dynamic_cast<Camera*>(element);
 		renderCameras.push_back(camera);
 	}
+
 	for (auto i : element->getChildren()) {
 		if (element->getFlipScene()) {
 			i->setFlipScene(true);
@@ -60,12 +68,7 @@ void tunage::List::render()
 		renderCameras.front()->updateCamera();
 		cameraMatrix = renderCameras.front()->getRenderMatrix();
 	}
-	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
-		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
-	}
-	for (auto i = renderSequenceElements.begin(); i != renderSequenceElements.end(); ++i) {
-		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
-	}
+
 	glFrontFace(GL_CW);
 	int countLight = 0;
 	for (auto i = renderSequenceLightsMirrored.begin(); i != renderSequenceLightsMirrored.end(); ++i) {
@@ -75,10 +78,19 @@ void tunage::List::render()
 		light->enable();
 		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
 	}
+	glFrontFace(GL_CCW);
+	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
+		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
+	}
+	glFrontFace(GL_CW);
 	for (auto i = renderSequenceMirrored.begin(); i != renderSequenceMirrored.end(); ++i) {
 		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
 	}
 	glFrontFace(GL_CCW);
+	for (auto i = renderSequenceElements.begin(); i != renderSequenceElements.end(); ++i) {
+		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
+	}
+	
 }
 
 void tunage::List::setCameraMatrix(glm::mat4 cameraMatrix)

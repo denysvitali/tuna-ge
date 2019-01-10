@@ -77,3 +77,8 @@ void tunage::Material::setTexture(Texture* texture)
 {
 	this->texture = texture;
 }
+
+bool tunage::Material::isTransparent()
+{
+	return alpha < 1.0f;
+}

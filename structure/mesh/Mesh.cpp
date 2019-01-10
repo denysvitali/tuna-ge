@@ -48,3 +48,8 @@ tunage::Material tunage::Mesh::getMaterial() const
 	return material;
 }
 
+bool tunage::Mesh::isTransparent()
+{
+	return material.isTransparent();
+}
+

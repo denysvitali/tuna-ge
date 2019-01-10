@@ -22,6 +22,8 @@ namespace tunage {
 
 		Material getMaterial() const;
 
+		bool isTransparent();
+
 	private:
 		Material material;
 		std::vector<Vertex> faces;

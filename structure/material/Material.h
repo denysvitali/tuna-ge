@@ -22,6 +22,7 @@ namespace tunage {
         glm::vec3 getEmission() const;
         int getShininess() const;
 		void setTexture(Texture* texture);
+		bool isTransparent();
     private:
 		Texture* texture = nullptr;
         int shininess;
