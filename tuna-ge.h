@@ -26,14 +26,14 @@ namespace tunage {
     public:
 		static TunaGE init();
         static void loop();
-		static void renderSingleFrame(unsigned char*& p, int& width, int& height);
+		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
 		static bool free();
 
 		static List renderList;
 
 		static const std::string version();
 
-		static Camera* getCurrentCamera();
+		static Camera& getCurrentCamera();
 
 		// Setting Callbacks
 		static void setMotionCallback(void (* motion_callback)( int, int ));
@@ -45,8 +45,6 @@ namespace tunage {
 
 		static void makeReflective(Node* node);
 
-        static void enableOriginMarker();
-
 		// Rendering Methods
 		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, RGBColor& color, const std::string string);
@@ -56,6 +54,9 @@ namespace tunage {
         // Get Parameters
         static int getScreenW();
         static int getScreenH();
+
+        // Flag to display a window. When false, only the framebuffer is used (e.g: for tests)
+        static void setDisplayWindow(bool enabled);
 
         static Node* loadOVO(const char* path);
 
@@ -83,6 +84,8 @@ namespace tunage {
 		static bool debug;
         static bool culling;
         static bool lighting;
+
+        static bool displayWindow;
 
         static int screen_w;
         static int screen_h;

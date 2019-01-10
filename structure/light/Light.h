@@ -35,6 +35,5 @@ namespace tunage {
 		float radius;
 		float intensity = 1;
 		unsigned int lightType = 0;
-		float sphereRadius = 1.0f;
     };
 }

@@ -1,96 +1,126 @@
 #include "Camera.h"
 #include <GL/freeglut.h>
 
-glm::mat4 tunage::Camera::getInverseMatrix() const {
+using namespace tunage;
+
+void Camera::setMode(CameraMode mode) {
+	this->mode = mode;
+}
+
+glm::mat4 Camera::getInverseMatrix() const {
 	return glm::inverse(getMatrix());
 }
 
-glm::mat4 tunage::Camera::getProjectionMatrix() const {
-	return glm::perspective(glm::radians(FOVangle), (float) (screen_w) / (float) (screen_h), nearPlane, farPlane);
+ProjectionMode Camera::getProjMode() const {
+	return projMode;
 }
 
-void tunage::Camera::loadProjectionMatrix() {
+void Camera::setProjMode(ProjectionMode mode) {
+	projMode = mode;
+}
+
+glm::mat4 Camera::getProjectionMatrix() const {
+	switch(getProjMode()){
+		case PERSPECTIVE:
+			return glm::perspective(glm::radians(FOVangle), (float) (screen_w) / (float) (screen_h), nearPlane, farPlane);
+		case ORTHOGRAPHIC:
+			// TODO: Test
+			return glm::ortho(0.0f, (float) screen_w, (float) screen_h, 0.0f, nearPlane, farPlane);
+	}
+}
+
+void Camera::loadProjectionMatrix() {
 	glMatrixMode(GL_PROJECTION);
-	glm::mat4 Projection = glm::perspective(glm::radians(FOVangle), (float) (screen_w) / (float) (screen_h), nearPlane,
-											farPlane);
+	glm::mat4 Projection = getProjectionMatrix();
 	glLoadMatrixf(glm::value_ptr(Projection));
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void tunage::Camera::setFOV(float FOVangle) {
+void Camera::setFOV(float FOVangle) {
 	this->FOVangle = FOVangle;
 }
 
-float tunage::Camera::getFOV() const {
+float Camera::getFOV() const {
 	return FOVangle;
 }
 
-void tunage::Camera::setNearPlane(float nearPlane) {
+void Camera::setNearPlane(float nearPlane) {
 	this->nearPlane = nearPlane;
 }
 
-float tunage::Camera::getNearPlane() const {
+float Camera::getNearPlane() const {
 	return nearPlane;
 }
 
-void tunage::Camera::setFarPlane(float farPlane) {
+void Camera::setFarPlane(float farPlane) {
 	this->farPlane = farPlane;
 }
 
-float tunage::Camera::getFarPlane() const {
+float Camera::getFarPlane() const {
 	return farPlane;
 }
 
-void tunage::Camera::setScreenSize(int screen_w, int screen_h) {
+void Camera::setScreenSize(int screen_w, int screen_h) {
 	this->screen_w = screen_w;
 	this->screen_h = screen_h;
 }
 
-void tunage::Camera::setProjMode(bool projMode) {
-	this->projMode = projMode;
+void Camera::setPos(glm::vec3 cameraPos) {
+	this->position = cameraPos;
 }
 
-void tunage::Camera::setCameraPos(glm::vec3 cameraPos) {
-	this->cameraPos = cameraPos;
+glm::vec3 Camera::getPos() const {
+	return position;
 }
 
-glm::vec3 tunage::Camera::getCameraPos() const {
-	return cameraPos;
+void Camera::setFront(glm::vec3 cameraFront) {
+	this->front = cameraFront;
 }
 
-void tunage::Camera::setCameraFront(glm::vec3 cameraFront) {
-	this->cameraFront = cameraFront;
+glm::vec3 Camera::getFront() const {
+	return front;
 }
 
-glm::vec3 tunage::Camera::getCameraFront() const {
-	return cameraFront;
+void Camera::setUp(glm::vec3 cameraUp) {
+	this->up = cameraUp;
 }
 
-void tunage::Camera::setCameraUp(glm::vec3 cameraUp) {
-	this->cameraUp = cameraUp;
+glm::vec3 Camera::getUp() const {
+	return up;
+}
+void Camera::update() {
+	glm::mat4 mat;
+	switch(mode){
+		case LOOK_AT_POINT:
+			mat = glm::lookAt(position, point, up);
+			break;
+		case LOOK_TOWARDS_VECTOR:
+			mat = glm::lookAt(position, position + point, up);
+			break;
+		default:
+			throw std::runtime_error("Invalid Camera Mode!");
+	}
+
+	this->setMatrix(mat);
 }
 
-glm::vec3 tunage::Camera::getCameraUp() const {
-	return cameraUp;
-}
-
-void tunage::Camera::setCameraSpeed(float cameraSpeed) {
-	this->cameraSpeed = cameraSpeed;
-}
-
-float tunage::Camera::getCameraSpeed() const {
-	return cameraSpeed;
-}
-
-void tunage::Camera::updateCamera() {
-	this->setMatrix(glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
-}
-
-glm::mat4 tunage::Camera::getRenderMatrix() const {
+glm::mat4 Camera::getRenderMatrix() const {
 	glm::mat4 composedMatrix;
 	if (getParent() != nullptr) {
 		composedMatrix = getMatrix() * glm::inverse(getParent()->getRenderMatrix());
 		return composedMatrix;
 	}
 	return getMatrix();
+}
+
+void Camera::lookAt(glm::vec3 pointInSpace) {
+	this->point = pointInSpace;
+}
+
+CameraMode Camera::getMode() {
+	return mode;
+}
+
+glm::vec3 Camera::getLookAtPoint() const {
+	return point;
 }

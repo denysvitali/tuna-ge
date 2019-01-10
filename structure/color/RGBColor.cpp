@@ -41,6 +41,7 @@ RGBColor RGBColor::getColor(const char *color){
             sprintf(output, "0x%s", lc_color  + 2);
 
             int num = (int) strtol(output, nullptr, 0);
+            delete[] output;
 
             auto r = static_cast<float>((num >> 16 & 0xFF) / 255.0);
             auto g = static_cast<float>(((num >> 8) & 0xFF) / 255.0);
@@ -49,6 +50,7 @@ RGBColor RGBColor::getColor(const char *color){
             rgbColor = RGBColor(r, g, b);
         }
     }
+    delete[] lc_color;
 
     return rgbColor;
 }

@@ -8,26 +8,21 @@ void tunage::List::pass(Node* element) {
 		sceneRoot = element;
 	}
 
-	Element listElement{ element };
+	Element listElement{element};
 	listElement.setMatrix((*element).getRenderMatrix());
 
-	if (dynamic_cast<Mesh*>(element) != nullptr)
-	{
+	if (dynamic_cast<Mesh*>(element) != nullptr) {
 		Mesh* mesh = dynamic_cast<Mesh*>(element);
 		Material mat = mesh->getMaterial();
 		listElement.setMaterial(mat);
 		renderSequenceElements.push_back(listElement);
 
-	}
-	else if (dynamic_cast<Light*>(element) != nullptr)
-	{
+	} else if (dynamic_cast<Light*>(element) != nullptr) {
 		auto light = dynamic_cast<Light*>(element);
 		lightMaterial.setEmission(light->getLightAmbient());
 		listElement.setMaterial(lightMaterial);
 		renderSequenceLights.push_back(listElement);
-	}
-	else if (dynamic_cast<Camera*>(element) != nullptr)
-	{
+	} else if (dynamic_cast<Camera*>(element) != nullptr) {
 		auto camera = dynamic_cast<Camera*>(element);
 		renderCameras.push_back(camera);
 	}
@@ -36,10 +31,9 @@ void tunage::List::pass(Node* element) {
 	}
 }
 
-void tunage::List::render()
-{
-	if(!renderCameras.empty()){
-		renderCameras.front()->updateCamera();
+void tunage::List::render() {
+	if (!renderCameras.empty()) {
+		renderCameras.front()->update();
 		cameraMatrix = renderCameras.front()->getRenderMatrix();
 	}
 	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
@@ -50,21 +44,20 @@ void tunage::List::render()
 	}
 }
 
-void tunage::List::setCameraMatrix(glm::mat4 cameraMatrix)
-{
+void tunage::List::setCameraMatrix(glm::mat4 cameraMatrix) {
 	this->cameraMatrix = cameraMatrix;
 }
 
-const std::vector<tunage::Element>& tunage::List::getRenderElements() const{
+const std::vector<tunage::Element> &tunage::List::getRenderElements() const {
 	return renderSequenceElements;
 }
 
-const std::vector<tunage::Element>& tunage::List::getRenderLights() const {
+const std::vector<tunage::Element> &tunage::List::getRenderLights() const {
 	return renderSequenceLights;
 }
 
-std::vector<tunage::Camera*>& tunage::List::getRenderCameras() {
-    return renderCameras;
+std::vector<tunage::Camera*> &tunage::List::getRenderCameras() {
+	return renderCameras;
 }
 
 void tunage::List::clear() {
@@ -80,20 +73,22 @@ void tunage::List::switchCamera() {
 	renderCameras.erase(renderCameras.begin());
 }
 
-tunage::Node* tunage::List::getSceneRoot() const{
+tunage::Node* tunage::List::getSceneRoot() const {
 	return sceneRoot;
 }
 
 void tunage::List::renderReflection() {
-	if(!renderCameras.empty()){
-		renderCameras.front()->updateCamera();
+	if (!renderCameras.empty()) {
+		renderCameras.front()->update();
 		cameraMatrix = renderCameras.front()->getRenderMatrix();
 	}
-	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
-		(*i->getNode()).renderReflection(cameraMatrix * i->getMatrix(), i->getMaterial());
+	for (auto &renderSequenceLight : renderSequenceLights) {
+		(*renderSequenceLight.getNode())
+		.renderReflection(cameraMatrix * renderSequenceLight.getMatrix(), renderSequenceLight.getMaterial());
 	}
-	for (auto i = renderSequenceElements.begin(); i != renderSequenceElements.end(); ++i) {
-		(*i->getNode()).renderReflection(cameraMatrix * i->getMatrix(), i->getMaterial());
+	for (auto &renderSequenceElement : renderSequenceElements) {
+		(*renderSequenceElement.getNode())
+		.renderReflection(cameraMatrix * renderSequenceElement.getMatrix(), renderSequenceElement.getMaterial());
 	}
 }
 

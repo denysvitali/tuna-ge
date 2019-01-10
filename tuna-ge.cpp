@@ -40,6 +40,9 @@ bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
 bool TunaGE::framerateVisible = false;
 
+// Display a window? Used during Tests to avoid generating GL windows
+bool TunaGE::displayWindow = true;
+
 int TunaGE::windowId = -1;
 
 //Camera TunaGE::getCurrentCamera() = Camera{"default getCurrentCamera()"};
@@ -68,6 +71,7 @@ TunaGE TunaGE::init() {
 
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
 
@@ -88,13 +92,15 @@ int TunaGE::getScreenW() {
 	return TunaGE::screen_w;
 }
 
-void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
+void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	int old_w = TunaGE::screen_w;
 	int old_h = TunaGE::screen_h;
 
 	TunaGE::screen_w = width;
 	TunaGE::screen_h = height;
+
+	TunaGE::reshapeCB(width, height);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 	glReadBuffer(GL_FRONT);
@@ -105,21 +111,25 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	TunaGE::displayCB();
 
-	std::vector<GLubyte> seed;
-	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &seed);
-
 	FIBITMAP* dib = FreeImage_Allocate(width, height, 24);
-	int bytespp = FreeImage_GetLine(dib) / FreeImage_GetWidth(dib);
-	for (unsigned y = 0; y < FreeImage_GetHeight(dib); y++) {
+	int bpp = FreeImage_GetBPP(dib);
+	int Bpp = bpp / 8;
+
+	auto* seed = (GLubyte*) malloc(sizeof(GLubyte) * width * height * Bpp);
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, seed);
+
+	for (unsigned y = 0; y < height; y++) {
 		BYTE* bits = FreeImage_GetScanLine(dib, y);
-		for (unsigned x = 0; x < FreeImage_GetWidth(dib); x++) {
-			bits[x*3 + 2] = seed[y * 3 * width + x * 3];
-			bits[x*3 + 1] = seed[y * 3 * width + x * 3 + 1];
-			bits[x*3 + 0] = seed[y * 3 * width + x * 3 + 2];
+		for (unsigned x = 0; x < width * Bpp; x+=Bpp) {
+			// BGR
+			bits[x + 2] = seed[y * Bpp * width + x];
+			bits[x + 1] = seed[y * Bpp * width + x + 1];
+			bits[x + 0] = seed[y * Bpp * width + x + 2];
 		}
 	}
 
-	FreeImage_Save(FIF_JPEG, dib, "/tmp/out.bmp");
+	//FreeImage_Save(FIF_BMP, dib, "/tmp/out.bmp");
+	std::free(seed);
 
 	TunaGE::debug = debug;
 	TunaGE::screen_w = old_w;
@@ -129,6 +139,8 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 	if (err) {
 		std::cerr << glGetString(err) << std::endl;
 	}
+
+	return dib;
 }
 
 bool TunaGE::free() {
@@ -160,9 +172,6 @@ void TunaGE::initGlut() {
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
     glEnable(GL_DEPTH_TEST);
-}
-
-void TunaGE::enableOriginMarker() {
 }
 
 const std::string TunaGE::version() {
@@ -226,7 +235,6 @@ void TunaGE::redisplay(){
 
 
 void TunaGE::displayCB() {
-
 	if(!TunaGE::reshapeAlreadyCalled){
 		TunaGE::reshapeCB(TunaGE::screen_w, TunaGE::screen_h);
 	}
@@ -250,39 +258,59 @@ void TunaGE::displayCB() {
 
 		std::stringstream ss;
 
-		glm::vec3 cp = TunaGE::getCurrentCamera()->getCameraPos();
-		glm::vec3 cf = TunaGE::getCurrentCamera()->getCameraFront();
+		Camera& cam = TunaGE::getCurrentCamera();
 
-		ss << TunaGE::getCurrentCamera()->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
-		ss << "CF: " << cf[0] << "," << cf[1] << "," << cf[2];
+		glm::vec3 cp = cam.getPos();
+		ss << TunaGE::getCurrentCamera().getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
+		glm::vec3 point;
+		switch(cam.getMode()){
+			case LOOK_AT_POINT:
+				point = cam.getLookAtPoint();
+				ss << "LAP: " << point[0] << ", " << point[1] << ", " << point[2];
+				break;
+			case LOOK_TOWARDS_VECTOR:
+				point = cam.getFront();
+				ss << "LTV: " << point[0] << ", " << point[1] << ", " << point[2];
+				break;
+		}
+
+		ss << " W: " << TunaGE::screen_w << "x" << TunaGE::screen_h;
 
 		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, ss.str());
 	}
 
-	glutPostWindowRedisplay(windowId);
-	glutSwapBuffers();
+	if(TunaGE::displayWindow) {
+		glutPostWindowRedisplay(windowId);
+		glutSwapBuffers();
+	}
 }
 
 void TunaGE::reshapeCB(int w, int h) {
 	if(!TunaGE::reshapeAlreadyCalled){
-		TunaGE::reshapeAlreadyCalled = true;
+		//TunaGE::reshapeAlreadyCalled = true;
 	}
 
 	glViewport(0, 0, w, h);
 	TunaGE::screen_w = w;
 	TunaGE::screen_h = h;
 	setProjectionMatrix();
-	glutPostWindowRedisplay(windowId);
-	glutSwapBuffers();
+
+	if(windowId != -1){
+		glutPostWindowRedisplay(windowId);
+	}
+
+	if(displayWindow) {
+		glutSwapBuffers();
+	}
 }
 
 void TunaGE::setProjectionMatrix() {
 
-    TunaGE::getCurrentCamera()->setFOV(45);
-    TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
-    TunaGE::getCurrentCamera()->setNearPlane(0.1f);
-    TunaGE::getCurrentCamera()->setFarPlane(500);
-    TunaGE::getCurrentCamera()->loadProjectionMatrix();
+    TunaGE::getCurrentCamera().setFOV(45);
+    TunaGE::getCurrentCamera().setScreenSize(screen_w, screen_h);
+    TunaGE::getCurrentCamera().setNearPlane(0.1f);
+    TunaGE::getCurrentCamera().setFarPlane(500);
+    TunaGE::getCurrentCamera().loadProjectionMatrix();
 
 }
 
@@ -302,8 +330,8 @@ void TunaGE::setSpecialCallback(void (* special_callback)(int, int, int)) {
 	TunaGE::special_callback = special_callback;
 }
 
-Camera* TunaGE::getCurrentCamera() {
-    return TunaGE::renderList.getRenderCameras().front();
+Camera& TunaGE::getCurrentCamera() {
+    return *TunaGE::renderList.getRenderCameras().front();
 }
 
 
@@ -876,4 +904,8 @@ Node* TunaGE::loadOVO(const char* path) {
 
 void TunaGE::makeReflective(Node* node) {
 	node->setMirror(true);
+}
+
+void TunaGE::setDisplayWindow(bool enabled) {
+	TunaGE::displayWindow = enabled;
 }
