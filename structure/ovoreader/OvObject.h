@@ -6,14 +6,14 @@ public:
 	enum class Type : int  ///< Type of entities
 	{
 		// Foundation types:
-				OBJECT = 0,
+		OBJECT = 0,
 		NODE,
 		OBJECT2D,
 		OBJECT3D,
 		LIST,
 
 		// Derived classes:
-				BUFFER,
+		BUFFER,
 		SHADER,
 		TEXTURE,
 		FILTER,
@@ -33,12 +33,12 @@ public:
 		EMITTER,
 
 		// Animation type
-				ANIM,
+		ANIM,
 
 		// Physics related:
-				PHYSICS,
+		PHYSICS,
 
 		// Terminator:
-				LAST,
+		LAST,
 	};
 };

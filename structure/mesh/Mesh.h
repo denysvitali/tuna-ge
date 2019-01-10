@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../../libapi.h"
 #include "../node/Node.h"
 #include "../material/Material.h"
@@ -15,6 +14,7 @@ namespace tunage {
 		void render() override;
 
 		void render(glm::mat4 pos, Material mat) override;
+		void renderReflection(glm::mat4 pos, Material mat) override;
 
 		void addVertex(Vertex vertex);
 

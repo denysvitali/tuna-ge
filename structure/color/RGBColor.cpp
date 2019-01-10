@@ -38,7 +38,7 @@ RGBColor RGBColor::getColor(const char *color){
             }
 
             char *output = new char[hexLen + 1];
-            sprintf(output, "0x%s", lc_color  + 1);
+            sprintf(output, "0x%s", lc_color  + 2);
 
             int num = (int) strtol(output, nullptr, 0);
 

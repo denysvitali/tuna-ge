@@ -10,6 +10,7 @@ namespace tunage {
 		Texture() : Object{}{}
 		Texture(std::string name) : Object{ name }{}
 		void render() override;
+		void renderReflection() override;
 		void loadFromFile(std::string path);
 		void loadTexture(void* bitmap);
 		void setAnisotropic(bool anisotropic);

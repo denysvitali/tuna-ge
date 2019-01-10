@@ -31,7 +31,7 @@ namespace tunage {
 
 		static List renderList;
 
-		static std::string version();
+		static const std::string version();
 
 		static Camera* getCurrentCamera();
 
@@ -41,11 +41,15 @@ namespace tunage {
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 		static void setSpecialCallback(void (* special_callback)( int, int, int ));
 
+		static void setFrameRate(bool enbabled);
+
+		static void makeReflective(Node* node);
+
         static void enableOriginMarker();
 
 		// Rendering Methods
 		static void render(glm::mat4 camera, List& list);
-        static void renderString(float x, float y, void* font, const char* string);
+        static void renderString(float x, float y, void* font, RGBColor& color, const std::string string);
 		static void redisplay();
 
 
@@ -83,6 +87,7 @@ namespace tunage {
         static int screen_w;
         static int screen_h;
         static bool reshapeAlreadyCalled;
+        static bool framerateVisible;
 
         TunaGE(){};
     };

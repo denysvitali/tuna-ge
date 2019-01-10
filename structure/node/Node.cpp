@@ -6,6 +6,10 @@ namespace tunage {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
+	void Node::renderReflection() {
+		throw std::runtime_error("render() called on a pure Node object");
+	}
+
 	void Node::render(glm::mat4 pos, Material mat) {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
@@ -72,5 +76,13 @@ namespace tunage {
 			return composedMatrix;
 		}
 		return m_matrix;
+	}
+
+	void Node::setMirror(bool val) {
+		this->mirror = val;
+	}
+
+	void Node::renderReflection(glm::mat4 pos, Material mat) {
+
 	}
 };

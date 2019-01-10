@@ -84,3 +84,16 @@ tunage::Node* tunage::List::getSceneRoot() const{
 	return sceneRoot;
 }
 
+void tunage::List::renderReflection() {
+	if(!renderCameras.empty()){
+		renderCameras.front()->updateCamera();
+		cameraMatrix = renderCameras.front()->getRenderMatrix();
+	}
+	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
+		(*i->getNode()).renderReflection(cameraMatrix * i->getMatrix(), i->getMaterial());
+	}
+	for (auto i = renderSequenceElements.begin(); i != renderSequenceElements.end(); ++i) {
+		(*i->getNode()).renderReflection(cameraMatrix * i->getMatrix(), i->getMaterial());
+	}
+}
+

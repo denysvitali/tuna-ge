@@ -10,7 +10,7 @@ void tunage::Mesh::render() {
 
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_TRIANGLES);
-	for (auto& face : faces) {
+	for (auto &face : faces) {
 		glNormal3f(face.getNorm().x, face.getNorm().y, face.getNorm().z);
 		glTexCoord2f(face.getUV().x, face.getUV().y);
 		glVertex3f(face.getPos().x, face.getPos().y, face.getPos().z);
@@ -19,14 +19,28 @@ void tunage::Mesh::render() {
 	glDisable(GL_TEXTURE_2D);
 }
 
-void tunage::Mesh::render(glm::mat4 pos, Material mat)
-{
+void tunage::Mesh::renderReflection(glm::mat4 pos, Material mat) {
 	mat.render();
 	glLoadMatrixf(glm::value_ptr(pos));
 
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_TRIANGLES);
-	for (auto& face : faces) {
+	for (auto &face : faces) {
+		glNormal3f(face.getNorm().x, -face.getNorm().y, face.getNorm().z);
+		glTexCoord2f(face.getUV().x, -face.getUV().y);
+		glVertex3f(face.getPos().x, -face.getPos().y, face.getPos().z);
+	}
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+}
+
+void tunage::Mesh::render(glm::mat4 pos, Material mat) {
+	mat.render();
+	glLoadMatrixf(glm::value_ptr(pos));
+
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_TRIANGLES);
+	for (auto &face : faces) {
 		glNormal3f(face.getNorm().x, face.getNorm().y, face.getNorm().z);
 		glTexCoord2f(face.getUV().x, face.getUV().y);
 		glVertex3f(face.getPos().x, face.getPos().y, face.getPos().z);
@@ -43,8 +57,7 @@ void tunage::Mesh::setMaterial(Material material) {
 	this->material = material;
 }
 
-tunage::Material tunage::Mesh::getMaterial() const
-{
+tunage::Material tunage::Mesh::getMaterial() const {
 	return material;
 }
 

@@ -15,7 +15,9 @@ namespace tunage {
 		Node(std::string name) : Object(name) {};
 
 		void render() override;
+		void renderReflection() override;
 		virtual void render(glm::mat4 pos, Material mat);
+		virtual void renderReflection(glm::mat4 pos, Material mat);
 
 		void setMatrix(glm::mat4 matrix);
 
@@ -35,10 +37,13 @@ namespace tunage {
 
 		Node* getSceneElementByName(const char* name);
 
+		void setMirror(bool val);
+
 	private:
 		void setParent(Node *parent);
 		std::vector<Node*> m_hierarchy;
 		Node *m_parent = nullptr;
 		glm::mat4 m_matrix = glm::mat4(1.0f);
+		bool mirror = false;
 	};
 }

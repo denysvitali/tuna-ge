@@ -30,10 +30,15 @@ void (* TunaGE::special_callback)( int, int, int ) = nullptr;
 void (* TunaGE::keyboard_callback)( unsigned char, int, int ) = nullptr;
 
 bool TunaGE::wireframe = false;
-bool TunaGE::debug = true;
+#ifdef DEBUG
+	bool TunaGE::debug = true;
+#else
+	bool TunaGE::debug = false;
+#endif
 bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
+bool TunaGE::framerateVisible = false;
 
 int TunaGE::windowId = -1;
 
@@ -160,7 +165,7 @@ void TunaGE::initGlut() {
 void TunaGE::enableOriginMarker() {
 }
 
-std::string TunaGE::version() {
+const std::string TunaGE::version() {
 	std::stringstream ss{};
 	ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
 	if (!Version::GIT_SHA1.empty()) {
@@ -169,14 +174,48 @@ std::string TunaGE::version() {
 	return ss.str();
 }
 
+void doReflection(Node* node, glm::mat4 origin){
+
+}
+
 void tunage::TunaGE::render(glm::mat4 camera, List &list) {
 	list.setCameraMatrix(camera);
 	list.render();
+
+	// Reflection
+	glFrontFace(GL_CW);
+	List reflectionList = list;
+	list.renderReflection();
+	glFrontFace(GL_CCW);
 }
 
-void TunaGE::renderString(float x, float y, void* font, const char* string) {
-	glRasterPos2d(x, y);
-	glutBitmapString(font, reinterpret_cast<const unsigned char*>(string));
+void TunaGE::renderString(float x, float y, void* font, RGBColor& color, const std::string string) {
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glRasterPos2f(x, y);
+	glColor3f(color.r(), color.g(), color.b());
+
+	for (char c : string) {
+		glutBitmapCharacter(font, c);
+	}
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	if (TunaGE::lighting) {
+		glEnable(GL_LIGHTING);
+	}
 }
 
 void TunaGE::redisplay(){
@@ -205,42 +244,19 @@ void TunaGE::displayCB() {
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		glDisable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D); //added this
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
-		glRasterPos2i(10, 10);
-		glColor3f(0.0, 1.0, 0.0);
-		std::string s = TunaGE::version();
-		void* font = GLUT_BITMAP_9_BY_15;
-		for (char c : s) {
-			glutBitmapCharacter(font, c);
-		}
+		RGBColor color = RGBColor::getColor("#fafafa");
 
-        glRasterPos2i(200, 10);
-        std::stringstream ss;
-        glm::vec3 cp = TunaGE::getCurrentCamera()->getCameraPos();
-        glm::vec3 cf = TunaGE::getCurrentCamera()->getCameraFront();
-        ss << TunaGE::getCurrentCamera()->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
-        ss << "CF: " << cf[0] << "," << cf[1] << "," << cf[2];
-        std::string s2 = ss.str();
-        for (char c : s2) {
-            glutBitmapCharacter(font, c);
-        }
+		renderString(10, 10, GLUT_BITMAP_9_BY_15, color, TunaGE::version());
 
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
+		std::stringstream ss;
 
-		if (TunaGE::lighting) {
-			glEnable(GL_LIGHTING);
-		}
+		glm::vec3 cp = TunaGE::getCurrentCamera()->getCameraPos();
+		glm::vec3 cf = TunaGE::getCurrentCamera()->getCameraFront();
+
+		ss << TunaGE::getCurrentCamera()->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
+		ss << "CF: " << cf[0] << "," << cf[1] << "," << cf[2];
+
+		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, ss.str());
 	}
 
 	glutPostWindowRedisplay(windowId);
@@ -290,6 +306,11 @@ Camera* TunaGE::getCurrentCamera() {
     return TunaGE::renderList.getRenderCameras().front();
 }
 
+
+void TunaGE::setFrameRate(bool enabled) {
+	TunaGE::framerateVisible = enabled;
+}
+
 Node* TunaGE::loadOVO(const char* path) {
 
     // Open file:
@@ -303,7 +324,7 @@ Node* TunaGE::loadOVO(const char* path) {
     std::cout.precision(2);  // 2 decimals are enough
     std::cout << std::fixed;      // Avoid scientific notation
 
-    std::map<std::string, Material*> mats;
+    std::map<const std::string, Material*> mats;
     Node* root = nullptr;
     std::stack<Node*> nodeStack;
     std::map<Node*, int> nodeChildrenCount;
@@ -552,7 +573,7 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Material name, or [none] if not used:
                 char materialName[FILENAME_MAX];
                 strcpy(materialName, data + position);
-                std::string matName = std::string(materialName);
+                const std::string matName = std::string(materialName);
                 mesh->setMaterial(*mats.find(matName)->second);
                 position += (unsigned int) strlen(materialName) + 1;
 
@@ -851,4 +872,8 @@ Node* TunaGE::loadOVO(const char* path) {
     // Done:
     fclose(dat);
     return root;
+}
+
+void TunaGE::makeReflective(Node* node) {
+	node->setMirror(true);
 }

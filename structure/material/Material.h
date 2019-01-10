@@ -10,6 +10,7 @@ namespace tunage {
     public:
 		Material() : Object() {};
 		void render() override;
+		void renderReflection() override;
         void setAmbient(glm::vec3 light);
         void setDiffuse(glm::vec3 light);
         void setSpecular(glm::vec3 light);
@@ -23,7 +24,7 @@ namespace tunage {
 		void setTexture(Texture* texture);
     private:
 		Texture* texture = nullptr;
-        int shininess;
+        int shininess{};
 		float alpha = 1.0f;
         glm::vec4 ambient = glm::vec4{0,0,0,1};
         glm::vec4 diffuse = glm::vec4{0,0,0,1};

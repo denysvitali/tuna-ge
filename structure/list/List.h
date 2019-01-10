@@ -17,6 +17,7 @@ namespace tunage {
 	    List(std::string name) : Object(name) {};
 		void pass(Node* element);
 		void render() override;
+		void renderReflection() override;
 		void setCameraMatrix(glm::mat4 cameraMatrix);
 		void clear();
 		const std::vector<Element>& getRenderElements() const;
