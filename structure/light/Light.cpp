@@ -15,26 +15,18 @@ void Light::setColor(RGBColor color) {
 	this->m_color = color;
 }
 
-
 void Light::render() {
-	//TODO: implement various light modes
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(getRenderMatrix()));
 
-	// Draw a small emissive sphere to show light position:
-	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
 	Material m{};
-	m.setAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
-	m.setSpecular(glm::vec3(0.6f, 0.6f, 0.6f));
-	m.setShininess(120);
-	m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-	m.setEmission(glm::vec3(1.0f, 1.0f, 1.0f));
-
+	m.setEmission(lightAmbient);
 	m.render();
 
+	// Draw a small emissive sphere to show light position:
 	glutSolidSphere(sphereRadius, 40, 40);
 
-	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
 	glm::vec4 ambient_wi = glm::vec4(
 			lightAmbient[0] * intensity,
 			lightAmbient[1] * intensity,
@@ -77,17 +69,13 @@ void Light::render() {
 
 void tunage::Light::render(glm::mat4 pos, Material mat)
 {
-	//TODO: implement various light modes
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(pos));
-
-	// Draw a small emissive sphere to show light position:
-	//glLoadMatrixf(glm::value_ptr(glm::mat4(1.0f)));
 	mat.render();
 
+	// Draw a small emissive sphere to show light position:
 	glutSolidSphere(sphereRadius, 40, 40);
 
-	// Light position is set to object coordinates and is modified by the current OpenGL matrix (as with any other object):
 	glm::vec4 ambient_wi = glm::vec4(
 		lightAmbient[0] * intensity,
 		lightAmbient[1] * intensity,

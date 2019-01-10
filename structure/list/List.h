@@ -21,14 +21,16 @@ namespace tunage {
 		void clear();
 		const std::vector<Element>& getRenderElements() const;
 		const std::vector<Element>& getRenderLights() const;
-		std::vector<Camera>& getRenderCameras();
+		std::vector<Camera*>& getRenderCameras();
 		void switchCamera();
+		Node* getSceneRoot() const;
 
 	private:
+		Node* sceneRoot = nullptr;
 		glm::mat4 cameraMatrix;
 		Material lightMaterial;
 		std::vector<Element> renderSequenceElements;
 		std::vector<Element> renderSequenceLights;
-        std::vector<Camera> renderCameras;
+        std::vector<Camera*> renderCameras;
 	};
 }

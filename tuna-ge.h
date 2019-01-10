@@ -33,7 +33,7 @@ namespace tunage {
 
 		static List renderList;
 
-		static Camera& getCurrentCamera();
+		static Camera* getCurrentCamera();
 
 		// Setting Callbacks
 		static void setMotionCallback(void (* motion_callback)( int, int ));

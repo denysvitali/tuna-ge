@@ -164,15 +164,17 @@ void TunaGE::initGlut() {
 		glDisable(GL_CULL_FACE);
 	}
 
-	if (TunaGE::lighting) {
-		glEnable(GL_LIGHTING);
-		//glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-	}
+    if (TunaGE::lighting) {
+        glEnable(GL_LIGHTING);
+        glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    }
 
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
+    glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void TunaGE::enableOriginMarker() {
@@ -295,9 +297,9 @@ void TunaGE::drawPlane(float width) {
 
 	material.setTexture(&tex);
 
-	mesh.setMaterial(material);
-	glm::mat4 model = glm::mat4(1.0f);
-	mesh.setMatrix(TunaGE::getCurrentCamera().getMatrix() * TunaGE::worldRotation * model);
+    mesh.setMaterial(material);
+    glm::mat4 model = glm::mat4(1.0f);
+    mesh.setMatrix(TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * model);
 
 	Vertex v1{ -width, 0, 0, 0, 1, 0, 0, 0 };
 	Vertex v2{ width, 0, 0, 0, 1, 0, 1, 1};
@@ -315,33 +317,33 @@ void TunaGE::drawPlane(float width) {
 	mesh.addVertex(v6);
 	mesh.render();
 
-	/*
-	glMatrixMode(GL_MODELVIEW);
-	glm::mat4 Model = glm::mat4(1.0f);
-	glm::mat4 vp = TunaGE::getCurrentCamera() * TunaGE::worldRotation * Model;
-	glLoadMatrixf(glm::value_ptr(vp));
-	RGBColor color = RGBColor::getColor("#8e44ad");
-	Material m{};
-	m.setAmbient(color.vec());
-	m.setShininess(120);
-	m.setSpecular(glm::vec3(0.3f, 0.3f, 0.3f));
-	m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
+    /*
+    glMatrixMode(GL_MODELVIEW);
+    glm::mat4 Model = glm::mat4(1.0f);
+    glm::mat4 vp = TunaGE::getCurrentCamera() * TunaGE::worldRotation * Model;
+    glLoadMatrixf(glm::value_ptr(vp));
+    RGBColor color = RGBColor::getColor("#8e44ad");
+    Material m{};
+    m.setAmbient(color.vec());
+    m.setShininess(120);
+    m.setSpecular(glm::vec3(0.3f, 0.3f, 0.3f));
+    m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
 
-	glBegin(GL_TRIANGLE_STRIP);
-	setMaterial(m);
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(width, 0, 0);
-	glVertex3f(0, 0, -width);
-	glVertex3f(0, 0, width);
-	glVertex3f(-width, 0, 0);
-	glEnd();
-	glBegin(GL_TRIANGLE_STRIP);
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glVertex3f(width, -0.01, 0);
-	glVertex3f(0, -0.01, -width);
-	glVertex3f(0, -0.01, width);
-	glVertex3f(-width, -0.01, 0);
-	glEnd();*/
+    glBegin(GL_TRIANGLE_STRIP);
+    setMaterial(m);
+    glNormal3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(width, 0, 0);
+    glVertex3f(0, 0, -width);
+    glVertex3f(0, 0, width);
+    glVertex3f(-width, 0, 0);
+    glEnd();
+    glBegin(GL_TRIANGLE_STRIP);
+    glNormal3f(0.0f, -1.0f, 0.0f);
+    glVertex3f(width, -0.01, 0);
+    glVertex3f(0, -0.01, -width);
+    glVertex3f(0, -0.01, width);
+    glVertex3f(-width, -0.01, 0);
+    glEnd();*/
 }
 
 void tunage::TunaGE::render(glm::mat4 camera, List &list) {
@@ -383,12 +385,12 @@ void TunaGE::drawOriginMarkers(float width) {
 	Material redMat = generateOriginMarkerMaterial(redColor);
 	setMaterial(redMat);
 
-	glMatrixMode(GL_MODELVIEW);
-	glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0));
-	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1, 0.02, 0.02));
-	glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::mat4 vp = TunaGE::getCurrentCamera().getMatrix() * TunaGE::worldRotation * rotationX * scale * translate;
-	glLoadMatrixf(glm::value_ptr(vp));
+    glMatrixMode(GL_MODELVIEW);
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0));
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1, 0.02, 0.02));
+    glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * rotationX * scale * translate;
+    glLoadMatrixf(glm::value_ptr(vp));
 
 	drawCube(1.0);
 
@@ -398,26 +400,26 @@ void TunaGE::drawOriginMarkers(float width) {
 	Material greenMat = generateOriginMarkerMaterial(greenColor);
 	setMaterial(greenMat);
 
-	glMatrixMode(GL_MODELVIEW);
-	translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0));
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 1, 0.02));
-	glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	vp = TunaGE::getCurrentCamera().getMatrix() * TunaGE::worldRotation * rotationY * scale * translate;
-	glLoadMatrixf(glm::value_ptr(vp));
-	drawCube(1.0);
+    glMatrixMode(GL_MODELVIEW);
+    translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0));
+    scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 1, 0.02));
+    glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * rotationY * scale * translate;
+    glLoadMatrixf(glm::value_ptr(vp));
+    drawCube(1.0);
 
 	// Z arrow - Blue
 	RGBColor blueColor = RGBColor::getColor("#2980b9");
 	Material blueMat = generateOriginMarkerMaterial(blueColor);
 	setMaterial(blueMat);
 
-	glMatrixMode(GL_MODELVIEW);
-	translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0, 0.5f));
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 0.02, 1));
-	glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	vp = TunaGE::getCurrentCamera().getMatrix() * TunaGE::worldRotation * rotationZ * scale * translate;
-	glLoadMatrixf(glm::value_ptr(vp));
-	drawCube(1.0);
+    glMatrixMode(GL_MODELVIEW);
+    translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0, 0.5f));
+    scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 0.02, 1));
+    glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * rotationZ * scale * translate;
+    glLoadMatrixf(glm::value_ptr(vp));
+    drawCube(1.0);
 
 }
 
@@ -449,17 +451,17 @@ void drawGrid(float size, int tesselation) {
 }
 
 void TunaGE::drawLight() {
-	glm::mat4 Model = glm::mat4(1.0f);
-	glm::mat4 vp = TunaGE::getCurrentCamera().getMatrix() * TunaGE::worldRotation * Model;
-	vp = glm::translate(vp, glm::vec3(1.0f, 1.0f, 0.0f));
-	light.setMatrix(vp);
-	light.setLight(1);
-	light.setIntensity(1.0);
-	light.setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
-	light.setLightDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-	light.setLightSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-	light.enable();
-	light.render();
+    glm::mat4 Model = glm::mat4(1.0f);
+    glm::mat4 vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * Model;
+    vp = glm::translate(vp, glm::vec3(1.0f, 1.0f, 0.0f));
+    light.setMatrix(vp);
+    light.setLight(1);
+    light.setIntensity(1.0);
+    light.setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
+    light.setLightDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
+    light.setLightSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
+    light.enable();
+    light.render();
 }
 
 void TunaGE::displayCB() {
@@ -498,16 +500,16 @@ void TunaGE::displayCB() {
 			glutBitmapCharacter(font, c);
 		}
 
-		glRasterPos2i(200, 10);
-		std::stringstream ss;
-		glm::vec3 cp = TunaGE::getCurrentCamera().getCameraPos();
-		glm::vec3 cf = TunaGE::getCurrentCamera().getCameraFront();
-		ss << TunaGE::getCurrentCamera().getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
-		ss << "CF: " << cf[0] << "," << cf[1] << "," << cf[2];
-		std::string s2 = ss.str();
-		for (char c : s2) {
-			glutBitmapCharacter(font, c);
-		}
+        glRasterPos2i(200, 10);
+        std::stringstream ss;
+        glm::vec3 cp = TunaGE::getCurrentCamera()->getCameraPos();
+        glm::vec3 cf = TunaGE::getCurrentCamera()->getCameraFront();
+        ss << TunaGE::getCurrentCamera()->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
+        ss << "CF: " << cf[0] << "," << cf[1] << "," << cf[2];
+        std::string s2 = ss.str();
+        for (char c : s2) {
+            glutBitmapCharacter(font, c);
+        }
 
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
@@ -572,11 +574,11 @@ void TunaGE::reshapeCB(int w, int h) {
 
 void TunaGE::setProjectionMatrix() {
 
-	TunaGE::getCurrentCamera().setFOV(45);
-	TunaGE::getCurrentCamera().setScreenSize(screen_w, screen_h);
-	TunaGE::getCurrentCamera().setNearPlane(0.1f);
-	TunaGE::getCurrentCamera().setFarPlane(100);
-	TunaGE::getCurrentCamera().loadProjectionMatrix();
+    TunaGE::getCurrentCamera()->setFOV(45);
+    TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
+    TunaGE::getCurrentCamera()->setNearPlane(0.1f);
+    TunaGE::getCurrentCamera()->setFarPlane(500);
+    TunaGE::getCurrentCamera()->loadProjectionMatrix();
 
 }
 
@@ -602,8 +604,8 @@ void TunaGE::setKeyboardCallback(void (* keyboard_callback)(unsigned char, int, 
 	TunaGE::keyboard_callback = keyboard_callback;
 }
 
-Camera &TunaGE::getCurrentCamera() {
-	return TunaGE::renderList.getRenderCameras().front();
+Camera* TunaGE::getCurrentCamera() {
+    return TunaGE::renderList.getRenderCameras().front();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
