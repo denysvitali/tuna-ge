@@ -55,7 +55,7 @@ void tunage::Camera::setScreenSize(int screen_w, int screen_h)
 	this->screen_h = screen_h;
 }
 
-void tunage::Camera::setProjMode(bool projModemode)
+void tunage::Camera::setProjMode(bool projMode)
 {
 	this->projMode = projMode;
 }
