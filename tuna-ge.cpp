@@ -16,6 +16,10 @@
 #include "structure/vertex/Vertex.h"
 #include "structure/mesh/Mesh.h"
 
+#include "structure/ovoreader/OvObject.h"
+#include "structure/ovoreader/OvMesh.h"
+#include "structure/ovoreader/OvLight.h"
+
 #include <FreeImage.h>
 
 using namespace tunage;
@@ -146,6 +150,7 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 }
 
 bool TunaGE::free() {
+	// TODO: Implement
 	return true;
 }
 
@@ -225,125 +230,6 @@ void TunaGE::c_PH(float width) {
 	glVertex3f(-width / 2, width / 2, -width / 2);
 }
 
-void TunaGE::drawCube(float width) {
-	glBegin(GL_TRIANGLE_STRIP);
-	// Front Face (facing the getCurrentCamera())
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	TunaGE::c_PB(width);
-	TunaGE::c_PA(width);
-	TunaGE::c_PD(width);
-	TunaGE::c_PC(width);
-	glEnd();
-
-	glBegin(GL_TRIANGLE_STRIP);
-	// Back Face
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	TunaGE::c_PH(width);
-	TunaGE::c_PG(width);
-	TunaGE::c_PF(width);
-	TunaGE::c_PE(width);
-	glEnd();
-
-	glBegin(GL_TRIANGLE_STRIP);
-	// Right Face
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	TunaGE::c_PG(width);
-	TunaGE::c_PB(width);
-	TunaGE::c_PE(width);
-	TunaGE::c_PD(width);
-	glEnd();
-
-	glBegin(GL_TRIANGLE_STRIP);
-	// Left Face
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	TunaGE::c_PA(width);
-	TunaGE::c_PH(width);
-	TunaGE::c_PC(width);
-	TunaGE::c_PF(width);
-	glEnd();
-
-	glBegin(GL_TRIANGLE_STRIP);
-	// Bottom Face
-	TunaGE::c_PD(width);
-	TunaGE::c_PC(width);
-	TunaGE::c_PE(width);
-	TunaGE::c_PF(width);
-	glEnd();
-
-
-	glBegin(GL_TRIANGLE_STRIP);
-	// Top Face
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	c_PB(width);
-	c_PG(width);
-	c_PA(width);
-	c_PH(width);
-	glEnd();
-}
-
-void TunaGE::drawPlane(float width) {
-	// Draws a plane on XZ
-
-	Mesh mesh{ "plane" };
-	Material material{};
-
-	RGBColor color = RGBColor::getColor("#1a1a1a");
-	material.setAmbient(color.vec());
-	material.setShininess(200);
-	material.setSpecular(glm::vec3(0.5f, 0.5f, 0.5f));
-	material.setDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
-
-	material.setTexture(&tex);
-
-    mesh.setMaterial(material);
-    glm::mat4 model = glm::mat4(1.0f);
-    mesh.setMatrix(TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * model);
-
-	Vertex v1{ -width, 0, 0, 0, 1, 0, 0, 0 };
-	Vertex v2{ width, 0, 0, 0, 1, 0, 1, 1};
-	Vertex v3{ 0, 0, -width, 0, 1, 0 , 1, 0};
-
-	Vertex v4{ 0, 0, width, 0, 1, 0 , 0, 1 };
-	Vertex v5{ width, 0, 0, 0, 1, 0 , 1, 1};
-	Vertex v6{ -width, 0, 0, 0, 1, 0 , 0 , 0};
-
-	mesh.addVertex(v1);
-	mesh.addVertex(v2);
-	mesh.addVertex(v3);
-	mesh.addVertex(v4);
-	mesh.addVertex(v5);
-	mesh.addVertex(v6);
-	mesh.render();
-
-    /*
-    glMatrixMode(GL_MODELVIEW);
-    glm::mat4 Model = glm::mat4(1.0f);
-    glm::mat4 vp = TunaGE::getCurrentCamera() * TunaGE::worldRotation * Model;
-    glLoadMatrixf(glm::value_ptr(vp));
-    RGBColor color = RGBColor::getColor("#8e44ad");
-    Material m{};
-    m.setAmbient(color.vec());
-    m.setShininess(120);
-    m.setSpecular(glm::vec3(0.3f, 0.3f, 0.3f));
-    m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-
-    glBegin(GL_TRIANGLE_STRIP);
-    setMaterial(m);
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(width, 0, 0);
-    glVertex3f(0, 0, -width);
-    glVertex3f(0, 0, width);
-    glVertex3f(-width, 0, 0);
-    glEnd();
-    glBegin(GL_TRIANGLE_STRIP);
-    glNormal3f(0.0f, -1.0f, 0.0f);
-    glVertex3f(width, -0.01, 0);
-    glVertex3f(0, -0.01, -width);
-    glVertex3f(0, -0.01, width);
-    glVertex3f(-width, -0.01, 0);
-    glEnd();*/
-}
-
 void tunage::TunaGE::render(glm::mat4 camera, List &list) {
 	list.setCameraMatrix(camera);
 	list.render();
@@ -354,113 +240,12 @@ void TunaGE::renderString(float x, float y, void* font, const char* string) {
 	glutBitmapString(font, reinterpret_cast<const unsigned char*>(string));
 }
 
-Material generateOriginMarkerMaterial(RGBColor color) {
-	Material m{};
-	m.setAmbient(color.vec());
-	m.setSpecular(glm::vec3(0.6f, 0.6f, 0.6f));
-	m.setShininess(120);
-	m.setDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-	return m;
-}
-
-void drawArrow(float x, float y, float z, float rx, float ry, float rz) {
-	double arrow_length = 0.3;
-	glPushMatrix();
-	glRotatef(rx, 1, 0, 0);
-	glRotatef(ry, 0, 1, 0);
-	glRotatef(rz, 0, 0, 1);
-	glTranslated(x, y, z);
-	glutSolidCylinder(0.02, arrow_length, 50, 50);
-	glTranslated(0, 0, arrow_length);
-	glutSolidCone(0.05, arrow_length * 0.85, 50, 50);
-	glPopMatrix();
-}
-
-void TunaGE::drawOriginMarkers(float width) {
-	// X arrow - Red
-	//RGBColor redColor = RGBColor::getColor("#c0392b");
-	RGBColor redColor = RGBColor::getColor("#ff0000");
-	Material redMat = generateOriginMarkerMaterial(redColor);
-	setMaterial(redMat);
-
-    glMatrixMode(GL_MODELVIEW);
-    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0));
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1, 0.02, 0.02));
-    glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * rotationX * scale * translate;
-    glLoadMatrixf(glm::value_ptr(vp));
-
-	drawCube(1.0);
-
-
-	// Y arrow - Green
-	RGBColor greenColor = RGBColor::getColor("#27ae60");
-	Material greenMat = generateOriginMarkerMaterial(greenColor);
-	setMaterial(greenMat);
-
-    glMatrixMode(GL_MODELVIEW);
-    translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0));
-    scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 1, 0.02));
-    glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * rotationY * scale * translate;
-    glLoadMatrixf(glm::value_ptr(vp));
-    drawCube(1.0);
-
-	// Z arrow - Blue
-	RGBColor blueColor = RGBColor::getColor("#2980b9");
-	Material blueMat = generateOriginMarkerMaterial(blueColor);
-	setMaterial(blueMat);
-
-    glMatrixMode(GL_MODELVIEW);
-    translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0, 0.5f));
-    scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.02, 0.02, 1));
-    glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * rotationZ * scale * translate;
-    glLoadMatrixf(glm::value_ptr(vp));
-    drawCube(1.0);
-
-}
-
-
-void drawGrid(float size, int tesselation) {
-	// Compute starting coordinates and step size:
-	float startX = -size / 2.0f;
-	float startZ = size / 2.0f;
-	float triangleSize = size / (float) tesselation;
-
-	// Normal is just one, set it now:
-	glNormal3f(0.0f, 1.0f, 0.0f);
-
-	// Go over XZ and draw triangles:
-	for (int curZ = 0; curZ < tesselation; curZ++) {
-		for (int curX = 0; curX < tesselation; curX++) {
-			glBegin(GL_TRIANGLE_STRIP);
-			glVertex3f(startX, 0.0f, startZ);
-			glVertex3f(startX + triangleSize, 0.0f, startZ);
-			glVertex3f(startX, 0.0f, startZ - triangleSize);
-			glVertex3f(startX + triangleSize, 0.0f, startZ - triangleSize);
-			glEnd();
-
-			startX += triangleSize;
-		}
-		startX = -size / 2.0f;
-		startZ -= triangleSize;
+void TunaGE::redisplay(){
+	if(windowId != -1){
+		glutPostWindowRedisplay(windowId);
 	}
 }
 
-void TunaGE::drawLight() {
-    glm::mat4 Model = glm::mat4(1.0f);
-    glm::mat4 vp = TunaGE::getCurrentCamera()->getMatrix() * TunaGE::worldRotation * Model;
-    vp = glm::translate(vp, glm::vec3(1.0f, 1.0f, 0.0f));
-    light.setMatrix(vp);
-    light.setLight(1);
-    light.setIntensity(1.0);
-    light.setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
-    light.setLightDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-    light.setLightSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-    light.enable();
-    light.render();
-}
 
 void TunaGE::displayCB() {
 
@@ -580,16 +365,6 @@ void TunaGE::setProjectionMatrix() {
 
 }
 
-void TunaGE::setWorldRotation(glm::mat4 worldRotation) {
-	TunaGE::worldRotation = worldRotation;
-}
-
-void TunaGE::setMaterial(Material material) {
-	TunaGE::material = material;
-
-	TunaGE::material.render();
-}
-
 void TunaGE::setMotionCallback(void (* motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
 }
@@ -606,103 +381,23 @@ Camera* TunaGE::getCurrentCamera() {
     return TunaGE::renderList.getRenderCameras().front();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////OVO READER IMPLEMENTATION////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// Stripped-down redefinition of OvObject (just for the chunk IDs):
-class OvObject {
-public:
-    enum class Type : int  ///< Type of entities
-    {
-        // Foundation types:
-                OBJECT = 0,
-        NODE,
-        OBJECT2D,
-        OBJECT3D,
-        LIST,
-
-        // Derived classes:
-                BUFFER,
-        SHADER,
-        TEXTURE,
-        FILTER,
-        MATERIAL,
-        FBO,
-        QUAD,
-        BOX,
-        SKYBOX,
-        FONT,
-        CAMERA,
-        LIGHT,
-        BONE,
-        MESH,       // Keep them...
-        SKINNED, // ...consecutive
-        INSTANCED,
-        PIPELINE,
-        EMITTER,
-
-        // Animation type
-                ANIM,
-
-        // Physics related:
-                PHYSICS,
-
-        // Terminator:
-                LAST,
-    };
-};
-
-// Stripped-down redefinition of OvMesh (just for the subtypes):
-class OvMesh {
-public:
-    enum class Subtype : int ///< Kind of mesh
-    {
-        // Foundation types:
-                DEFAULT = 0,
-        NORMALMAPPED,
-        TESSELLATED,
-
-        // Terminator:
-                LAST,
-    };
-};
-
-// Stripped-down redefinition of OvLight (just for the subtypes):
-class OvLight {
-public:
-    enum class Subtype : int ///< Kind of light
-    {
-        // Foundation types:
-                OMNI = 0,
-        DIRECTIONAL,
-        SPOT,
-
-        // Terminator:
-                LAST,
-    };
-};
-
-using namespace std;
-
 Node* TunaGE::loadOVO(const char* path) {
 
     // Open file:
     FILE* dat = fopen(path, "rb");
     if (dat == nullptr) {
-        cout << "ERROR: unable to open file '" << path << "'" << endl;
+        std::cout << "ERROR: unable to open file '" << path << "'" << std::endl;
         return nullptr;
     }
 
     // Configure stream:
-    cout.precision(2);  // 2 decimals are enough
-    cout << fixed;      // Avoid scientific notation
+    std::cout.precision(2);  // 2 decimals are enough
+    std::cout << std::fixed;      // Avoid scientific notation
 
-    map<string, Material*> mats;
+    std::map<std::string, Material*> mats;
     Node* root = nullptr;
-    stack<Node*> nodeStack;
-    map<Node*, int> nodeChildrenCount;
+    std::stack<Node*> nodeStack;
+    std::map<Node*, int> nodeChildrenCount;
     unsigned int lightCount = 0;
 
     /////////////////
@@ -718,7 +413,7 @@ Node* TunaGE::loadOVO(const char* path) {
         // Load whole chunk into memory:
         char* data = new char[chunkSize];
         if (fread(data, sizeof(char), chunkSize, dat) != chunkSize) {
-            cout << "ERROR: unable to read from file '" << path << "'" << endl;
+            std::cout << "ERROR: unable to read from file '" << path << "'" << std::endl;
             fclose(dat);
             delete[] data;
             return nullptr;
@@ -830,7 +525,7 @@ Node* TunaGE::loadOVO(const char* path) {
                 ss << "../tuna-ge/assets/textures/" << textureName;
                 texture->loadFromFile(ss.str());
 #else
-                stringstream ss;
+                std::stringstream ss;
                 ss << "../../tuna-ge/assets/textures/" << textureName;
                 texture->loadFromFile(ss.str());
 #endif
@@ -942,7 +637,7 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Material name, or [none] if not used:
                 char materialName[FILENAME_MAX];
                 strcpy(materialName, data + position);
-                mesh->setMaterial(*mats.find(string(materialName))->second);
+                mesh->setMaterial(*mats.find(std::string(materialName))->second);
                 position += (unsigned int) strlen(materialName) + 1;
 
                 // Mesh bounding sphere radius:
@@ -993,7 +688,7 @@ Node* TunaGE::loadOVO(const char* path) {
                     position += sizeof(PhysProps);
                 }
 
-                vector<Vertex> v;
+                std::vector<Vertex> v;
 
                 // Interleaved and compressed vertex/normal/UV/tangent data:
                 for (unsigned int c = 0; c < vertices; c++) {
@@ -1227,8 +922,8 @@ Node* TunaGE::loadOVO(const char* path) {
 
 
             default:
-                cout << "UNKNOWN]" << endl;
-                cout << "ERROR: corrupted or bad data in file " << path << endl;
+                std::cout << "UNKNOWN]" << std::endl;
+                std::cout << "ERROR: corrupted or bad data in file " << path << std::endl;
                 fclose(dat);
                 delete[] data;
                 return nullptr;

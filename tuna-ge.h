@@ -29,9 +29,9 @@ namespace tunage {
 		static void renderSingleFrame(unsigned char*& p, int& width, int& height);
 		static bool free();
 
-        static std::string version();
-
 		static List renderList;
+
+		static std::string version();
 
 		static Camera* getCurrentCamera();
 
@@ -40,19 +40,15 @@ namespace tunage {
 		static void setMouseCallback(void (* mouse_callback)( int, int, int, int ));
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 
-        // Draw Functions
-        static void drawCube(float width);
-        static void drawPlane(float width);
-        static void drawOriginMarkers(float width);
-        static void setColor(RGBColor color);
+		static void setColor(RGBColor color);
         static void enableOriginMarker();
-        static void setWorldRotation(glm::mat4 worldRotation);
-		static void setMaterial(Material material);
 
-        // Rendering Methods
+		// Rendering Methods
 		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, const char* string);
 		static void reshapeCB(int w, int h);
+		static void redisplay();
+
 
         // Get Parameters
         static int getScreenW();
@@ -73,9 +69,8 @@ namespace tunage {
 		static void computeRotationMatrix();
         static void setProjectionMatrix();
         static void set2DTextProjectionMatrix();
-        static void drawLight();
 
-        // Auxiliary Functions
+		// Auxiliary Functions
 		static void c_PA(float w);
 		static void c_PB(float w);
 		static void c_PC(float w);
