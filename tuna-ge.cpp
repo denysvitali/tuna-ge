@@ -46,8 +46,6 @@ int TunaGE::screen_w = 0;
 int TunaGE::screen_h = 0;
 
 TunaGE TunaGE::init() {
-
-
 	TunaGE engine{};
 	std::cout << "TunaGE::init()" << std::endl;
 
@@ -139,7 +137,7 @@ void TunaGE::initGlut() {
 	glutMouseFunc(mouse_callback);
 	glutDisplayFunc(TunaGE::displayCB);
 	glutReshapeFunc(TunaGE::reshapeCB);
-	glutSpecialFunc(TunaGE::specialFuncCB);
+	glutSpecialFunc(special_callback);
 	glutKeyboardFunc(keyboard_callback);
 
 	if (TunaGE::culling) {
@@ -249,10 +247,6 @@ void TunaGE::displayCB() {
 	glutSwapBuffers();
 }
 
-void TunaGE::specialFuncCB(int key, int mouseX, int mouseY) {
-
-}
-
 void TunaGE::reshapeCB(int w, int h) {
 	if(!TunaGE::reshapeAlreadyCalled){
 		TunaGE::reshapeAlreadyCalled = true;
@@ -286,6 +280,10 @@ void TunaGE::setMouseCallback(void (* mouse_callback)(int, int, int, int)) {
 
 void TunaGE::setKeyboardCallback(void (* keyboard_callback)(unsigned char, int, int)) {
 	TunaGE::keyboard_callback = keyboard_callback;
+}
+
+void TunaGE::setSpecialCallback(void (* special_callback)(int, int, int)) {
+	TunaGE::special_callback = special_callback;
 }
 
 Camera* TunaGE::getCurrentCamera() {

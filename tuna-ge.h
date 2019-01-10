@@ -39,6 +39,7 @@ namespace tunage {
 		static void setMotionCallback(void (* motion_callback)( int, int ));
 		static void setMouseCallback(void (* mouse_callback)( int, int, int, int ));
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
+		static void setSpecialCallback(void (* special_callback)( int, int, int ));
 
         static void enableOriginMarker();
 
