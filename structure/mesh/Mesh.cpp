@@ -4,7 +4,10 @@
 #include <GL/freeglut.h>
 
 void tunage::Mesh::render() {
-	material.render();
+
+	if (material != nullptr) {
+		material->render();
+	}
 	glm::mat4 composedMatrix = getRenderMatrix();
 	glLoadMatrixf(glm::value_ptr(composedMatrix));
 
@@ -19,11 +22,13 @@ void tunage::Mesh::render() {
 	glDisable(GL_TEXTURE_2D);
 }
 
-void tunage::Mesh::render(glm::mat4 pos, Material mat)
+void tunage::Mesh::render(glm::mat4 pos, Material* mat)
 {
-	mat.render();
-	glLoadMatrixf(glm::value_ptr(pos));
+	if (mat != nullptr) {
+		mat->render();
+	}
 
+	glLoadMatrixf(glm::value_ptr(pos));
 	
 	glBegin(GL_TRIANGLES);
 	for (auto& face : faces) {
@@ -39,17 +44,17 @@ void tunage::Mesh::addVertex(Vertex vertex) {
 	faces.push_back(vertex);
 }
 
-void tunage::Mesh::setMaterial(Material material) {
+void tunage::Mesh::setMaterial(Material* material) {
 	this->material = material;
 }
 
-tunage::Material tunage::Mesh::getMaterial() const
+tunage::Material* tunage::Mesh::getMaterial() const
 {
 	return material;
 }
 
 bool tunage::Mesh::isTransparent()
 {
-	return material.isTransparent();
+	return material->isTransparent();
 }
 

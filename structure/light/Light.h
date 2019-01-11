@@ -8,7 +8,7 @@ namespace tunage {
     	explicit Light() : Node{} {};
 		explicit Light(std::string name) : Node{ name }{}
 		void render() override;
-		void render(glm::mat4 pos, Material mat) override;
+		void render(glm::mat4 pos, Material* mat) override;
 		void setLightAmbient(glm::vec3 lightAmbient);
         glm::vec3 getLightAmbient() const;
 		void setLightDiffuse(glm::vec3 lightDiffuse);

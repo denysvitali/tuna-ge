@@ -17,7 +17,6 @@ namespace tunage {
 		void setAnisotropicLevel(int anisotropicLevel);
 
 	private:
-
 		void init();
 
 		bool initialized = false;

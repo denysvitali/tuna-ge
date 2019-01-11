@@ -4,6 +4,12 @@
 
 using namespace tunage;
 
+tunage::Material::~Material()
+{
+	delete texture;
+	std::cout << "distrutto id: " << getId() << std::endl;
+}
+
 void tunage::Material::render()
 {
 	if (texture != nullptr) {
@@ -76,6 +82,11 @@ int Material::getShininess() const {
 void tunage::Material::setTexture(Texture* texture)
 {
 	this->texture = texture;
+}
+
+Texture * tunage::Material::getTexture() const
+{
+	return texture;
 }
 
 bool tunage::Material::isTransparent()

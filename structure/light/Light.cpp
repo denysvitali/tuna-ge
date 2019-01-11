@@ -59,11 +59,14 @@ void Light::render() {
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
 }
 
-void tunage::Light::render(glm::mat4 pos, Material mat)
+void tunage::Light::render(glm::mat4 pos, Material* mat)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(pos));
-	mat.render();
+
+	if (mat != nullptr) {
+		mat->render();
+	}
 
 	// Draw a small emissive sphere to show light position:
 	glutSolidSphere(sphereRadius, 40, 40);
@@ -102,7 +105,8 @@ void tunage::Light::render(glm::mat4 pos, Material mat)
 		default:
 			break;
 	}
-
+	
+	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_CONSTANT_ATTENUATION, &attenuation);
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));

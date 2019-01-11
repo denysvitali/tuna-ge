@@ -21,6 +21,7 @@
 
 tunage::Texture::~Texture() {
 	glDeleteTextures(1, &texId);
+	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
 void tunage::Texture::render() {

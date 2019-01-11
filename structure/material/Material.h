@@ -8,6 +8,7 @@
 namespace tunage {
     class LIB_API Material : public Object{
     public:
+		~Material();
 		Material() : Object() {};
 		void render() override;
         void setAmbient(glm::vec3 light);
@@ -22,6 +23,7 @@ namespace tunage {
         glm::vec3 getEmission() const;
         int getShininess() const;
 		void setTexture(Texture* texture);
+		Texture* getTexture() const;
 		bool isTransparent();
     private:
 		Texture* texture = nullptr;

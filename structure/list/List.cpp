@@ -20,7 +20,7 @@ void tunage::List::pass(Node* element) {
 	if (dynamic_cast<Mesh*>(element) != nullptr)
 	{
 		Mesh* mesh = dynamic_cast<Mesh*>(element);
-		Material mat = mesh->getMaterial();
+		Material* mat = mesh->getMaterial();
 		if (element->getFlipScene()) {
 			Element mirrorElement{ element };
 			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1,-1,1)) * element->getRenderMatrix());
@@ -35,10 +35,12 @@ void tunage::List::pass(Node* element) {
 	{
 		Light* light = dynamic_cast<Light*>(element);
 
-		lightMaterial.setEmission(light->getLightAmbient());
+		lightMaterial = new Material();
+		lightMaterial->setEmission(light->getLightAmbient());
 		if (element->getFlipScene()) {
 			Light* mirroredLight = new Light();
 			*mirroredLight = *light;
+			mirroredLight->clearHierarchy();
 			Element mirrorElement{ mirroredLight };
 			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1,-1,1)) * element->getRenderMatrix());
 			mirrorElement.setMaterial(lightMaterial);
@@ -50,8 +52,11 @@ void tunage::List::pass(Node* element) {
 	}
 	else if (dynamic_cast<Camera*>(element) != nullptr)
 	{
-		auto camera = dynamic_cast<Camera*>(element);
-		renderCameras.push_back(camera);
+		Camera* camera = dynamic_cast<Camera*>(element);
+		if (std::find(renderCameras.begin(), renderCameras.end(), camera) == renderCameras.end()) {
+			renderCameras.push_back(camera);
+		}
+		
 	}
 
 	for (auto i : element->getChildren()) {
@@ -110,13 +115,22 @@ std::vector<tunage::Camera*>& tunage::List::getRenderCameras() {
     return renderCameras;
 }
 
-void tunage::List::clear() {
+void tunage::List::clearRenderElements() {
 	sceneRoot = nullptr;
-	renderCameras.clear();
-	renderSequenceLights.clear();
 	renderSequenceElements.clear();
 	renderSequenceMirrored.clear();
+	for (auto l : renderSequenceLights) {
+		delete l.getMaterial();
+	}
+	for (auto l : renderSequenceLightsMirrored) {
+		delete l.getNode();
+	}
+	renderSequenceLights.clear();
 	renderSequenceLightsMirrored.clear();
+}
+
+void tunage::List::clearCameras() {
+	renderCameras.clear();
 }
 
 void tunage::List::switchCamera() {

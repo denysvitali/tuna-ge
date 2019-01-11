@@ -127,7 +127,15 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 }
 
 bool TunaGE::free() {
-	// TODO: Implement
+
+	if (renderList.getSceneRoot() != nullptr) {
+		for (auto mat : renderList.getSceneRoot()->getAllMaterials()) {
+			delete mat.second;
+		}
+		delete renderList.getSceneRoot();
+	}
+	renderList.clearRenderElements();
+	renderList.clearCameras();
 	return true;
 }
 
@@ -548,7 +556,7 @@ Node* TunaGE::loadOVO(const char* path) {
                 char materialName[FILENAME_MAX];
                 strcpy(materialName, data + position);
                 std::string matName = std::string(materialName);
-                mesh->setMaterial(*mats.find(matName)->second);
+                mesh->setMaterial(mats.find(matName)->second);
                 position += (unsigned int) strlen(materialName) + 1;
 
                 // Mesh bounding sphere radius:
@@ -838,12 +846,15 @@ Node* TunaGE::loadOVO(const char* path) {
                 delete[] data;
                 return nullptr;
         }
-
+		/*for (auto mat : mats) {
+			delete mat.second;
+		}*/
         // Release chunk memory:
         delete[] data;
     }
 
     // Done:
     fclose(dat);
+	root->setAllMaterials(mats);
     return root;
 }

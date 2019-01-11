@@ -2,11 +2,19 @@
 #include "Node.h"
 
 namespace tunage {
+
+	Node::~Node()
+	{
+		for (auto node : m_hierarchy) {
+			delete node;
+		}
+		std::cout << "distrutto id: " << getId() << std::endl;
+	}
 	void Node::render() {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
-	void Node::render(glm::mat4 pos, Material mat)
+	void Node::render(glm::mat4 pos, Material* mat)
 	{
 		throw std::runtime_error("render() called on a pure Node object");
 	}
@@ -46,7 +54,7 @@ namespace tunage {
 		for (auto i = m_hierarchy.begin(); i != m_hierarchy.end(); ++i) {
 			if ((*i)->getId() == id) {
 				(*i)->setParent(nullptr);
-				Node *node = *i;
+				Node* node = *i;
 				m_hierarchy.erase(i);
 				return node;
 			}
@@ -59,6 +67,11 @@ namespace tunage {
 			return m_parent->unlinkById(getId());
 		}
 		return nullptr;
+	}
+
+	void Node::clearHierarchy() {
+		m_parent = nullptr;
+		m_hierarchy.clear();
 	}
 
 	Node * Node::getSceneElementByName(const char* name)
@@ -84,5 +97,14 @@ namespace tunage {
 			return composedMatrix;
 		}
 		return m_matrix;
+	}
+
+	void Node::setAllMaterials(std::map<std::string, Material*> allMaterials)
+	{
+		this->allMaterials = allMaterials;
+	}
+	std::map<std::string, Material*> Node::getAllMaterials() const
+	{
+		return allMaterials;
 	}
 };
