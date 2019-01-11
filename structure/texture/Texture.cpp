@@ -10,16 +10,12 @@
 #include <regex>
 #include <stdio.h>
 
-#ifdef _WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#endif
+#include "../utils/CurrentDir.h"
 
 
-tunage::Texture::~Texture() {
+using namespace tunage;
+
+Texture::~Texture() {
 	glDeleteTextures(1, &texId);
 	std::cout << "distrutto id: " << getId() << std::endl;
 }
@@ -33,19 +29,20 @@ void tunage::Texture::render() {
 		// Update texture content:
 		glBindTexture(GL_TEXTURE_2D, texId);
 	}
-
-
 }
 
-void tunage::Texture::loadFromFile(std::string path) {
+void Texture::loadFromFile(std::string path) {
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
-	std::cout << "Current dir: " << dir << std::endl;
 
-	std::regex jpg(".*\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
-	std::regex bmp(".*\.bmp", std::regex_constants::ECMAScript | std::regex_constants::icase);
-	std::regex png(".*\.png", std::regex_constants::ECMAScript | std::regex_constants::icase);
-	std::regex dds(".*\.dds", std::regex_constants::ECMAScript | std::regex_constants::icase);
+#ifdef DEBUG
+	std::cout << "Current dir: " << dir << std::endl;
+#endif
+
+	std::regex jpg(".*\\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
+	std::regex bmp(".*\\.bmp", std::regex_constants::ECMAScript | std::regex_constants::icase);
+	std::regex png(".*\\.png", std::regex_constants::ECMAScript | std::regex_constants::icase);
+	std::regex dds(".*\\.dds", std::regex_constants::ECMAScript | std::regex_constants::icase);
 
 	FREE_IMAGE_FORMAT format = FIF_BMP;
 
@@ -69,23 +66,23 @@ void tunage::Texture::loadFromFile(std::string path) {
 
 }
 
-void tunage::Texture::loadTexture(void* bitmap) {
+void Texture::loadTexture(void* bitmap) {
 	this->bitmap = bitmap;
 }
 
-void tunage::Texture::setAnisotropic(bool anisotropic) {
+void Texture::setAnisotropic(bool anisotropic) {
 	this->anisotropic = anisotropic;
 }
 
-void tunage::Texture::setMipmap(bool useMipmaps) {
+void Texture::setMipmap(bool useMipmaps) {
 	this->useMipmaps = useMipmaps;
 }
 
-void tunage::Texture::setAnisotropicLevel(int anisotropicLevel) {
+void Texture::setAnisotropicLevel(int anisotropicLevel) {
 	this->anisotropicLevel = anisotropicLevel;
 }
 
-void tunage::Texture::init() {
+void Texture::init() {
 	if (strstr((const char *) glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic")) {
 		isAnisotropicSupported = true;
 		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropicLevel);
@@ -108,8 +105,6 @@ void tunage::Texture::init() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	FIBITMAP* bitmap;
-
 	if (!useMipmaps) {
 		// Without mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -121,7 +116,6 @@ void tunage::Texture::init() {
 		// Using mipmapping:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, this->bmp_w, this->bmp_h, GL_BGRA_EXT, GL_UNSIGNED_BYTE, this->bitmap);
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, 256, 256, GL_BGR_EXT, GL_UNSIGNED_BYTE, bitmap->data);
 	}
 
 }

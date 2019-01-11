@@ -30,10 +30,18 @@ void (* TunaGE::special_callback)( int, int, int ) = nullptr;
 void (* TunaGE::keyboard_callback)( unsigned char, int, int ) = nullptr;
 
 bool TunaGE::wireframe = false;
-bool TunaGE::debug = true;
+#ifdef DEBUG
+	bool TunaGE::debug = true;
+#else
+	bool TunaGE::debug = false;
+#endif
 bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
+bool TunaGE::framerateVisible = false;
+
+// Display a window? Used during Tests to avoid generating GL windows
+bool TunaGE::displayWindow = true;
 
 int TunaGE::windowId = -1;
 
@@ -63,6 +71,7 @@ TunaGE TunaGE::init() {
 
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
 
@@ -83,13 +92,15 @@ int TunaGE::getScreenW() {
 	return TunaGE::screen_w;
 }
 
-void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
+void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	int old_w = TunaGE::screen_w;
 	int old_h = TunaGE::screen_h;
 
 	TunaGE::screen_w = width;
 	TunaGE::screen_h = height;
+
+	TunaGE::reshapeCB(width, height);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 	glReadBuffer(GL_FRONT);
@@ -100,21 +111,25 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	TunaGE::displayCB();
 
-	std::vector<GLubyte> seed;
-	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &seed);
-
 	FIBITMAP* dib = FreeImage_Allocate(width, height, 24);
-	int bytespp = FreeImage_GetLine(dib) / FreeImage_GetWidth(dib);
-	for (unsigned y = 0; y < FreeImage_GetHeight(dib); y++) {
+	int bpp = FreeImage_GetBPP(dib);
+	int Bpp = bpp / 8;
+
+	auto* seed = (GLubyte*) malloc(sizeof(GLubyte) * width * height * Bpp);
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, seed);
+
+	for (unsigned y = 0; y < height; y++) {
 		BYTE* bits = FreeImage_GetScanLine(dib, y);
-		for (unsigned x = 0; x < FreeImage_GetWidth(dib); x++) {
-			bits[x*3 + 2] = seed[y * 3 * width + x * 3];
-			bits[x*3 + 1] = seed[y * 3 * width + x * 3 + 1];
-			bits[x*3 + 0] = seed[y * 3 * width + x * 3 + 2];
+		for (unsigned x = 0; x < width * Bpp; x+=Bpp) {
+			// BGR
+			bits[x + 2] = seed[y * Bpp * width + x];
+			bits[x + 1] = seed[y * Bpp * width + x + 1];
+			bits[x + 0] = seed[y * Bpp * width + x + 2];
 		}
 	}
 
-	FreeImage_Save(FIF_JPEG, dib, "/tmp/out.bmp");
+	//FreeImage_Save(FIF_BMP, dib, "/tmp/out.bmp");
+	std::free(seed);
 
 	TunaGE::debug = debug;
 	TunaGE::screen_w = old_w;
@@ -124,6 +139,8 @@ void TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 	if (err) {
 		std::cerr << glGetString(err) << std::endl;
 	}
+
+	return dib;
 }
 
 bool TunaGE::free() {
@@ -167,10 +184,7 @@ void TunaGE::initGlut() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void TunaGE::enableOriginMarker() {
-}
-
-std::string TunaGE::version() {
+const std::string TunaGE::version() {
 	std::stringstream ss{};
 	ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
 	if (!Version::GIT_SHA1.empty()) {
@@ -179,14 +193,33 @@ std::string TunaGE::version() {
 	return ss.str();
 }
 
-void tunage::TunaGE::render(glm::mat4 camera, List &list) {
-	list.setCameraMatrix(camera);
-	list.render();
-}
+void TunaGE::renderString(float x, float y, void* font, RGBColor& color, const std::string string) {
 
-void TunaGE::renderString(float x, float y, void* font, const char* string) {
-	glRasterPos2d(x, y);
-	glutBitmapString(font, reinterpret_cast<const unsigned char*>(string));
+	glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glRasterPos2f(x, y);
+	glColor3f(color.r(), color.g(), color.b());
+
+	for (char c : string) {
+		glutBitmapCharacter(font, c);
+	}
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	if (TunaGE::lighting) {
+		glEnable(GL_LIGHTING);
+	}
 }
 
 void TunaGE::redisplay(){
@@ -197,7 +230,6 @@ void TunaGE::redisplay(){
 
 
 void TunaGE::displayCB() {
-
 	if(!TunaGE::reshapeAlreadyCalled){
 		TunaGE::reshapeCB(TunaGE::screen_w, TunaGE::screen_h);
 	}
@@ -215,46 +247,37 @@ void TunaGE::displayCB() {
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		glDisable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D); //added this
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
-		glRasterPos2i(10, 10);
-		glColor3f(0.0, 1.0, 0.0);
-		std::string s = TunaGE::version();
-		void* font = GLUT_BITMAP_9_BY_15;
-		for (char c : s) {
-			glutBitmapCharacter(font, c);
+		RGBColor color = RGBColor::getColor("#fafafa");
+
+		renderString(10, 10, GLUT_BITMAP_9_BY_15, color, TunaGE::version());
+
+		std::stringstream ss;
+
+		Camera* cam = TunaGE::getCurrentCamera();
+
+		glm::vec3 cp = cam->getPos();
+		ss << cam->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
+		glm::vec3 point;
+		switch(cam->getMode()){
+			case LOOK_AT_POINT:
+				point = cam->getLookAtPoint();
+				ss << "LAP: " << point[0] << ", " << point[1] << ", " << point[2];
+				break;
+			case LOOK_TOWARDS_VECTOR:
+				point = cam->getFront();
+				ss << "LTV: " << point[0] << ", " << point[1] << ", " << point[2];
+				break;
 		}
 
-        glRasterPos2i(200, 10);
-        std::stringstream ss;
-        glm::vec3 cp = TunaGE::getCurrentCamera()->getCameraPos();
-        glm::vec3 cf = TunaGE::getCurrentCamera()->getCameraFront();
-        ss << TunaGE::getCurrentCamera()->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
-        ss << "CF: " << cf[0] << "," << cf[1] << "," << cf[2];
-        std::string s2 = ss.str();
-        for (char c : s2) {
-            glutBitmapCharacter(font, c);
-        }
+		ss << " W: " << TunaGE::screen_w << "x" << TunaGE::screen_h;
 
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-
-		if (TunaGE::lighting) {
-			glEnable(GL_LIGHTING);
-		}
+		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, ss.str());
 	}
 
-	glutPostWindowRedisplay(windowId);
-	glutSwapBuffers();
+	if(TunaGE::displayWindow) {
+		glutPostWindowRedisplay(windowId);
+		glutSwapBuffers();
+	}
 }
 
 void TunaGE::reshapeCB(int w, int h) {
@@ -267,10 +290,15 @@ void TunaGE::reshapeCB(int w, int h) {
 	TunaGE::screen_h = h;
 	TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
 	TunaGE::getCurrentCamera()->loadProjectionMatrix();
-	glutPostWindowRedisplay(windowId);
-	glutSwapBuffers();
-}
 
+	if(windowId != -1){
+		glutPostWindowRedisplay(windowId);
+	}
+
+	if(displayWindow) {
+		glutSwapBuffers();
+	}
+}
 
 void TunaGE::setMotionCallback(void (* motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
@@ -292,6 +320,11 @@ Camera* TunaGE::getCurrentCamera() {
     return TunaGE::renderList.getRenderCameras().front();
 }
 
+
+void TunaGE::setFrameRate(bool enabled) {
+	TunaGE::framerateVisible = enabled;
+}
+
 Node* TunaGE::loadOVO(const char* path) {
 
     // Open file:
@@ -305,7 +338,7 @@ Node* TunaGE::loadOVO(const char* path) {
     std::cout.precision(2);  // 2 decimals are enough
     std::cout << std::fixed;      // Avoid scientific notation
 
-    std::map<std::string, Material*> mats;
+    std::map<const std::string, Material*> mats;
     Node* root = nullptr;
     std::stack<Node*> nodeStack;
     std::map<Node*, int> nodeChildrenCount;
@@ -767,7 +800,8 @@ Node* TunaGE::loadOVO(const char* path) {
                 // Influence radius:
                 float radius;
                 memcpy(&radius, data + position, sizeof(float));
-                light->setRadius(radius);
+              //  light->setRadius(radius);
+				//TODO: to implement
                 position += sizeof(float);
 
                 // Direction:
@@ -857,4 +891,8 @@ Node* TunaGE::loadOVO(const char* path) {
     fclose(dat);
 	root->setAllMaterials(mats);
     return root;
+}
+
+void TunaGE::setDisplayWindow(bool enabled) {
+	TunaGE::displayWindow = enabled;
 }

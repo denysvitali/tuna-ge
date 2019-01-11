@@ -17,7 +17,7 @@ void Light::render() {
 	m.render();
 
 	// Draw a small emissive sphere to show light position:
-	glutSolidSphere(sphereRadius, 40, 40);
+	glutSolidSphere(radius, 40, 40);
 
 	glm::vec4 ambient_wi = glm::vec4(
 			lightAmbient[0] * intensity,
@@ -69,7 +69,7 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 	}
 
 	// Draw a small emissive sphere to show light position:
-	glutSolidSphere(sphereRadius, 40, 40);
+	glutSolidSphere(radius, 40, 40);
 
 	glm::vec4 ambient_wi = glm::vec4(
 		lightAmbient[0] * intensity,

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../../libapi.h"
 #include "../node/Node.h"
 #include "../material/Material.h"

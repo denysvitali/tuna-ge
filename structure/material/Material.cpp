@@ -28,7 +28,7 @@ void tunage::Material::render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,
 				 glm::value_ptr(glm::vec4(emission, alpha)));
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,
-		shininess);
+				shininess);
 }
 
 void Material::setAmbient(glm::vec3 light) {
@@ -48,7 +48,7 @@ void Material::setEmission(glm::vec3 light) {
 }
 
 void Material::setShininess(int intensity) {
-    shininess = intensity;
+	shininess = intensity;
 }
 
 void tunage::Material::setAlpha(float alpha)
@@ -76,11 +76,10 @@ glm::vec3 Material::getSpecular() const {
 }
 
 int Material::getShininess() const {
-    return this->shininess;
+	return this->shininess;
 }
 
-void tunage::Material::setTexture(Texture* texture)
-{
+void tunage::Material::setTexture(Texture* texture) {
 	this->texture = texture;
 }
 

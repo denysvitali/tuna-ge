@@ -33,24 +33,24 @@ namespace tunage {
 		return flipScene;
 	}
 
-	void Node::setParent(Node *parent) {
+	void Node::setParent(Node* parent) {
 		this->m_parent = parent;
 	}
 
-	Node *Node::getParent() const{
+	Node* Node::getParent() const {
 		return m_parent;
 	}
 
-	std::vector<Node *> Node::getChildren() {
+	std::vector<Node*> Node::getChildren() {
 		return m_hierarchy;
 	}
 
-	void Node::link(Node *child) {
+	void Node::link(Node* child) {
 		child->setParent(this);
 		m_hierarchy.push_back(child);
 	}
 
-	Node *Node::unlinkById(int id) {
+	Node* Node::unlinkById(int id) {
 		for (auto i = m_hierarchy.begin(); i != m_hierarchy.end(); ++i) {
 			if ((*i)->getId() == id) {
 				(*i)->setParent(nullptr);
@@ -62,7 +62,7 @@ namespace tunage {
 		return nullptr;
 	}
 
-	Node *Node::unlink() {
+	Node* Node::unlink() {
 		if (m_parent != nullptr) {
 			return m_parent->unlinkById(getId());
 		}
@@ -83,7 +83,7 @@ namespace tunage {
 			if (returnOfBranch != nullptr) return returnOfBranch;
 		}
 		return nullptr;
-		
+
 	}
 
 	glm::mat4 Node::getMatrix() const {
@@ -99,11 +99,12 @@ namespace tunage {
 		return m_matrix;
 	}
 
-	void Node::setAllMaterials(std::map<std::string, Material*> allMaterials)
+	void Node::setAllMaterials(std::map<const std::string, Material*> allMaterials)
 	{
 		this->allMaterials = allMaterials;
 	}
-	std::map<std::string, Material*> Node::getAllMaterials() const
+
+	std::map<const std::string, Material*> Node::getAllMaterials() const
 	{
 		return allMaterials;
 	}

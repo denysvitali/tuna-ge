@@ -32,9 +32,8 @@ namespace tunage {
 		glm::vec4 lightSpecular = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 lightDirection = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		float lightCutoff;
-		float radius;
+		float radius = 3.0f;
 		float intensity = 1;
 		unsigned int lightType = 0;
-		float sphereRadius = 1.0f;
     };
 }

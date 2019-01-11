@@ -3,6 +3,10 @@
 #include <tuna-ge.h>
 #include <iomanip>
 
+#include <FreeImage.h>
+#include <structure/utils/CurrentDir.h>
+
+
 using namespace tunage;
 namespace {
 
@@ -37,39 +41,68 @@ class GeTest : public ::testing::Test {
 
     TEST(GeTest, scene_setup){
 
-		TunaGE::init();
-		TunaGE::enableOriginMarker();
+		char dir[FILENAME_MAX];
+		GetCurrentDir(dir, FILENAME_MAX);
 
+		std::cout << dir << std::endl;
+
+    	FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/1.bmp");
+    	ASSERT_NE(bmp, nullptr);
+
+    	TunaGE::setDisplayWindow(true);
+		TunaGE::init();
 
 		Camera camera1{"camera 1"};
 		Camera camera2{"camera 2"};
 
-		camera1.setCameraPos(glm::vec3(-0.0, 2.0f, -0.0f));  // Camera is at (0,2,10), in World Space
-		camera1.setCameraFront(glm::vec3(0.01f, -1.0f, 0.01f)); // looks in the direction
-		camera1.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f)); // Head is up (set to 0,-1,0 to look upside-down)
-		camera1.setCameraSpeed(0.1f);
+		camera1.setPos(glm::vec3(0.1, -7, 0.1));
+		ASSERT_EQ(glm::vec3(0.1, -7, 0.1), camera1.getPos());
 
-		camera2.setCameraPos(glm::vec3(-0.0, 3.0f, -0.0f));  // Camera is at (0,2,10), in World Space
-		camera2.setCameraFront(glm::vec3(0.01f, -1.0f, 0.01f)); // looks in the direction
-		camera2.setCameraUp(glm::vec3(0.0f, 1.0f, 0.0f)); // Head is up (set to 0,-1,0 to look upside-down)
-		camera2.setCameraSpeed(0.1f);
+		camera1.setUp(glm::vec3(0.0f, -1.0f, 0.0f));
+		ASSERT_EQ(glm::vec3(0.0f, -1.0f, 0.0f), camera1.getUp());
+
+		camera1.lookAt(glm::vec3(0.0, -10, 0));
+		ASSERT_EQ(glm::vec3(0.0, -10, 0), camera1.getLookAtPoint());
+
+		camera1.setMode(CameraMode::LOOK_AT_POINT);
+		ASSERT_EQ(CameraMode::LOOK_AT_POINT, camera1.getMode());
+
+		camera2.setPos(glm::vec3(1.0, -5, 0));
+		ASSERT_EQ(glm::vec3(1.0, -5, 0), camera2.getPos());
+
+		camera2.lookAt(glm::vec3(0, -10, 0));
+		ASSERT_EQ(glm::vec3(0, -10, 0), camera2.getLookAtPoint());
+
+		camera2.setUp(glm::vec3(0.0f, 1.0f, 0.0f));
+		ASSERT_EQ(glm::vec3(0, 1.0, 0.0), camera2.getUp());
 
 		Mesh mesh{ "plane" };
+		ASSERT_EQ("plane", mesh.getName());
+
 
 		Material material{};
 		material.setAmbient(glm::vec3(0.0f, 0.0f, 0.0f));
+		ASSERT_EQ(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), material.getAmbient());
+
 		material.setShininess(120);
+		ASSERT_EQ(120, material.getShininess());
+
 		material.setSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
+		ASSERT_EQ(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), material.getSpecular());
+
 		material.setDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
+		ASSERT_EQ(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), material.getDiffuse());
 
 		Texture tex{"a bad time"};
+		ASSERT_EQ("a bad time", tex.getName());
 
 #if _WINDOWS
 		tex.loadFromFile("../tuna-ge/assets/textures/sans.png");
 #else
 		tex.loadFromFile("../../tuna-ge/assets/textures/sans.png");
-
 #endif
+
+		ASSERT_NE(0, tex.getId());
 
 		material.setTexture(&tex);
 
@@ -95,11 +128,13 @@ class GeTest : public ::testing::Test {
 		Node root{"root"};
 		root.link(&mesh);
 		root.link(&camera1);
+		root.link(&camera2);
 
 		Light light{ "Light 1" };
-		light.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f)));
+		light.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.2f, 0.0f)));
 		light.setLight(1);
 		light.setIntensity(1);
+		light.setRadius(0.15);
 		light.setLightAmbient(glm::vec3(0.0f, 1.0f, 0.0f));
 		light.setLightDiffuse(glm::vec3(0.0f, 1.0f, 0.0f));
 		light.setLightSpecular(glm::vec3(0.0f, 1.0f, 0.0f));
@@ -107,51 +142,55 @@ class GeTest : public ::testing::Test {
 
 		mesh.link(&light);
 
-		Light light2{"Light 2" };
-		light2.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f)));
+		Light light2{ "Light 2" };
+		light2.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.2f, 0.0f)));
 		light2.setLight(2);
 		light2.setIntensity(1.0);
-		light2.setLightAmbient(glm::vec3(1.0f, 1.0f, 1.0f));
-		light2.setLightDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
-		light2.setLightSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
+		light2.setRadius(0.15);
+		light2.setLightAmbient(glm::vec3(1.0f, 0.0f, 0.0f));
+		light2.setLightDiffuse(glm::vec3(1.0f, 0.0f, 0.0f));
+		light2.setLightSpecular(glm::vec3(1.0f, 0.0f, 0.0f));
 		light2.enable();
 
-		light.link(&light2);
-		light2.link(&camera2);
-
-		Light light3{"Light 3" };
-		light3.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, -2.0f)));
-		light3.setLight(3);
-		light3.setIntensity(1.0);
-		light3.setLightAmbient(glm::vec3(1.0f, 0.0f, 0.0f));
-		light3.setLightDiffuse(glm::vec3(1.0f, 0.0f, 0.0f));
-		light3.setLightSpecular(glm::vec3(1.0f, 0.0f, 0.0f));
-		light3.enable();
-
-		light.link(&light3);
-
-		Light light4{"Light 4" };
-		light4.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-0.8f, -0.8f, 0.4f)));
-		light4.setLight(4);
-		light4.setIntensity(1.0);
-		light4.setLightAmbient(glm::vec3(0.0f, 0.0f, 1.0f));
-		light4.setLightDiffuse(glm::vec3(0.0f, 0.0f, 1.0f));
-		light4.setLightSpecular(glm::vec3(0.0f, 0.0f, 1.0f));
-		light4.enable();
-
-		light.link(&light4);
+		mesh.link(&light2);
 
 		TunaGE::renderList.pass(&root);
 
+		ASSERT_EQ(2, TunaGE::renderList.getRenderCameras().size());
+		ASSERT_EQ(1, TunaGE::renderList.getRenderElements().size());
+		ASSERT_EQ(2, TunaGE::renderList.getRenderLights().size());
+
 		std::cout << "Library Version: " << TunaGE::version() << std::endl;
-		int w = 600;
-		int h = 600;
+		int w = 700;
+		int h = 700;
 
 		auto pixels = new uint8_t(w  * h * 3);
 
-		//TunaGE::loop();
+		FIBITMAP* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
 
-		TunaGE::renderSingleFrame(pixels, w, h);
+		int r_w = FreeImage_GetWidth(rendered_bmp);
+		int r_h = FreeImage_GetHeight(rendered_bmp);
+		int r_bpp = FreeImage_GetBPP(rendered_bmp);
+
+		int e_w = FreeImage_GetWidth(bmp);
+		int e_h = FreeImage_GetHeight(bmp);
+		int e_bpp = FreeImage_GetBPP(bmp);
+
+		ASSERT_EQ(e_w, r_w);
+		ASSERT_EQ(e_h, r_h);
+		ASSERT_EQ(e_bpp, r_bpp);
+
+		for(int i=0; i<e_h; i++){
+			BYTE* sl1 = FreeImage_GetScanLine(bmp, i);
+			BYTE* sl2 = FreeImage_GetScanLine(rendered_bmp, i);
+
+			for(int j=0; j<e_w; j++){
+				ASSERT_EQ(sl1[j], sl2[j]);
+			}
+		}
+		FreeImage_Unload(rendered_bmp);
+		FreeImage_Unload(bmp);
+
 		delete pixels;
     }
 
