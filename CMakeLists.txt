@@ -102,14 +102,14 @@ target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/ DESTINATION ${CMAKE_BINARY_DIR}/tuna-gui)
 
-add_executable(GeTest test/GeTest.cpp)
-add_test(GeTest test/GeTest.cpp)
-target_link_libraries(GeTest tuna_ge ${GTEST_BOTH_LIBRARIES})
-
 IF(FREEIMAGE_FOUND)
     INCLUDE_DIRECTORIES(${FREEIMAGE_INCLUDE_DIR})
     TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})
 ENDIF(FREEIMAGE_FOUND)
+
+add_executable(GeTest test/GeTest.cpp)
+target_link_libraries(GeTest tuna_ge ${GTEST_BOTH_LIBRARIES})
+add_test(GeTest GeTest)
 
 target_sources(tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/version.hh ${CMAKE_CURRENT_BINARY_DIR}/version.cc)
 
