@@ -7,7 +7,14 @@ set(CMAKE_CXX_COMPILER clang++)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DDEBUG=1)
-    set(CMAKE_CXX_FLAGS -fsanitize=address)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+endif()
+
+if(CI MATCHES 1)
+    message("Running in CI mode")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCI=1")
+    set(CI_FLAG CI=1)
+    add_compile_options(-DCI=1)
 endif()
 
 # the commit's SHA1, and whether the building workspace was dirty or not

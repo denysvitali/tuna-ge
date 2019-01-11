@@ -46,7 +46,12 @@ class GeTest : public ::testing::Test {
 
 		std::cout << dir << std::endl;
 
-    	FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/1.bmp");
+#ifdef CI
+		std::cerr << "Running in CI" << std::endl;
+    	FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../test/expected_results/1.bmp");
+#else
+		FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/1.bmp");
+#endif
     	ASSERT_NE(bmp, nullptr);
 
     	TunaGE::setDisplayWindow(true);
@@ -96,9 +101,17 @@ class GeTest : public ::testing::Test {
 		Texture tex{"a bad time"};
 		ASSERT_EQ("a bad time", tex.getName());
 
-#if _WINDOWS
+		std::cerr << "Hello :)" << std::endl;
+
+#ifdef _WINDOWS
 		tex.loadFromFile("../tuna-ge/assets/textures/sans.png");
+#endif
+
+#ifdef CI
+		std::cerr << "Running in CI" << std::endl;
+		tex.loadFromFile("../assets/textures/sans.png");
 #else
+		std::cerr << "Not running in CI" << std::endl;
 		tex.loadFromFile("../../tuna-ge/assets/textures/sans.png");
 #endif
 
@@ -166,7 +179,7 @@ class GeTest : public ::testing::Test {
 
 		auto pixels = new uint8_t(w  * h * 3);
 
-		FIBITMAP* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
+		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
 
 		int r_w = FreeImage_GetWidth(rendered_bmp);
 		int r_h = FreeImage_GetHeight(rendered_bmp);
