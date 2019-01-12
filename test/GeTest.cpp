@@ -88,16 +88,16 @@ class GeTest : public ::testing::Test {
 
 		Material material{};
 		material.setAmbient(glm::vec3(0.0f, 0.0f, 0.0f));
-		ASSERT_EQ(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), material.getAmbient());
+		ASSERT_EQ(glm::vec3(0.0f, 0.0f, 0.0f), material.getAmbient());
 
 		material.setShininess(120);
 		ASSERT_EQ(120, material.getShininess());
 
 		material.setSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-		ASSERT_EQ(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), material.getSpecular());
+		ASSERT_EQ(glm::vec3(1.0f, 1.0f, 1.0f), material.getSpecular());
 
 		material.setDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
-		ASSERT_EQ(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), material.getDiffuse());
+		ASSERT_EQ(glm::vec3(0.5f, 0.5f, 0.5f), material.getDiffuse());
 
 		Texture tex{"a bad time"};
 		ASSERT_EQ("a bad time", tex.getName());
@@ -120,7 +120,7 @@ class GeTest : public ::testing::Test {
 
 		material.setTexture(&tex);
 
-		mesh.setMaterial(material);
+		mesh.setMaterial(&material);
 		mesh.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, 0.0f)));
 
 		float width = 1;
@@ -208,9 +208,4 @@ class GeTest : public ::testing::Test {
 		delete pixels;
     }
 
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

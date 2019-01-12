@@ -17,6 +17,7 @@ using namespace tunage;
 
 Texture::~Texture() {
 	glDeleteTextures(1, &texId);
+	free(bitmap);
 	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
@@ -60,10 +61,11 @@ void Texture::loadFromFile(std::string path) {
 	this->bmp_h = FreeImage_GetHeight(bitmap);
 	this->bmp_w = FreeImage_GetWidth(bitmap);
 
+	int size = sizeof(BYTE) * 32/8 * bmp_w * bmp_h;
+	this->bitmap = malloc(size);
+	memcpy(this->bitmap, FreeImage_GetBits(FreeImage_ConvertTo32Bits(bitmap)), static_cast<size_t>(size));
 
-	this->bitmap = FreeImage_GetBits(FreeImage_ConvertTo32Bits(bitmap));
-
-
+	FreeImage_Unload(bitmap);
 }
 
 void Texture::loadTexture(void* bitmap) {
