@@ -1,10 +1,11 @@
 #include "../stdafx.h"
 #include <gtest/gtest.h>
-#include <tuna-ge.h>
 #include <iomanip>
 
 #include <FreeImage.h>
-#include <structure/utils/CurrentDir.h>
+
+#include "../tuna-ge.h"
+#include "../structure/utils/CurrentDir.h"
 
 
 using namespace tunage;
