@@ -24,7 +24,7 @@
 
 using namespace tunage;
 
-//Set default values
+//Set default values//
 void (* TunaGE::motion_callback)( int, int ) = nullptr;
 void (* TunaGE::mouse_callback)( int, int, int, int ) = nullptr;
 void (* TunaGE::special_callback)( int, int, int ) = nullptr;
@@ -39,11 +39,11 @@ bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
 bool TunaGE::framerateVisible = false;
-// Display a window? Used during Tests to avoid generating GL windows
+//	Display a window? Used during Tests to avoid generating GL windows
 bool TunaGE::displayWindow = true;
 int TunaGE::windowId = -1;
 List TunaGE::renderList = List{ "render list" };
-// Screen size
+//	Screen size
 int TunaGE::screen_w = 0;
 int TunaGE::screen_h = 0;
 
@@ -82,6 +82,7 @@ void TunaGE::initGlut() {
 	glutSpecialFunc(special_callback);
 	glutKeyboardFunc(keyboard_callback);
 
+	//Enables of FreeGLUT settings
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LIGHTING);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
@@ -93,11 +94,12 @@ void TunaGE::initGlut() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+// Enter the main FreeGLUT processing loop:
 void TunaGE::loop() {
-	// Enter the main FreeGLUT processing loop:
 	glutMainLoop();
 }
 
+//	Destroys all the elements of the scene (if any) and all the elements used in the list for additional features
 bool TunaGE::free() {
 
 	if (renderList.getSceneRoot() != nullptr) {
@@ -111,6 +113,7 @@ bool TunaGE::free() {
 	return true;
 }
 
+//	Main callback called by FreeGLUT each frame to render the scene
 void TunaGE::displayCB() {
 	if (!TunaGE::reshapeAlreadyCalled) {
 		TunaGE::reshapeCB(TunaGE::screen_w, TunaGE::screen_h);
@@ -143,10 +146,9 @@ void TunaGE::displayCB() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-
 	TunaGE::renderList.render();
 
-	// Keep me as last rendering item
+	//Keep me as last rendering item
 	if (TunaGE::debug) {
 		RGBColor color = RGBColor::getColor("#fafafa");
 
@@ -181,6 +183,8 @@ void TunaGE::displayCB() {
 	}
 }
 
+//	Callback called by FreeGLUT one time before starting and everytime the window size changes.
+//	It is responsible to adapt the projection of the sceen using the parameters stored in the current camera
 void TunaGE::reshapeCB(int w, int h) {
 	if (!TunaGE::reshapeAlreadyCalled) {
 		TunaGE::reshapeAlreadyCalled = true;
@@ -201,22 +205,21 @@ void TunaGE::reshapeCB(int w, int h) {
 	}
 }
 
+//	Setters of the user-defined callbacks called by FreeGLUT accordingly
 void TunaGE::setMotionCallback(void(*motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
 }
-
 void TunaGE::setMouseCallback(void(*mouse_callback)(int, int, int, int)) {
 	TunaGE::mouse_callback = mouse_callback;
 }
-
 void TunaGE::setKeyboardCallback(void(*keyboard_callback)(unsigned char, int, int)) {
 	TunaGE::keyboard_callback = keyboard_callback;
 }
-
 void TunaGE::setSpecialCallback(void(*special_callback)(int, int, int)) {
 	TunaGE::special_callback = special_callback;
 }
 
+//	Renders a string on screen with position, color and font specified
 void TunaGE::renderString(float x, float y, void* font, RGBColor& color, const std::string string) {
 
 	glDisable(GL_LIGHTING);
@@ -246,6 +249,7 @@ void TunaGE::renderString(float x, float y, void* font, RGBColor& color, const s
 	}
 }
 
+// Forces a call on displayCallback, usable client-side
 void TunaGE::redisplay() {
 	if (windowId != -1) {
 		glutPostWindowRedisplay(windowId);
@@ -255,38 +259,36 @@ void TunaGE::redisplay() {
 int TunaGE::getScreenH() {
 	return TunaGE::screen_h;
 }
-
 int TunaGE::getScreenW() {
 	return TunaGE::screen_w;
 }
 
+//	Returns the current camera used for rendering
 Camera* TunaGE::getCurrentCamera() {
 	return TunaGE::renderList.getRenderCameras().front();
 }
 
+//	Setters for various flags
 void tunage::TunaGE::enableCulling(bool enabled)
 {
-TunaGE:culling = enabled;
+	TunaGE::culling = enabled;
 }
-
 void tunage::TunaGE::wireframeMode(bool enabled)
 {
 	TunaGE::wireframe = enabled;
 }
-
 void tunage::TunaGE::setLightning(bool enabled)
 {
 	TunaGE::lighting = enabled;
 }
-
 void TunaGE::displayFrameRate(bool enabled) {
 	TunaGE::framerateVisible = enabled;
 }
-
 void TunaGE::setDisplayWindow(bool enabled) {
 	TunaGE::displayWindow = enabled;
 }
 
+//	Renders a single frame, used for debugging and testing
 void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	int old_w = TunaGE::screen_w;
@@ -338,6 +340,7 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 	return dib;
 }
 
+//	Returns the current version
 const std::string TunaGE::version() {
 	std::stringstream ss{};
 	ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
@@ -347,6 +350,7 @@ const std::string TunaGE::version() {
 	return ss.str();
 }
 
+//	Load a full scene from a specified file OvO, this scene is then returned via the Root Node
 Node* TunaGE::loadOVO(const char* path) {
 
 	// Open file:
@@ -529,8 +533,6 @@ Node* TunaGE::loadOVO(const char* path) {
 			mats[mat->getName()] = mat;
 		}
 									   break;
-
-
 		case OvObject::Type::MESH:
 		case OvObject::Type::SKINNED: {
 
@@ -859,7 +861,6 @@ Node* TunaGE::loadOVO(const char* path) {
 		}
 									break;
 
-
 		case OvObject::Type::BONE: {
 
 			// Bone name:
@@ -902,9 +903,6 @@ Node* TunaGE::loadOVO(const char* path) {
 			delete[] data;
 			return nullptr;
 		}
-		/*for (auto mat : mats) {
-			delete mat.second;
-		}*/
 		// Release chunk memory:
 		delete[] data;
 	}
