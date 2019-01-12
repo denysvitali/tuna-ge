@@ -2,20 +2,35 @@
 #include "Node.h"
 
 namespace tunage {
+
+	Node::~Node()
+	{
+		for (auto node : m_hierarchy) {
+			delete node;
+		}
+		std::cout << "distrutto id: " << getId() << std::endl;
+	}
 	void Node::render() {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
-	void Node::renderReflection() {
-		throw std::runtime_error("render() called on a pure Node object");
-	}
-
-	void Node::render(glm::mat4 pos, Material mat) {
+	void Node::render(glm::mat4 pos, Material* mat)
+	{
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
 	void Node::setMatrix(glm::mat4 matrix) {
 		m_matrix = matrix;
+	}
+
+	void Node::setFlipScene(bool flipScene)
+	{
+		this->flipScene = flipScene;
+	}
+
+	bool Node::getFlipScene() const
+	{
+		return flipScene;
 	}
 
 	void Node::setParent(Node* parent) {
@@ -54,7 +69,13 @@ namespace tunage {
 		return nullptr;
 	}
 
-	Node* Node::getSceneElementByName(const char* name) {
+	void Node::clearHierarchy() {
+		m_parent = nullptr;
+		m_hierarchy.clear();
+	}
+
+	Node * Node::getSceneElementByName(const char* name)
+	{
 		if (this->getName() == name) return this;
 
 		for (Node* node : m_hierarchy) {
@@ -78,11 +99,13 @@ namespace tunage {
 		return m_matrix;
 	}
 
-	void Node::setMirror(bool val) {
-		this->mirror = val;
+	void Node::setAllMaterials(std::map<const std::string, Material*> allMaterials)
+	{
+		this->allMaterials = allMaterials;
 	}
 
-	void Node::renderReflection(glm::mat4 pos, Material mat) {
-
+	std::map<const std::string, Material*> Node::getAllMaterials() const
+	{
+		return allMaterials;
 	}
 };

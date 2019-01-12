@@ -13,17 +13,18 @@ namespace tunage {
 
 		void render() override;
 
-		void render(glm::mat4 pos, Material mat) override;
-		void renderReflection(glm::mat4 pos, Material mat) override;
+		void render(glm::mat4 pos, Material* mat) override;
 
 		void addVertex(Vertex vertex);
 
-		void setMaterial(Material material);
+		void setMaterial(Material* material);
 
-		Material getMaterial() const;
+		Material* getMaterial() const;
+
+		bool isTransparent();
 
 	private:
-		Material material;
+		Material* material;
 		std::vector<Vertex> faces;
 	};
 }

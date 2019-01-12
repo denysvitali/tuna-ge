@@ -50,14 +50,14 @@ namespace tunage {
 		
 
 	private:
-		CameraMode mode = CameraMode::LOOK_AT_POINT;
+		CameraMode mode = CameraMode::LOOK_TOWARDS_VECTOR;
 
 		float FOVangle = 45.0f;
 
 		int screen_w = 100;
 		int screen_h = 100;
 		float nearPlane = 0.1f;
-		float farPlane = 100.0f;
+		float farPlane = 500.0f;
 
 		ProjectionMode projMode = PERSPECTIVE;
 

@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 namespace tunage {
     class LIB_API Object {
@@ -15,7 +16,6 @@ namespace tunage {
 		explicit Object(std::string name);
 
         virtual void render() = 0;
-        virtual void renderReflection() = 0;
         int getId();
         std::string getName();
         void setName(std::string newString);

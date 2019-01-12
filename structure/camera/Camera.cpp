@@ -89,19 +89,16 @@ glm::vec3 Camera::getUp() const {
 	return up;
 }
 void Camera::update() {
-	glm::mat4 mat;
 	switch(mode){
 		case LOOK_AT_POINT:
-			mat = glm::lookAt(position, point, up);
+			this->setMatrix(glm::lookAt(position, point, up));
 			break;
 		case LOOK_TOWARDS_VECTOR:
-			mat = glm::lookAt(position, position + point, up);
+			this->setMatrix(glm::lookAt(position, position + front, up));
 			break;
 		default:
 			throw std::runtime_error("Invalid Camera Mode!");
 	}
-
-	this->setMatrix(mat);
 }
 
 glm::mat4 Camera::getRenderMatrix() const {

@@ -24,16 +24,13 @@
 namespace tunage {
     class LIB_API TunaGE {
     public:
+		
+		//Methods//
+		//Main methods
 		static TunaGE init();
-        static void loop();
-		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
+		static Node* loadOVO(const char* path);
+		static void loop();
 		static bool free();
-
-		static List renderList;
-
-		static const std::string version();
-
-		static Camera& getCurrentCamera();
 
 		// Setting Callbacks
 		static void setMotionCallback(void (* motion_callback)( int, int ));
@@ -41,57 +38,58 @@ namespace tunage {
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 		static void setSpecialCallback(void (* special_callback)( int, int, int ));
 
-		static void setFrameRate(bool enbabled);
-
-		static void makeReflective(Node* node);
-
 		// Rendering Methods
-		static void render(glm::mat4 camera, List& list);
         static void renderString(float x, float y, void* font, RGBColor& color, const std::string string);
 		static void redisplay();
-
 
         // Get Parameters
         static int getScreenW();
         static int getScreenH();
+		static Camera* getCurrentCamera();
 
-        // Flag to display a window. When false, only the framebuffer is used (e.g: for tests)
-        static void setDisplayWindow(bool enabled);
+		//Set Flags
+		static void enableCulling(bool enabled);
+		static void wireframeMode(bool enabled);
+		static void setLightning(bool enabled);
+        static void setDisplayWindow(bool enabled);		// Flag to display a window. When false, only the framebuffer is used (e.g: for tests)
+		static void displayFrameRate(bool enbabled);
 
-        static Node* loadOVO(const char* path);
+		//Debugging and Test methods
+		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
+		static const std::string version();
 
-        ~TunaGE() {}
+		//Fields//
+		static List renderList;
+
     private:
 
-        static int windowId;
+		TunaGE() {};
+
+		//Methods//
         static void initGlut();
         static void displayCB();
 		static void reshapeCB(int w, int h);
-		static void specialFuncCB(int key, int mouseX, int mouseY);
-        //static void kbdCB(unsigned char c, int mouseX, int mouseY);
-		//static void mouseCallback(int button, int state, int mouseX, int mouseY);
-		//static void motionCallback(int mouseX, int mouseY);
-		static void computeRotationMatrix();
-        static void setProjectionMatrix();
 
-		//callbacks
+		//Fields//
+		static int windowId;
+
+		//Callbacks
 		static void (* motion_callback)( int, int );
 		static void (* mouse_callback)( int, int, int, int );
 		static void (* special_callback)( int, int, int );
 		static void (* keyboard_callback)( unsigned char, int, int );
 
+		//Flags
 		static bool wireframe;
 		static bool debug;
         static bool culling;
         static bool lighting;
-
         static bool displayWindow;
+		static bool reshapeAlreadyCalled;
+		static bool framerateVisible;
 
         static int screen_w;
         static int screen_h;
-        static bool reshapeAlreadyCalled;
-        static bool framerateVisible;
-
-        TunaGE(){};
+      
     };
 }

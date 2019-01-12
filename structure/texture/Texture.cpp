@@ -17,9 +17,11 @@ using namespace tunage;
 
 Texture::~Texture() {
 	glDeleteTextures(1, &texId);
+	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
-void Texture::render() {
+void tunage::Texture::render() {
+	glEnable(GL_TEXTURE_2D);
 	if (!initialized) {
 		initialized = true;
 		init();
@@ -27,8 +29,6 @@ void Texture::render() {
 		// Update texture content:
 		glBindTexture(GL_TEXTURE_2D, texId);
 	}
-
-
 }
 
 void Texture::loadFromFile(std::string path) {
@@ -117,9 +117,5 @@ void Texture::init() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, this->bmp_w, this->bmp_h, GL_BGRA_EXT, GL_UNSIGNED_BYTE, this->bitmap);
 	}
-
-}
-
-void Texture::renderReflection() {
 
 }

@@ -10,11 +10,11 @@ tunage::Node* tunage::Element::getNode() const {
 	return node;
 }
 
-void tunage::Element::setMaterial(Material material) {
-	this->material = std::move(material);
+void tunage::Element::setMaterial(Material* material) {
+	this->material = material;
 }
 
-tunage::Material tunage::Element::getMaterial() const {
+tunage::Material* tunage::Element::getMaterial() const {
 	return material;
 }
 
