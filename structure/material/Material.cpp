@@ -12,6 +12,7 @@ tunage::Material::~Material()
 
 void tunage::Material::render()
 {
+	//	Render texture
 	if (texture != nullptr) {
 		texture->render();
 	}

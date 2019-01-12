@@ -63,38 +63,39 @@ void tunage::List::pass(Node* element) {
 	}
 }
 
+//	Renders the elements saved in the various render lists using the first camera in the renderCamera list
 void tunage::List::render() {
+
 	if (!renderCameras.empty()) {
 		renderCameras.front()->update();
 		cameraMatrix = renderCameras.front()->getRenderMatrix();
-	}
 
-	glFrontFace(GL_CW);
-	int countLight = 0;
-	for (auto i = renderSequenceLightsMirrored.begin(); i != renderSequenceLightsMirrored.end(); ++i) {
-		Light* light = dynamic_cast<Light*>(&(*i->getNode()));
-		light->setLight(renderSequenceLights.size() + countLight);
-		countLight++;
-		light->enable();
-		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
-	}
-	glFrontFace(GL_CCW);
-	for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
-		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
-	}
-	glFrontFace(GL_CW);
-	for (auto i = renderSequenceMirrored.begin(); i != renderSequenceMirrored.end(); ++i) {
-		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
-	}
-	glFrontFace(GL_CCW);
-	for (auto i = renderSequenceElements.begin(); i != renderSequenceElements.end(); ++i) {
-		(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
-	}
-	
-}
+		//	Mirrored elements needs to be rendered ClockWise
+		glFrontFace(GL_CW);
+		int countLight = 0;
+		for (auto i = renderSequenceLightsMirrored.begin(); i != renderSequenceLightsMirrored.end(); ++i) {
 
-void tunage::List::setCameraMatrix(glm::mat4 cameraMatrix) {
-	this->cameraMatrix = cameraMatrix;
+			//	In case of mirrored lights we need to set the light number different from the normal lights.
+			//	This puts a limitation of 4 lights in a mirrored scenes.
+			Light* light = dynamic_cast<Light*>(&(*i->getNode()));
+			light->setLight(renderSequenceLights.size() + countLight);
+			countLight++;
+			light->enable();
+			(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
+		}
+		glFrontFace(GL_CCW);
+		for (auto i = renderSequenceLights.begin(); i != renderSequenceLights.end(); ++i) {
+			(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
+		}
+		glFrontFace(GL_CW);
+		for (auto i = renderSequenceMirrored.begin(); i != renderSequenceMirrored.end(); ++i) {
+			(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
+		}
+		glFrontFace(GL_CCW);
+		for (auto i = renderSequenceElements.begin(); i != renderSequenceElements.end(); ++i) {
+			(*i->getNode()).render(cameraMatrix * i->getMatrix(), i->getMaterial());
+		}
+	}	
 }
 
 const std::vector<tunage::Element> &tunage::List::getRenderElements() const {
@@ -109,8 +110,10 @@ std::vector<tunage::Camera*> &tunage::List::getRenderCameras() {
 	return renderCameras;
 }
 
+//	Clears the list vectors and deallocates the light materials and the mirrored light nodes allocated in the pass method,
+//	the scene root is then set to nullptr.
+//	The cameras are not cleared in this method to allow a repopulation of the list without changing the cameras order
 void tunage::List::clearRenderElements() {
-	sceneRoot = nullptr;
 	renderSequenceElements.clear();
 	renderSequenceMirrored.clear();
 	for (auto l : renderSequenceLights) {
@@ -121,12 +124,15 @@ void tunage::List::clearRenderElements() {
 	}
 	renderSequenceLights.clear();
 	renderSequenceLightsMirrored.clear();
+	sceneRoot = nullptr;
 }
 
+//	If it is needed to pass a different scene, call this method togheter with clearRenderElements
 void tunage::List::clearCameras() {
 	renderCameras.clear();
 }
 
+//	Switches the current camera used for rendering by pushing the front camera in the list at the back
 void tunage::List::switchCamera() {
 	assert(!renderCameras.empty());
 	renderCameras.push_back(renderCameras.front());

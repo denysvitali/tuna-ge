@@ -3,8 +3,11 @@
 #include "Mesh.h"
 #include <GL/freeglut.h>
 
+
+//	Render method using the mesh render matrix and material
 void tunage::Mesh::render() {
 
+	//	Render material
 	if (material != nullptr) {
 		material->render();
 	}
@@ -20,8 +23,10 @@ void tunage::Mesh::render() {
 	glEnd();
 }
 
+//	Render method using a material and render matrix passed as parameters
 void tunage::Mesh::render(glm::mat4 pos, Material* mat)
 {
+	//	Render material
 	if (mat != nullptr) {
 		mat->render();
 	}

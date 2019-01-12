@@ -19,6 +19,7 @@ void Camera::setProjMode(ProjectionMode mode) {
 	projMode = mode;
 }
 
+//	Generate the projection matrix using the camera settings
 glm::mat4 Camera::getProjectionMatrix() const {
 	switch(getProjMode()){
 		case PERSPECTIVE:
@@ -29,6 +30,7 @@ glm::mat4 Camera::getProjectionMatrix() const {
 	}
 }
 
+//	Loads the projection matrix used by FreeGLUT to render the scene
 void Camera::loadProjectionMatrix() {
 	glMatrixMode(GL_PROJECTION);
 	glm::mat4 Projection = getProjectionMatrix();
@@ -88,6 +90,8 @@ void Camera::setUp(glm::vec3 cameraUp) {
 glm::vec3 Camera::getUp() const {
 	return up;
 }
+
+//	Updates the current camera matrix using the glm LookAt method
 void Camera::update() {
 	switch(mode){
 		case LOOK_AT_POINT:
@@ -101,6 +105,7 @@ void Camera::update() {
 	}
 }
 
+//	Different from the getRenderMatrix method in node because of the inversion needed for the camera
 glm::mat4 Camera::getRenderMatrix() const {
 	glm::mat4 composedMatrix;
 	if (getParent() != nullptr) {

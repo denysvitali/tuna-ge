@@ -9,16 +9,22 @@ namespace tunage {
 		~Texture();
 		Texture() : Object{}{}
 		Texture(std::string name) : Object{ name }{}
+
+		//	Rendering methods
 		void render() override;
+
+		//	Load texture methods
 		void loadFromFile(std::string path);
 		void loadTexture(void* bitmap);
+
+		//	Settings methods
 		void setAnisotropic(bool anisotropic);
 		void setMipmap(bool useMipmaps);
 		void setAnisotropicLevel(int anisotropicLevel);
-
 	private:
 		void init();
 
+		//	Default settings
 		bool initialized = false;
 		unsigned int texId = 0;
 		bool useMipmaps = false;

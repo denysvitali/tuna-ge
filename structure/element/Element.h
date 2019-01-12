@@ -5,9 +5,11 @@
 #include "../node/Node.h"
 
 namespace tunage {
+
     class LIB_API Element{
     public:
 		explicit Element(Node* elem) : node{ elem }{};
+
 		void setNode(Node* node);
 		Node* getNode() const;
 		void setMaterial(Material* material);

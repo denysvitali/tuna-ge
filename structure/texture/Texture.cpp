@@ -20,8 +20,10 @@ Texture::~Texture() {
 	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
+//	Binds the texture
 void tunage::Texture::render() {
 	glEnable(GL_TEXTURE_2D);
+	//	The first call of this render method will call the init method
 	if (!initialized) {
 		initialized = true;
 		init();
@@ -31,6 +33,7 @@ void tunage::Texture::render() {
 	}
 }
 
+//	Loads the bitmap of a texture from a file using FreeImage
 void Texture::loadFromFile(std::string path) {
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
@@ -59,11 +62,7 @@ void Texture::loadFromFile(std::string path) {
 	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str(), 0);
 	this->bmp_h = FreeImage_GetHeight(bitmap);
 	this->bmp_w = FreeImage_GetWidth(bitmap);
-
-
 	this->bitmap = FreeImage_GetBits(FreeImage_ConvertTo32Bits(bitmap));
-
-
 }
 
 void Texture::loadTexture(void* bitmap) {
@@ -82,6 +81,7 @@ void Texture::setAnisotropicLevel(int anisotropicLevel) {
 	this->anisotropicLevel = anisotropicLevel;
 }
 
+//	Loads the texture bitmap on FreeGLUT with the current settings
 void Texture::init() {
 	if (strstr((const char *) glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic")) {
 		isAnisotropicSupported = true;

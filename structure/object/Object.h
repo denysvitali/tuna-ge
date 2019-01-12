@@ -16,6 +16,7 @@ namespace tunage {
 		explicit Object(std::string name);
 
         virtual void render() = 0;
+
         int getId();
         std::string getName();
         void setName(std::string newString);

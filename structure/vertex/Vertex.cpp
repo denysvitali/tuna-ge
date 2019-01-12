@@ -1,6 +1,3 @@
-//
-// Created by dvitali on 17.11.18.
-//
 #include "Vertex.h"
 
 using namespace tunage;
