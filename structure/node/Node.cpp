@@ -61,6 +61,7 @@ namespace tunage {
 		return nullptr;
 	}
 
+	// Unlink himself
 	Node* Node::unlink() {
 		if (m_parent != nullptr) {
 			return m_parent->unlinkById(getId());

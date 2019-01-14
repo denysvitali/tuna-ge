@@ -9,7 +9,8 @@ namespace tunage {
 	class LIB_API Mesh : public Node {
 	public:
 		Mesh() : Node{} {}
-		Mesh(const char* name) : Node{name} {}
+
+		explicit Mesh(const char* name) : Node{name} {}
 
 		void render() override;
 
@@ -24,7 +25,7 @@ namespace tunage {
 		bool isTransparent();
 
 	private:
-		Material* material;
+		Material* material = nullptr;
 		std::vector<Vertex> faces;
 	};
 }

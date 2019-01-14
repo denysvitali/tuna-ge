@@ -39,8 +39,11 @@ namespace tunage {
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 		static void setSpecialCallback(void (* special_callback)( int, int, int ));
 
+		// Window Settings
+		static void setWindowSize(int width, int height);
+
 		// Rendering Methods
-        static void renderString(float x, float y, void* font, RGBColor& color, const std::string string);
+        static void renderString(float x, float y, void* font, RGBColor& color, String string);
 		static void redisplay();
 
         // Get Parameters
@@ -91,6 +94,8 @@ namespace tunage {
 
         static int screen_w;
         static int screen_h;
+
+        static bool glutInitAlreadyCalled;
       
     };
 }
