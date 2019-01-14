@@ -47,13 +47,13 @@ namespace {
 		char dir[FILENAME_MAX];
 		GetCurrentDir(dir, FILENAME_MAX);
 
-		std::cout << dir << std::endl;
+		std::cerr << dir << std::endl;
 
 		std::string path;
 		FIBITMAP* bmp = nullptr;
 #ifdef _WINDOWS
-		bmp = FreeImage_Load(FIF_BMP, "../tuna-ge/test/expected_results/2.bmp");
-		path = "../tuna-ge/assets/scenes/gauntletTex.ovo";
+		bmp = FreeImage_Load(FIF_BMP, "./expected_results/2.bmp");
+		path = "../assets/scenes/gauntletTex.ovo";
 #else
 	#ifdef CI
 			std::cerr << "Running in CI" << std::endl;
