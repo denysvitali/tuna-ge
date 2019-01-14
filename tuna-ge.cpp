@@ -63,7 +63,7 @@ List TunaGE::renderList = List{ "render list" };
 int TunaGE::screen_w = 100;
 int TunaGE::screen_h = 100;
 
-auto TunaGE::allocatedObjects = std::vector<Object*>{};
+std::vector<Object*> TunaGE::allocatedObjects = std::vector<Object*>{};
 
 bool TunaGE::glutInitAlreadyCalled = false;
 

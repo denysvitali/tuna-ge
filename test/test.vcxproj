@@ -37,11 +37,15 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NodeTest.cpp" />
     <ClCompile Include="OvoScene.cpp" />
+    <ClCompile Include="utils\ImageComparator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\tuna-ge.vcxproj">
       <Project>{aef94ea7-0b7d-4e3b-93e4-60626104a469}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="utils\ImageComparator.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
