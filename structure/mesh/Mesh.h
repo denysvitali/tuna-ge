@@ -12,6 +12,7 @@ namespace tunage {
 
 		explicit Mesh(const char* name) : Node{name} {}
 
+		//	Rendering methods
 		void render() override;
 
 		void render(glm::mat4 pos, Material* mat) override;
@@ -26,6 +27,6 @@ namespace tunage {
 
 	private:
 		Material* material = nullptr;
-		std::vector<Vertex> faces;
+		std::vector<Vertex> faces;	//	Vertexes of the mesh object
 	};
 }

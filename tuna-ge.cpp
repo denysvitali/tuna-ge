@@ -71,8 +71,6 @@ void TunaGE::init() {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
 	TunaGE::setWindowSize(TunaGE::screen_w, TunaGE::screen_h);
-	/*glutInitWindowSize(TunaGE::screen_w, TunaGE::screen_h);
-	//glViewport(0, 0, TunaGE::screen_w, TunaGE::screen_h);*/
 
 	if(!glutInitAlreadyCalled) {
 		// FreeGLUT can parse command-line params, in case:
@@ -101,7 +99,7 @@ void TunaGE::initGlut() {
 	glutSpecialFunc(special_callback);
 	glutKeyboardFunc(keyboard_callback);
 
-	//Enables of FreeGLUT settings
+	// FreeGLUT default settings
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LIGHTING);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
@@ -167,7 +165,7 @@ void TunaGE::displayCB() {
 
 	TunaGE::renderList.render();
 
-	//Keep me as last rendering item
+	// Keep me as last rendering item
 	if (TunaGE::debug) {
 		RGBColor color = RGBColor::getColor("#fafafa");
 
@@ -288,16 +286,13 @@ Camera* TunaGE::getCurrentCamera() {
 }
 
 //	Setters for various flags
-void tunage::TunaGE::enableCulling(bool enabled)
-{
+void tunage::TunaGE::enableCulling(bool enabled){
 	TunaGE::culling = enabled;
 }
-void tunage::TunaGE::wireframeMode(bool enabled)
-{
+void tunage::TunaGE::wireframeMode(bool enabled){
 	TunaGE::wireframe = enabled;
 }
-void tunage::TunaGE::setLightning(bool enabled)
-{
+void tunage::TunaGE::setLightning(bool enabled){
 	TunaGE::lighting = enabled;
 }
 void TunaGE::displayFrameRate(bool enabled) {
@@ -317,7 +312,6 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 	TunaGE::screen_h = height;
 
 	TunaGE::reshapeCB(width, height);
-
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glReadBuffer(GL_FRONT);

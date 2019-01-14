@@ -11,50 +11,43 @@ namespace tunage {
 	class LIB_API Node : public Object {
 
 	public:
-
 		virtual ~Node();
 		Node() : Object() {}
 
 		explicit Node(const char* name) : Object(name) {};
 
-		void render() override;
-
+		//	Rendering methods
+		virtual void render() override;
 		virtual void render(glm::mat4 pos, Material* mat);
 
-		void setMatrix(glm::mat4 matrix);
-
-		void setFlipScene(bool flipScene);
-
-		bool getFlipScene() const;
-
-		glm::mat4 getMatrix() const;
-
-		virtual glm::mat4 getRenderMatrix() const;
-
+		//	Scene methods
+		void link(Node *child);
+		std::vector<Node *> getChildren();
+		Node* unlinkById(int id);
+		Node* unlink();
+		void clearHierarchy();
 		Node* getParent() const;
 
-		void link(Node *child);
-
-		std::vector<Node *> getChildren();
-
-		Node* unlinkById(int id);
-
-		Node* unlink();
-
-		void clearHierarchy();
-
+		//	Recursive methods to iterate the scene
 		Node* getSceneElementByName(const char* name);
+		virtual glm::mat4 getRenderMatrix() const;
 
-		void setAllMaterials(std::vector<Material*> allMaterials);
-
-		std::vector<Material*> getAllMaterials() const;
-
+		void setMatrix(glm::mat4 matrix);
+		glm::mat4 getMatrix() const;
+		void setFlipScene(bool flipScene);
+		bool getFlipScene() const;
+        void setAllMaterials(std::vector<Material*> allMaterials);
+        std::vector<Material*> getAllMaterials() const;
 	private:
+		//	Scene methods
 		void setParent(Node *parent);
+
+		//	Scene fields
 		std::vector<Node*> m_hierarchy;
-		std::map<std::string, Material*> allMaterials;
 		Node *m_parent = nullptr;
+
+		std::map<const std::string, Material*> allMaterials;
 		glm::mat4 m_matrix = glm::mat4(1.0f);
-		bool flipScene = false;
+		bool flipScene = false;	//	Flag to indicate at the rendering list from which node to start mirroring the scene
 	};
 }

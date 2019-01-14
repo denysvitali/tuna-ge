@@ -15,23 +15,33 @@ namespace tunage {
 	public:
 		List() : Object() {}
 	    List(const char* name) : Object(name) {};
-		void pass(Node* element);
-		void render() override;
-		void setCameraMatrix(glm::mat4 cameraMatrix);
-		void clearRenderElements();
-		void clearCameras();
+
+		void switchCamera();
+		Node* getSceneRoot() const;
 		const std::vector<Element>& getRenderElements() const;
 		const std::vector<Element>& getRenderLights() const;
 		std::vector<Camera*>& getRenderCameras();
-		void switchCamera();
-		Node* getSceneRoot() const;
+
+		//	Fill and render methods
+		void pass(Node* element);
+		void render() override;
+
+		//	Clear methods
+		void clearRenderElements();
+		void clearCameras();
 
 	private:
+		//	Root of the current scene passed in the list
 		Node* sceneRoot = nullptr;
+
+		//	Render matrix of the first camera in the renderCameras list
 		glm::mat4 cameraMatrix;
+
+		//	Materials used for lights
 		Material* lightMaterial;
+
+		//	Render lists
 		std::vector<Element> renderSequenceElements;
-		//std::vector<Element> renderSequenceTransparentElements;
 		std::vector<Element> renderSequenceMirrored;
 		std::vector<Element> renderSequenceLights;
 		std::vector<Element> renderSequenceLightsMirrored;

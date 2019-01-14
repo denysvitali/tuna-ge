@@ -12,17 +12,18 @@ namespace tunage {
 		explicit Camera(const char* name) : Node{name} {}
 		explicit Camera(const char* name, CameraMode mode): Node{name}, mode{mode} {}
 
-		void setMode(CameraMode mode);
-		CameraMode getMode();
-
+		//	Camera render matrix methods
+		glm::mat4 getRenderMatrix() const override;
+		glm::mat4 getInverseMatrix() const;
+		void update();
+		
+		//	Projection methods
+		glm::mat4 getProjectionMatrix() const;
+		void loadProjectionMatrix();
 		void setProjMode(ProjectionMode projMode);
 		ProjectionMode getProjMode() const;
-
-		glm::mat4 getInverseMatrix() const;
-		glm::mat4 getProjectionMatrix() const;
-
-		void loadProjectionMatrix();
-
+		
+		//	Camera settings methods
 		void setFOV(float FOVangle);
 		float getFOV() const;
 		void setNearPlane(float nearPlane);
@@ -30,41 +31,30 @@ namespace tunage {
 		void setFarPlane(float farPlane);
 		float getFarPlane() const;
 		void setScreenSize(int width, int height);
-
-		// Camera Settings
+		void setMode(CameraMode mode);
+		CameraMode getMode();
 		void setPos(glm::vec3 cameraPos);
 		glm::vec3 getPos() const;
-
 		void setFront(glm::vec3 cameraFront);
 		glm::vec3 getFront() const;
-
 		void setUp(glm::vec3 cameraUp);
 		glm::vec3 getUp() const;
-
 		void lookAt(glm::vec3 pointInSpace);
 		glm::vec3 getLookAtPoint() const;
 
-		void update();
-
-		glm::mat4 getRenderMatrix() const override;
-		
-
 	private:
+		//	Default settings
 		CameraMode mode = CameraMode::LOOK_TOWARDS_VECTOR;
-
+		ProjectionMode projMode = PERSPECTIVE;
 		float FOVangle = 45.0f;
-
 		int screen_w = 100;
 		int screen_h = 100;
 		float nearPlane = 0.1f;
 		float farPlane = 500.0f;
-
-		ProjectionMode projMode = PERSPECTIVE;
-
-		glm::vec3 position = glm::vec3(0,0,0);
-		glm::vec3 front = glm::vec3(0,0,-1);
-		glm::vec3 up = glm::vec3(0,1,0);
-		glm::vec3 point = glm::vec3(0,0,0);
+		glm::vec3 position = glm::vec3(0,0,0);	//	Camera is at position (0,0,0) (From the current render matrix)
+		glm::vec3 front = glm::vec3(0,0,-1);	//	Camera looks toward the specified vector
+		glm::vec3 up = glm::vec3(0,1,0);		//	Camera Roll inclination (From the current render matrix)
+		glm::vec3 point = glm::vec3(0,0,0);		//	Alternative to front: Camera looks toward the specified point
 
 	};
 }

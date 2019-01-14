@@ -8,8 +8,16 @@ namespace tunage {
     public:
     	explicit Light() : Node{} {};
 		explicit Light(const char* name) : Node{ name }{}
+
+		//	Rendering methods
 		void render() override;
 		void render(glm::mat4 pos, Material* mat) override;
+
+		//	Light on-off
+		void enable();
+		void disable();
+
+		//	Light settings
 		void setLightAmbient(glm::vec3 lightAmbient);
         glm::vec3 getLightAmbient() const;
 		void setLightDiffuse(glm::vec3 lightDiffuse);
@@ -22,11 +30,10 @@ namespace tunage {
 		void setRadius(float radius);
 		void setIntensity(float f);
 		void setType(unsigned int lightType);
-		void enable();
-		void disable();
 
 	private:
-		int light = 0;
+		//	Default settings
+		int light = 0;	//	Light number used by FreeGLUT
 		glm::vec3 lightPosition = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec4 lightAmbient = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec4 lightDiffuse = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);

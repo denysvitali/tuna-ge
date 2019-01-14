@@ -7,6 +7,7 @@
 
 using namespace tunage;
 
+//	Render method using the light render matrix and default material
 void Light::render() {
 
 	glMatrixMode(GL_MODELVIEW);
@@ -14,6 +15,7 @@ void Light::render() {
 
 	Material m{};
 	m.setEmission(lightAmbient);
+	//	Render material
 	m.render();
 
 	// Draw a small emissive sphere to show light position:
@@ -37,6 +39,7 @@ void Light::render() {
 			lightSpecular[2] * intensity,
 			1.0f);
 
+	//	Sets various FreeGLUT options based on the light type (0 = DIRECTIONAL, 1 = OMNI, 2 = SPOT)
 	switch (lightType){
 		case 0:
 			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
@@ -53,22 +56,23 @@ void Light::render() {
 		default:
 			break;
 	}
-
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
 }
 
+//	Render method using a material and render matrix passed as parameters
 void tunage::Light::render(glm::mat4 pos, Material* mat)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(glm::value_ptr(pos));
 
+	//	Render material
 	if (mat != nullptr) {
 		mat->render();
 	}
 
-	// Draw a small emissive sphere to show light position:
+	//	Draw a small emissive sphere to show light position:
 	glutSolidSphere(radius, 40, 40);
 
 	glm::vec4 ambient_wi = glm::vec4(
@@ -89,6 +93,7 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 		lightSpecular[2] * intensity,
 		1.0f);
 
+	//	Sets various FreeGLUT options based on the light type (0 = DIRECTIONAL, 1 = OMNI, 2 = SPOT)
 	switch (lightType){
 		case 0:
 			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
@@ -105,7 +110,6 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 		default:
 			break;
 	}
-	
 	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_CONSTANT_ATTENUATION, &attenuation);
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
 	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
@@ -116,7 +120,6 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 void Light::enable() {
 	glEnable(static_cast<GLenum>(light + GL_LIGHT0));
 }
-
 void Light::disable() {
 	glDisable(static_cast<GLenum>(light + GL_LIGHT0));
 }
@@ -155,6 +158,7 @@ void Light::setLightCutoff(float lightCutoff) {
 	this->lightCutoff = lightCutoff;
 }
 
+//	Set light number used by FreeGLUT (can only be between 0 and 7; maximum of 8 lights rendered at the same time)
 void Light::setLight(int light) {
 	if (light >= 0 && light <= 7) {
 		this->light = light;

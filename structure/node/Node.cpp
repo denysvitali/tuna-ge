@@ -44,11 +44,13 @@ namespace tunage {
 		return m_hierarchy;
 	}
 
+	//	Links a node as a children of the current node
 	void Node::link(Node* child) {
 		child->setParent(this);
 		m_hierarchy.push_back(child);
 	}
 
+	//	Unlinks a children with the specified id (and sets said children parent node to nullptr)
 	Node* Node::unlinkById(int id) {
 		for (auto i = m_hierarchy.begin(); i != m_hierarchy.end(); ++i) {
 			if ((*i)->getId() == id) {
@@ -61,7 +63,7 @@ namespace tunage {
 		return nullptr;
 	}
 
-	// Unlink himself
+	//	Unlinks the current node from the parent node
 	Node* Node::unlink() {
 		if (m_parent != nullptr) {
 			return m_parent->unlinkById(getId());
@@ -69,11 +71,14 @@ namespace tunage {
 		return nullptr;
 	}
 
+	//	Unlinks this node from the parents and all childrens from this node (only from the point of view of this node).
+	//	Mainly used on duplicate nodes if the hierarchy is not needed or before deleting them.
 	void Node::clearHierarchy() {
 		m_parent = nullptr;
 		m_hierarchy.clear();
 	}
 
+	//	Recursive method that searches and returns a node with the specified name from the current node onwards.
 	Node* Node::getSceneElementByName(const char* name) {
 		if (this->getName() == String{name}) return this;
 
@@ -89,6 +94,7 @@ namespace tunage {
 		return m_matrix;
 	}
 
+	//	Recursive method that returns the render matrix of the current node by multiplying the current matrix recursively with the parent ones.
 	glm::mat4 Node::getRenderMatrix() const {
 		glm::mat4 composedMatrix;
 		if (m_parent != nullptr) {

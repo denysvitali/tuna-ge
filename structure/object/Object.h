@@ -17,6 +17,7 @@ namespace tunage {
 		explicit Object(const char* name);
 
         virtual void render() = 0;
+
         int getId();
         String getName();
         void setName(const char* newString);

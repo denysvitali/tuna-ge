@@ -10,25 +10,32 @@ namespace tunage {
     public:
 		~Material();
 		Material() : Object() {};
+
+		//	Rendering methods
 		void render() override;
+
+		//	Material settings
         void setAmbient(glm::vec3 light);
+		glm::vec3 getAmbient() const;
         void setDiffuse(glm::vec3 light);
+		glm::vec3 getDiffuse() const;
         void setSpecular(glm::vec3 light);
+		glm::vec3 getSpecular() const;
         void setEmission(glm::vec3 light);
+		glm::vec3 getEmission() const;
         void setShininess(int intensity);
+		int getShininess() const;
 		void setAlpha(float alpha);
-        glm::vec3 getAmbient() const;
-        glm::vec3 getDiffuse() const;
-        glm::vec3 getSpecular() const;
-        glm::vec3 getEmission() const;
-        int getShininess() const;
+		bool isTransparent();
+        
+        //	Texture methods
 		void setTexture(Texture* texture);
 		Texture* getTexture() const;
-		bool isTransparent();
     private:
+		//	Default settings
 		Texture* texture = nullptr;
         int shininess{};
-		float alpha = 1.0f;
+		float alpha = 1.0f;	//	Alpha channel used for material transparency
         glm::vec3 ambient = glm::vec3{0,0,0};
         glm::vec3 diffuse = glm::vec3{0,0,0};
         glm::vec3 specular = glm::vec3{0,0,0};

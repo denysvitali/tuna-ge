@@ -4,14 +4,13 @@
 #include <algorithm>
 #include <GL/freeglut.h>
 
+using namespace tunage;
+
 //	Recursive method to save an entire scene in the render lists by passing the root as paramether. 
 //	Meshes, Lights, and Cameras are separated in different lists to order the rendering process (lights must be rendered before meshes).
 //	The Camera list is used to determinate the current Camera in use.
 //	If the mirrored flag is set, the current node will be saved in a "renderMirrored" list to simulate a reflection plane on the y=0 axis; 
 //	all his childrens mirrored flag will be set before calling the pass method on them.
-
-using namespace tunage;
-
 void List::pass(Node* element) {
 
 	if (sceneRoot == nullptr) {
@@ -63,40 +62,39 @@ void List::pass(Node* element) {
 	}
 }
 
-void List::render() {
+//	Renders the elements saved in the various render lists using the first camera in the renderCamera list
+void tunage::List::render() {
 	if (!renderCameras.empty()) {
-		renderCameras.front()->update();
-		cameraMatrix = renderCameras.front()->getRenderMatrix();
-	}
+        renderCameras.front()->update();
+        cameraMatrix = renderCameras.front()->getRenderMatrix();
 
-	glFrontFace(GL_CW);
-	int countLight = 0;
-	for (auto &i : renderSequenceLightsMirrored) {
-		auto* light = dynamic_cast<Light*>(&(*i.getNode()));
-		light->setLight(static_cast<int>(renderSequenceLights.size() + countLight));
-		countLight++;
-		light->enable();
-		(*i.getNode()).render(cameraMatrix * i.getMatrix(), i.getMaterial());
-	}
-	glFrontFace(GL_CCW);
-	for (auto &k : renderSequenceLights) {
-		(*k.getNode()).render(cameraMatrix * k.getMatrix(), k.getMaterial());
-	}
-	glFrontFace(GL_CW);
-	for (auto &i : renderSequenceMirrored) {
-		(*i.getNode())
-				.render(cameraMatrix * i.getMatrix(), i.getMaterial());
-	}
-	glFrontFace(GL_CCW);
-	for (auto &j : renderSequenceElements) {
-		(*j.getNode())
-				.render(cameraMatrix * j.getMatrix(), j.getMaterial());
-	}
-
-}
-
-void List::setCameraMatrix(glm::mat4 cameraMatrix) {
-	this->cameraMatrix = cameraMatrix;
+        //	Mirrored elements needs to be rendered ClockWise
+        glFrontFace(GL_CW);
+        int countLight = 0;
+        for (auto &i : renderSequenceLightsMirrored) {
+            //	In case of mirrored lights we need to set the light number different from the normal lights.
+            //	This puts a limitation of 4 lights in a mirrored scenes.
+            auto *light = dynamic_cast<Light *>(&(*i.getNode()));
+            light->setLight(static_cast<int>(renderSequenceLights.size() + countLight));
+            countLight++;
+            light->enable();
+            (*i.getNode()).render(cameraMatrix * i.getMatrix(), i.getMaterial());
+        }
+        glFrontFace(GL_CCW);
+        for (auto &k : renderSequenceLights) {
+            (*k.getNode()).render(cameraMatrix * k.getMatrix(), k.getMaterial());
+        }
+        glFrontFace(GL_CW);
+        for (auto &i : renderSequenceMirrored) {
+            (*i.getNode())
+                    .render(cameraMatrix * i.getMatrix(), i.getMaterial());
+        }
+        glFrontFace(GL_CCW);
+        for (auto &j : renderSequenceElements) {
+            (*j.getNode())
+                    .render(cameraMatrix * j.getMatrix(), j.getMaterial());
+        }
+    }
 }
 
 const std::vector<Element> &List::getRenderElements() const {
@@ -111,6 +109,9 @@ std::vector<Camera*> &List::getRenderCameras() {
 	return renderCameras;
 }
 
+//	Clears the list vectors and deallocates the light materials and the mirrored light nodes allocated in the pass method,
+//	the scene root is then set to nullptr.
+//	The cameras are not cleared in this method to allow a repopulation of the list without changing the cameras order
 void List::clearRenderElements() {
 	sceneRoot = nullptr;
 	renderSequenceElements.clear();
@@ -128,10 +129,12 @@ void List::clearRenderElements() {
 }
 
 void List::clearCameras() {
+//	If it is needed to pass a different scene, call this method togheter with clearRenderElements
 	renderCameras.clear();
 }
 
 void List::switchCamera() {
+//	Switches the current camera used for rendering by pushing the front camera in the list at the back
 	assert(!renderCameras.empty());
 	renderCameras.push_back(renderCameras.front());
 	renderCameras.erase(renderCameras.begin());
