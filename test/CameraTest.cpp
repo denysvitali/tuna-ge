@@ -39,7 +39,7 @@ namespace {
         glm::vec3 position{1, 1, 1};
         glm::vec3 point{1, 2, 3};
         glm::vec3 front{1, 0, 0};
-        glm::vec3 up{0,1,0};
+        glm::vec3 up{0, 1, 0};
 
         c0.setMode(CameraMode::LOOK_AT_POINT);
         c0.setProjMode(ProjectionMode::PERSPECTIVE);
@@ -57,7 +57,7 @@ namespace {
         glm::vec3 position{1, 1, 1};
         glm::vec3 point{1, 2, 3};
         glm::vec3 front{1, 0, 0};
-        glm::vec3 up{0,1,0};
+        glm::vec3 up{0, 1, 0};
 
         c0.setMode(CameraMode::LOOK_TOWARDS_VECTOR);
         c0.setProjMode(ProjectionMode::PERSPECTIVE);
@@ -68,5 +68,64 @@ namespace {
 
         c0.update();
         ASSERT_EQ(c0.getMatrix(), glm::lookAt(position, position + front, up));
+    }
+
+    TEST(CameraTest, camera_render_matrix_parentless) {
+        Camera c0{"Camera 0"};
+
+        glm::vec3 position{1, 1, 1};
+        glm::vec3 point{1, 2, 3};
+        glm::vec3 front{1, 0, 0};
+        glm::vec3 up{0, 1, 0};
+
+        c0.setUp(up);
+        c0.setFront(front);
+        c0.setPos(position);
+        c0.update();
+
+        ASSERT_EQ(c0.getRenderMatrix(), c0.getMatrix());
+    }
+
+    TEST(CameraTest, camera_render_matrix_hierarchy) {
+        Node n0{"Node 0"};
+        Node n1{"Node 1"};
+        Node n2{"Node 2"};
+        Node n3{"Node 3"};
+        Camera c0{"Camera 0"};
+
+        glm::mat4 m0 = glm::mat4{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+        glm::mat4 m1 = glm::mat4{15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+        glm::mat4 m2 = glm::mat4{0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
+        glm::mat4 m3 = glm::mat4{1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 0};
+
+        n0.setMatrix(m0);
+        n1.setMatrix(m1);
+        n2.setMatrix(m2);
+        n3.setMatrix(m3);
+
+        glm::vec3 position{1, 1, 1};
+        glm::vec3 point{1, 2, 3};
+        glm::vec3 front{1, 0, 0};
+        glm::vec3 up{0, 1, 0};
+
+        c0.setMode(CameraMode::LOOK_AT_POINT);
+        c0.setProjMode(ProjectionMode::PERSPECTIVE);
+
+        c0.setUp(up);
+        c0.lookAt(front);
+        c0.setPos(position);
+
+        //      n0
+        //      n1
+        //  n2      n3
+        //          c0
+        n0.link(&n1);
+        n1.link(&n2);
+        n1.link(&n3);
+        n3.link(&c0);
+
+        c0.update();
+
+        ASSERT_EQ(c0.getRenderMatrix(), glm::mat4{c0.getMatrix() * glm::inverse(m0 * m1 * m3)});
     }
 }
