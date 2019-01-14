@@ -101,7 +101,6 @@ namespace {
 		TunaGE::free();
 
 		delete c;
-		delete root;
 		delete pixels;
 	}
 

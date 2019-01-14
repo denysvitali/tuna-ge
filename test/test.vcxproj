@@ -36,6 +36,7 @@
     <ClCompile Include="GeTest.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NodeTest.cpp" />
+    <ClCompile Include="OvoScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\tuna-ge.vcxproj">

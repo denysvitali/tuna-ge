@@ -97,10 +97,7 @@ namespace tunage {
 
         static bool glutInitAlreadyCalled;
 
-        static std::vector<Texture*> allocatedTextures;
-        static std::vector<Mesh*> allocatedMeshes;
-        static std::vector<Light*> allocatedLights;
-        static std::vector<Material*> allocatedMaterials;
+        static std::vector<Object*> allocatedObjects;
 
     };
 }
