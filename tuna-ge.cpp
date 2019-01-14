@@ -22,6 +22,10 @@
 
 #include <FreeImage.h>
 
+
+// Save Image during renderSingleFrame in a temp dir (in order to generate expected test results)
+#define SAVE_IMAGE 1
+
 // Windows related shit:
 /*
  *  There is nothing remotely unsafe about fopen(), but a few people at MS seem to have lost their collective marbles
@@ -56,22 +60,25 @@ bool TunaGE::displayWindow = true;
 int TunaGE::windowId = -1;
 List TunaGE::renderList = List{ "render list" };
 //	Screen size
-int TunaGE::screen_w = 0;
-int TunaGE::screen_h = 0;
+int TunaGE::screen_w = 100;
+int TunaGE::screen_h = 100;
+
+bool TunaGE::glutInitAlreadyCalled = false;
 
 void TunaGE::init() {
 	std::cout << "TunaGE::init()" << std::endl;
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	TunaGE::screen_h = 100;
-	TunaGE::screen_w = 100;
-	glutInitWindowPosition(TunaGE::screen_w, TunaGE::screen_h);
 
+	TunaGE::setWindowSize(TunaGE::screen_w, TunaGE::screen_h);
 
-	// FreeGLUT can parse command-line params, in case:
-	int argc = 1;
-	char* argv[1] = {(char*) "Tuna"};
-	glutInit(&argc, argv);
+	if(!glutInitAlreadyCalled) {
+		// FreeGLUT can parse command-line params, in case:
+		int argc = 1;
+		char* argv[1] = {(char*) "Tuna"};
+		glutInit(&argc, argv);
+		glutInitAlreadyCalled = true;
+	}
 
 
 	// Set some optional flags:
@@ -82,7 +89,9 @@ void TunaGE::init() {
 }
 
 void TunaGE::initGlut() {
-	//	Set callback functions:
+	glutSetWindow(TunaGE::windowId);
+
+	// Set callback functions:
 	glutMotionFunc(motion_callback);
 	glutMouseFunc(mouse_callback);
 	glutDisplayFunc(TunaGE::displayCB);
@@ -90,7 +99,7 @@ void TunaGE::initGlut() {
 	glutSpecialFunc(special_callback);
 	glutKeyboardFunc(keyboard_callback);
 
-	//	FreeGLUT default settings
+	// FreeGLUT default settings
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_LIGHTING);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
@@ -156,18 +165,18 @@ void TunaGE::displayCB() {
 
 	TunaGE::renderList.render();
 
-	//	Keep me as last rendering item
+	// Keep me as last rendering item
 	if (TunaGE::debug) {
 		RGBColor color = RGBColor::getColor("#fafafa");
 
-		/*renderString(10, 10, GLUT_BITMAP_9_BY_15, color, TunaGE::version());
+		renderString(10, 10, GLUT_BITMAP_9_BY_15, color, String{TunaGE::version()});
 
 		std::stringstream ss;
 
 		Camera* cam = TunaGE::getCurrentCamera();
 
 		glm::vec3 cp = cam->getPos();
-		ss << cam->getName() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
+		ss << cam->getName().data() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
 		glm::vec3 point;
 		switch (cam->getMode()) {
 		case LOOK_AT_POINT:
@@ -182,11 +191,10 @@ void TunaGE::displayCB() {
 
 		ss << " W: " << TunaGE::screen_w << "x" << TunaGE::screen_h;
 
-		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, ss.str());
-			*/
+		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, String{ss.str().data()});
 	}
 
-	if (TunaGE::displayWindow) {
+	if (TunaGE::windowId != -1) {
 		glutPostWindowRedisplay(windowId);
 		glutSwapBuffers();
 	}
@@ -229,7 +237,7 @@ void TunaGE::setSpecialCallback(void(*special_callback)(int, int, int)) {
 }
 
 //	Renders a string on screen with position, color and font specified
-void TunaGE::renderString(float x, float y, void* font, RGBColor& color, const std::string string) {
+void TunaGE::renderString(float x, float y, void* font, RGBColor& color, String string) {
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
@@ -244,7 +252,7 @@ void TunaGE::renderString(float x, float y, void* font, RGBColor& color, const s
 	glRasterPos2f(x, y);
 	glColor3f(color.r(), color.g(), color.b());
 
-	for (char c : string) {
+	for (char c : std::string(string.data())) {
 		glutBitmapCharacter(font, c);
 	}
 
@@ -305,16 +313,21 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 
 	TunaGE::reshapeCB(width, height);
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glReadBuffer(GL_FRONT);
 
 	bool debug = TunaGE::debug;
 
+	/*
+	 * Temporarily change debug value to FALSE, because the commit ID shown on the
+	 * bottom left corner, whilst running in DEV mode, might affect the test result
+	 * (the resulting bitmap changes if the commit SHA1 changes)
+	 */
 	TunaGE::debug = false;
 
 	TunaGE::displayCB();
 
-	FIBITMAP* dib = FreeImage_Allocate(width, height, 24);
+	auto dib = FreeImage_Allocate(width, height, 24);
 	int bpp = FreeImage_GetBPP(dib);
 	int Bpp = bpp / 8;
 
@@ -331,7 +344,18 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 		}
 	}
 
-	//FreeImage_Save(FIF_BMP, dib, "/tmp/out.bmp");
+#ifdef SAVE_IMAGE
+#ifdef _WINDOWS
+	std::cout << getenv("TEMP") << std::endl;
+	std::stringstream ss;
+	ss << getenv("TEMP") << "/out.bmp";
+	std::cout << "Output file: " << ss.str() << std::endl;
+	FreeImage_Save(FIF_BMP, dib, ss.str().data());
+#else
+	FreeImage_Save(FIF_BMP, dib, "/tmp/out.bmp");
+#endif
+
+#endif
 	std::free(seed);
 
 	TunaGE::debug = debug;
@@ -355,7 +379,6 @@ String TunaGE::version() {
 	}
 
 	std::string str = ss.str();
-
 	return String{ss.str().data()};
 }
 
@@ -930,6 +953,26 @@ Node* TunaGE::loadOVO(const char* path) {
 
 	root->setAllMaterials(materials);
 	return root;
+}
+
+void TunaGE::setWindowSize(int width, int height) {
+	screen_w = width;
+	screen_h = height;
+
+	glViewport(0, 0, width, height);
+	if(TunaGE::windowId != -1) {
+		glutReshapeWindow(width, height);
+		glutMainLoopEvent();
+	} else {
+		if(!glutInitAlreadyCalled) {
+			return;
+		} else {
+			glutDestroyWindow(TunaGE::windowId);
+			TunaGE::windowId = glutCreateWindow("Tuna");
+			glutInitWindowSize(width, height);
+			glutSetWindow(TunaGE::windowId);
+		}
+	}
 }
 
 

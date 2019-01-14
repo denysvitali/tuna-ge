@@ -10,7 +10,7 @@ namespace tunage {
 	class LIB_API Camera : public Node{
 	public:
 		explicit Camera(const char* name) : Node{name} {}
-		explicit Camera(const char* name, CameraMode mode): Node{std::move(name)}, mode{mode} {}
+		explicit Camera(const char* name, CameraMode mode): Node{name}, mode{mode} {}
 
 		//	Camera render matrix methods
 		glm::mat4 getRenderMatrix() const override;

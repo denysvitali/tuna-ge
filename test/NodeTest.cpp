@@ -88,6 +88,24 @@ namespace {
         ASSERT_EQ(m, n.getMatrix());
     }
 
+    TEST(NodeTest, node_linking){
+        Node n{"Node 1"};
+        Node n2{"Node 2"};
+
+        n.link(&n2);
+        ASSERT_EQ(n.getChildren()[0], &n2);
+    }
+
+    TEST(NodeTest, node_unlinking){
+        Node n{"Node 1"};
+        Node n2{"Node 2"};
+
+        n.link(&n2);
+        ASSERT_EQ(1, n.getChildren().size());
+        n2.unlink();
+        ASSERT_EQ(0, n.getChildren().size());
+    }
+
     TEST(NodeTest, node_render) {
         Node n{"Node 1"};
         ASSERT_THROW(n.render(), std::runtime_error);
