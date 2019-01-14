@@ -63,6 +63,11 @@ List TunaGE::renderList = List{ "render list" };
 int TunaGE::screen_w = 100;
 int TunaGE::screen_h = 100;
 
+auto TunaGE::allocatedTextures = std::vector<Texture*>{};
+auto TunaGE::allocatedMeshes = std::vector<Mesh*>{};
+auto TunaGE::allocatedLights = std::vector<Light*>{};
+auto TunaGE::allocatedMaterials = std::vector<Material*>{};
+
 bool TunaGE::glutInitAlreadyCalled = false;
 
 void TunaGE::init() {
@@ -118,15 +123,27 @@ void TunaGE::loop() {
 
 //	Destroys all the elements of the scene (if any) and all the elements used in the list for additional features
 bool TunaGE::free() {
-
-	if (renderList.getSceneRoot() != nullptr) {
-		for (auto mat : renderList.getSceneRoot()->getAllMaterials()) {
-			delete mat;
-		}
-		delete renderList.getSceneRoot();
-	}
 	renderList.clearRenderElements();
 	renderList.clearCameras();
+
+	delete TunaGE::renderList.getSceneRoot();
+
+	for(auto t : allocatedTextures){
+		delete t;
+	}
+
+	for(auto m : allocatedMeshes){
+		delete m;
+	}
+
+	for(auto l : allocatedLights){
+		delete l;
+	}
+
+	for(auto m : allocatedMaterials){
+		delete m;
+	}
+
 	return true;
 }
 
@@ -210,8 +227,11 @@ void TunaGE::reshapeCB(int w, int h) {
 	glViewport(0, 0, w, h);
 	TunaGE::screen_w = w;
 	TunaGE::screen_h = h;
-	TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
-	TunaGE::getCurrentCamera()->loadProjectionMatrix();
+
+	if(TunaGE::getCurrentCamera() != nullptr){
+		TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
+		TunaGE::getCurrentCamera()->loadProjectionMatrix();
+	}
 
 	if (windowId != -1) {
 		glutPostWindowRedisplay(windowId);
@@ -282,6 +302,10 @@ int TunaGE::getScreenW() {
 
 //	Returns the current camera used for rendering
 Camera* TunaGE::getCurrentCamera() {
+	if(renderList.getRenderCameras().size() == 0){
+		return nullptr;
+	}
+
 	return TunaGE::renderList.getRenderCameras().front();
 }
 
@@ -406,6 +430,7 @@ Node* TunaGE::loadOVO(const char* path) {
 	// Create default materials
 
 	Material* nullMaterial = new Material{};
+	allocatedMaterials.push_back(nullMaterial);
 	nullMaterial->setName("[none]");
 	mats["[none]"] = nullMaterial;
 
@@ -442,6 +467,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 		case OvObject::Type::NODE: {
 			Node* node = new Node();
+
 			if (root == nullptr) root = node;
 
 			while (!nodeStack.empty()) {
@@ -488,6 +514,7 @@ Node* TunaGE::loadOVO(const char* path) {
 		case OvObject::Type::MATERIAL: {
 
 			Material* mat = new Material();
+			allocatedMaterials.push_back(mat);
 
 			// Material name:
 			char materialName[FILENAME_MAX];
@@ -530,6 +557,7 @@ Node* TunaGE::loadOVO(const char* path) {
 			strcpy_s(textureName, FILENAME_MAX, data + position);
 			if (std::string(textureName) != "[none]") {
 				Texture* texture = new Texture(textureName);
+				allocatedTextures.push_back(texture);
 #if _WINDOWS
 				std::stringstream ss;
 				ss << "../tuna-ge/assets/textures/" << textureName;
@@ -570,6 +598,7 @@ Node* TunaGE::loadOVO(const char* path) {
 		case OvObject::Type::SKINNED: {
 
 			Mesh* mesh = new Mesh();
+			allocatedMeshes.push_back(mesh);
 
 			while (!nodeStack.empty()) {
 				Node* parent = nodeStack.top();
@@ -783,7 +812,7 @@ Node* TunaGE::loadOVO(const char* path) {
 		case OvObject::Type::LIGHT: {
 
 			Light* light = new Light();
-
+			allocatedLights.push_back(light);
 
 			while (!nodeStack.empty()) {
 				Node* parent = nodeStack.top();

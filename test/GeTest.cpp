@@ -5,9 +5,12 @@
 
 #include "../tuna-ge.h"
 #include "../structure/utils/CurrentDir.h"
+#include "utils/ImageComparator.h"
 
 
 using namespace tunage;
+using namespace testing_utils;
+
 namespace {
 
 class GeTest : public ::testing::Test {
@@ -69,8 +72,8 @@ class GeTest : public ::testing::Test {
 
     	TunaGE::init();
 
-		Camera* camera1 = new Camera{"camera 1"};
-		Camera* camera2 = new Camera{"camera 2"};
+		auto* camera1 = new Camera{"camera 1"};
+		auto* camera2 = new Camera{"camera 2"};
 
 		camera1->setPos(glm::vec3(0, -7, 0));
 		ASSERT_EQ(glm::vec3(0, -7, 0), camera1->getPos());
@@ -192,26 +195,7 @@ class GeTest : public ::testing::Test {
 
 		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
 
-		int r_w = FreeImage_GetWidth(rendered_bmp);
-		int r_h = FreeImage_GetHeight(rendered_bmp);
-		int r_bpp = FreeImage_GetBPP(rendered_bmp);
-
-		int e_w = FreeImage_GetWidth(bmp);
-		int e_h = FreeImage_GetHeight(bmp);
-		int e_bpp = FreeImage_GetBPP(bmp);
-
-		ASSERT_EQ(e_w, r_w);
-		ASSERT_EQ(e_h, r_h);
-		ASSERT_EQ(e_bpp, r_bpp);
-
-		for(int i=0; i<e_h; i++){
-			BYTE* sl1 = FreeImage_GetScanLine(bmp, i);
-			BYTE* sl2 = FreeImage_GetScanLine(rendered_bmp, i);
-
-			for(int j=0; j<e_w; j++){
-				ASSERT_EQ(sl1[j], sl2[j]);
-			}
-		}
+		ImageComparator::compare(bmp, rendered_bmp);
 		
 		FreeImage_Unload(rendered_bmp);
 		FreeImage_Unload(bmp);
@@ -220,6 +204,8 @@ class GeTest : public ::testing::Test {
 
 		delete camera1;
 		delete camera2;
+
+		TunaGE::free();
     }
 
 }

@@ -61,15 +61,17 @@ void Texture::loadFromFile(const char* path) {
 		format = FIF_DDS;
 	}
 
-	FIBITMAP* bitmap = FreeImage_Load(format, path, 0);
-	this->bmp_h = FreeImage_GetHeight(bitmap);
-	this->bmp_w = FreeImage_GetWidth(bitmap);
+	FIBITMAP* fibmp = FreeImage_Load(format, path, 0);
+	this->bmp_h = FreeImage_GetHeight(fibmp);
+	this->bmp_w = FreeImage_GetWidth(fibmp);
 
 	int size = sizeof(BYTE) * 32/8 * bmp_w * bmp_h;
-	this->bitmap = malloc(size);
-	memcpy(this->bitmap, FreeImage_GetBits(FreeImage_ConvertTo32Bits(bitmap)), static_cast<size_t>(size));
+	this->bitmap = malloc(static_cast<size_t>(size));
+	FIBITMAP* b32 = FreeImage_ConvertTo32Bits(fibmp);
+	memcpy(this->bitmap, FreeImage_GetBits(b32), static_cast<size_t>(size));
 
-	FreeImage_Unload(bitmap);
+	FreeImage_Unload(b32);
+	FreeImage_Unload(fibmp);
 }
 
 void Texture::loadTexture(void* bitmap) {
