@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../structure/node/Node.h"
+#include <tuna-ge.h>
 
 using namespace tunage;
 namespace {

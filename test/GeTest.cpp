@@ -1,8 +1,7 @@
-#include "../stdafx.h"
-#include <gtest/gtest.h>
 #include <iomanip>
 
 #include <FreeImage.h>
+#include <gtest/gtest.h>
 
 #include "../tuna-ge.h"
 #include "../structure/utils/CurrentDir.h"
@@ -40,6 +39,21 @@ class GeTest : public ::testing::Test {
         // Objects declared here can be used by all tests in the test case for Foo.
     };
 
+	TEST(GeTest, interface_test) {
+		std::stringstream ss;
+		ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
+
+		char* version = TunaGE::version();
+		std::string ver = std::string(version);
+
+		// TODO: Check
+		//free(version);
+
+		std::string ourver = ss.str();
+
+		ASSERT_TRUE(strncmp(ver.data(), ourver.data(), ourver.size()) == 0);
+	}
+
     TEST(GeTest, scene_setup){
 
 		char dir[FILENAME_MAX];
@@ -58,32 +72,32 @@ class GeTest : public ::testing::Test {
     	TunaGE::setDisplayWindow(true);
 		TunaGE::init();
 
-		Camera camera1{"camera 1"};
-		Camera camera2{"camera 2"};
+		Camera* camera1 = new Camera{"camera 1"};
+		Camera* camera2 = new Camera{"camera 2"};
 
-		camera1.setPos(glm::vec3(0.1, -7, 0.1));
-		ASSERT_EQ(glm::vec3(0.1, -7, 0.1), camera1.getPos());
+		camera1->setPos(glm::vec3(0.1, -7, 0.1));
+		ASSERT_EQ(glm::vec3(0.1, -7, 0.1), camera1->getPos());
 
-		camera1.setUp(glm::vec3(0.0f, -1.0f, 0.0f));
-		ASSERT_EQ(glm::vec3(0.0f, -1.0f, 0.0f), camera1.getUp());
+		camera1->setUp(glm::vec3(0.0f, -1.0f, 0.0f));
+		ASSERT_EQ(glm::vec3(0.0f, -1.0f, 0.0f), camera1->getUp());
 
-		camera1.lookAt(glm::vec3(0.0, -10, 0));
-		ASSERT_EQ(glm::vec3(0.0, -10, 0), camera1.getLookAtPoint());
+		camera1->lookAt(glm::vec3(0.0, -10, 0));
+		ASSERT_EQ(glm::vec3(0.0, -10, 0), camera1->getLookAtPoint());
 
-		camera1.setMode(CameraMode::LOOK_AT_POINT);
-		ASSERT_EQ(CameraMode::LOOK_AT_POINT, camera1.getMode());
+		camera1->setMode(CameraMode::LOOK_AT_POINT);
+		ASSERT_EQ(CameraMode::LOOK_AT_POINT, camera1->getMode());
 
-		camera2.setPos(glm::vec3(1.0, -5, 0));
-		ASSERT_EQ(glm::vec3(1.0, -5, 0), camera2.getPos());
+		camera2->setPos(glm::vec3(1.0, -5, 0));
+		ASSERT_EQ(glm::vec3(1.0, -5, 0), camera2->getPos());
 
-		camera2.lookAt(glm::vec3(0, -10, 0));
-		ASSERT_EQ(glm::vec3(0, -10, 0), camera2.getLookAtPoint());
+		camera2->lookAt(glm::vec3(0, -10, 0));
+		ASSERT_EQ(glm::vec3(0, -10, 0), camera2->getLookAtPoint());
 
-		camera2.setUp(glm::vec3(0.0f, 1.0f, 0.0f));
-		ASSERT_EQ(glm::vec3(0, 1.0, 0.0), camera2.getUp());
+		camera2->setUp(glm::vec3(0.0f, 1.0f, 0.0f));
+		ASSERT_EQ(glm::vec3(0, 1.0, 0.0), camera2->getUp());
 
 		Mesh mesh{ "plane" };
-		ASSERT_EQ("plane", mesh.getName());
+		ASSERT_EQ(std::string("plane"), std::string(mesh.getName()));
 
 
 		Material material{};
@@ -100,7 +114,7 @@ class GeTest : public ::testing::Test {
 		ASSERT_EQ(glm::vec3(0.5f, 0.5f, 0.5f), material.getDiffuse());
 
 		Texture tex{"a bad time"};
-		ASSERT_EQ("a bad time", tex.getName());
+		ASSERT_EQ(std::string("a bad time"), std::string(tex.getName()));
 
 		std::cerr << "Hello :)" << std::endl;
 
@@ -141,8 +155,8 @@ class GeTest : public ::testing::Test {
 
 		Node root{"root"};
 		root.link(&mesh);
-		root.link(&camera1);
-		root.link(&camera2);
+		root.link(camera1);
+		root.link(camera2);
 
 		Light light{ "Light 1" };
 		light.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.2f, 0.0f)));
@@ -206,6 +220,9 @@ class GeTest : public ::testing::Test {
 		FreeImage_Unload(bmp);
 
 		delete pixels;
+
+		delete camera1;
+		delete camera2;
     }
 
 }

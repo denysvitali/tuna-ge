@@ -8,7 +8,7 @@ namespace tunage {
 	public:
 		~Texture();
 		Texture() : Object{}{}
-		Texture(std::string name) : Object{ name }{}
+		Texture(const char* name) : Object{ name }{}
 		void render() override;
 		void loadFromFile(std::string path);
 		void loadTexture(void* bitmap);

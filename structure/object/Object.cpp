@@ -12,7 +12,7 @@ Object::Object() {
 	idGenCount++;
 }
 
-Object::Object(std::string name) : m_name{std::move(name)} {
+Object::Object(const char* name) : m_name{name} {
 	m_id = idGenCount;
 	idGenCount++;
 }
@@ -21,10 +21,10 @@ int Object::getId() {
 	return m_id;
 }
 
-std::string Object::getName() {
-	return m_name;
+char* Object::getName() {
+	return m_name.data();
 }
 
-void Object::setName(std::string newName) {
-	m_name = std::move(newName);
+void Object::setName(const char* newName) {
+	m_name = newName;
 }

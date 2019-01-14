@@ -14,7 +14,7 @@ namespace tunage {
 
 	public:
 		List() : Object() {}
-	    List(std::string name) : Object(name) {};
+	    List(const char* name) : Object(name) {};
 		void pass(Node* element);
 		void render() override;
 		void setCameraMatrix(glm::mat4 cameraMatrix);

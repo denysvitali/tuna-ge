@@ -15,7 +15,7 @@ namespace tunage {
 		virtual ~Node();
 		Node() : Object() {}
 
-		Node(std::string name) : Object(name) {};
+		explicit Node(const char* name) : Object(name) {};
 
 		void render() override;
 
@@ -45,14 +45,14 @@ namespace tunage {
 
 		Node* getSceneElementByName(const char* name);
 
-		void setAllMaterials(std::map<const std::string, Material*> allMaterials);
+		void setAllMaterials(std::vector<Material*> allMaterials);
 
-		std::map<const std::string, Material*> getAllMaterials() const;
+		std::vector<Material*> getAllMaterials() const;
 
 	private:
 		void setParent(Node *parent);
 		std::vector<Node*> m_hierarchy;
-		std::map<const std::string, Material*> allMaterials;
+		std::map<std::string, Material*> allMaterials;
 		Node *m_parent = nullptr;
 		glm::mat4 m_matrix = glm::mat4(1.0f);
 		bool flipScene = false;

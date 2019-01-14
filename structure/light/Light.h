@@ -6,7 +6,7 @@ namespace tunage {
     class LIB_API Light : public Node{
     public:
     	explicit Light() : Node{} {};
-		explicit Light(std::string name) : Node{ name }{}
+		explicit Light(const char* name) : Node{ name }{}
 		void render() override;
 		void render(glm::mat4 pos, Material* mat) override;
 		void setLightAmbient(glm::vec3 lightAmbient);

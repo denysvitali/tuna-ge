@@ -27,7 +27,7 @@ namespace tunage {
 		
 		//Methods//
 		//Main methods
-		static TunaGE init();
+		static void init();
 		static Node* loadOVO(const char* path);
 		static void loop();
 		static bool free();
@@ -56,7 +56,7 @@ namespace tunage {
 
 		//Debugging and Test methods
 		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
-		static const std::string version();
+		static char* version();
 
 		//Fields//
 		static List renderList;

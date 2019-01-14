@@ -9,8 +9,8 @@
 namespace tunage {
 	class LIB_API Camera : public Node{
 	public:
-		explicit Camera(std::string name) : Node{name} {}
-		explicit Camera(std::string name, CameraMode mode): Node{name}, mode{mode} {}
+		explicit Camera(const char* name) : Node{name} {}
+		explicit Camera(const char* name, CameraMode mode): Node{std::move(name)}, mode{mode} {}
 
 		void setMode(CameraMode mode);
 		CameraMode getMode();

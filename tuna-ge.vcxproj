@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;TUNAGE_EXPORTS;_CRT_SECURE_NO_WARNINGS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;TUNAGE_EXPORTS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -109,7 +109,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINDOWS;TUNAGE_EXPORTS;_CRT_SECURE_NO_WARNINGS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;TUNAGE_EXPORTS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -184,8 +184,6 @@
     <ClCompile Include="structure\object\Object.cpp" />
     <ClCompile Include="structure\texture\Texture.cpp" />
     <ClCompile Include="structure\vertex\Vertex.cpp" />
-    <ClCompile Include="test\GeTest.cpp" />
-    <ClCompile Include="test\NodeTest.cpp" />
     <ClCompile Include="tuna-ge.cpp" />
     <ClCompile Include="version.cc" />
     <ClCompile Include="version.cpp" />
@@ -215,8 +213,6 @@
     <Import Project="$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" />
     <Import Project="$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
     <Import Project="$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" />
-    <Import Project="$(SolutionDir)denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets" Condition="Exists('$(SolutionDir)denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets')" />
-    <Import Project="..\packages\denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -229,7 +225,5 @@
     <Error Condition="!Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets'))" />
-    <Error Condition="!Exists('$(SolutionDir)packages\denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets'))" />
-    <Error Condition="!Exists('..\packages\denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\denysvitali.gtest.1.8.1-2edadce\build\native\denysvitali.gtest.targets'))" />
   </Target>
 </Project>

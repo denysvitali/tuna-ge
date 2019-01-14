@@ -1,21 +1,22 @@
+#include <utility>
+
 #include <stdexcept>
 #include "Node.h"
 
 namespace tunage {
 
-	Node::~Node()
-	{
+	Node::~Node() {
 		for (auto node : m_hierarchy) {
 			//delete node;
 		}
 		std::cout << "distrutto id: " << getId() << std::endl;
 	}
+
 	void Node::render() {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
-	void Node::render(glm::mat4 pos, Material* mat)
-	{
+	void Node::render(glm::mat4 pos, Material* mat) {
 		throw std::runtime_error("render() called on a pure Node object");
 	}
 
@@ -23,13 +24,11 @@ namespace tunage {
 		m_matrix = matrix;
 	}
 
-	void Node::setFlipScene(bool flipScene)
-	{
+	void Node::setFlipScene(bool flipScene) {
 		this->flipScene = flipScene;
 	}
 
-	bool Node::getFlipScene() const
-	{
+	bool Node::getFlipScene() const {
 		return flipScene;
 	}
 
@@ -74,8 +73,7 @@ namespace tunage {
 		m_hierarchy.clear();
 	}
 
-	Node * Node::getSceneElementByName(const char* name)
-	{
+	Node* Node::getSceneElementByName(const char* name) {
 		if (this->getName() == name) return this;
 
 		for (Node* node : m_hierarchy) {
@@ -99,13 +97,17 @@ namespace tunage {
 		return m_matrix;
 	}
 
-	void Node::setAllMaterials(std::map<const std::string, Material*> allMaterials)
-	{
-		this->allMaterials = allMaterials;
+	void Node::setAllMaterials(std::vector<Material*> allMaterials) {
+		for(auto* material : allMaterials){
+			this->allMaterials[material->getName()] = material;
+		}
 	}
 
-	std::map<const std::string, Material*> Node::getAllMaterials() const
-	{
-		return allMaterials;
+	std::vector<Material*> Node::getAllMaterials() const {
+		std::vector<Material*> materials{};
+		for(const auto &material : allMaterials){
+			materials.push_back(material.second);
+		}
+		return materials;
 	}
 };
