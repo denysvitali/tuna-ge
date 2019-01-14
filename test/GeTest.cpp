@@ -214,6 +214,7 @@ class GeTest : public ::testing::Test {
 				ASSERT_EQ(sl1[j], sl2[j]);
 			}
 		}
+		
 		FreeImage_Unload(rendered_bmp);
 		FreeImage_Unload(bmp);
 
