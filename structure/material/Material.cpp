@@ -5,7 +5,6 @@
 using namespace tunage;
 
 Material::~Material() {
-	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
 void Material::render() {

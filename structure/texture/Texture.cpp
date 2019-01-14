@@ -18,7 +18,6 @@ using namespace tunage;
 Texture::~Texture() {
 	glDeleteTextures(1, &texId);
 	free(bitmap);
-	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
 //	Binds the texture
