@@ -51,13 +51,18 @@ namespace {
 
 		std::string path;
 		FIBITMAP* bmp = nullptr;
-#ifdef CI
-		std::cerr << "Running in CI" << std::endl;
-		bmp = FreeImage_Load(FIF_BMP, "../test/expected_results/2.bmp");
-		path = "../../assets/scenes/gauntletTex.ovo";
+#ifdef _WINDOWS
+		bmp = FreeImage_Load(FIF_BMP, "../tuna-ge/test/expected_results/2.bmp");
+		path = "../tuna-ge/assets/scenes/gauntletTex.ovo";
 #else
-		bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/2.bmp");
-		path = "../../tuna-ge/assets/scenes/gauntletTex.ovo";
+	#ifdef CI
+			std::cerr << "Running in CI" << std::endl;
+			bmp = FreeImage_Load(FIF_BMP, "../test/expected_results/2.bmp");
+			path = "../../assets/scenes/gauntletTex.ovo";
+	#else
+			bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/2.bmp");
+			path = "../../tuna-ge/assets/scenes/gauntletTex.ovo";
+	#endif
 #endif
 
 		ASSERT_NE(nullptr, bmp);
@@ -101,7 +106,6 @@ namespace {
 		TunaGE::free();
 
 		delete c;
-		delete root;
 		delete pixels;
 	}
 

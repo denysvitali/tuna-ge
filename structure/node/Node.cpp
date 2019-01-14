@@ -6,10 +6,6 @@
 namespace tunage {
 
 	Node::~Node() {
-		for (auto node : m_hierarchy) {
-			//delete node;
-		}
-		std::cout << "distrutto id: " << getId() << std::endl;
 	}
 
 	void Node::render() {
