@@ -107,7 +107,7 @@ IF(FREEIMAGE_FOUND)
     TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})
 ENDIF(FREEIMAGE_FOUND)
 
-add_executable(Test test/utils/ImageComparator.cpp test/GeTest.cpp test/NodeTest.cpp test/OvoScene.cpp test/Main.cpp)
+add_executable(Test test/utils/ImageComparator.cpp test/GeTest.cpp test/CameraTest.cpp test/NodeTest.cpp test/OvoScene.cpp test/Main.cpp)
 target_link_libraries(Test tuna_ge ${GTEST_BOTH_LIBRARIES})
 add_test(Test Test)
 
