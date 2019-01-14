@@ -5,6 +5,7 @@
 using namespace tunage;
 
 Material::~Material() {
+	delete texture;
 	std::cout << "distrutto id: " << getId() << std::endl;
 }
 
