@@ -1,6 +1,7 @@
 #pragma once
 #include "../color/RGBColor.h"
 #include "../node/Node.h"
+#include "../material/Material.h"
 
 namespace tunage {
     class LIB_API Light : public Node{

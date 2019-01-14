@@ -35,7 +35,7 @@ class NodeTest : public ::testing::Test {
 
     TEST(NodeTest, node_creation){
         Node node{"Node 1"};
-        ASSERT_EQ("Node 1", node.getName());
+        ASSERT_STREQ("Node 1", node.getName().data());
     }
 
     TEST(NodeTest, node_id){

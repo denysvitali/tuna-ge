@@ -8,5 +8,5 @@
 	#define LIB_API __declspec(dllimport)
 #endif
 #else // Under Linux
-	#define LIB_API  // Dummy declaration
+	#define LIB_API
 #endif

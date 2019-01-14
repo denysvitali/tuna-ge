@@ -10,7 +10,7 @@ namespace tunage {
 		Texture() : Object{}{}
 		Texture(const char* name) : Object{ name }{}
 		void render() override;
-		void loadFromFile(std::string path);
+		void loadFromFile(const char* path);
 		void loadTexture(void* bitmap);
 		void setAnisotropic(bool anisotropic);
 		void setMipmap(bool useMipmaps);

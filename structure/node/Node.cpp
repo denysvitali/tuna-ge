@@ -74,7 +74,7 @@ namespace tunage {
 	}
 
 	Node* Node::getSceneElementByName(const char* name) {
-		if (this->getName() == name) return this;
+		if (this->getName() == String{name}) return this;
 
 		for (Node* node : m_hierarchy) {
 			Node* returnOfBranch = node->getSceneElementByName(name);
@@ -99,7 +99,7 @@ namespace tunage {
 
 	void Node::setAllMaterials(std::vector<Material*> allMaterials) {
 		for(auto* material : allMaterials){
-			this->allMaterials[material->getName()] = material;
+			this->allMaterials[std::string{material->getName().data()}] = material;
 		}
 	}
 

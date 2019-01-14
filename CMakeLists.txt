@@ -84,6 +84,7 @@ find_program(VALGRIND "valgrind")
 
 
 add_library(tuna_ge STATIC tuna-ge.cpp
+        structure/string/String.cpp
         structure/color/RGBColor.cpp
         structure/light/Light.cpp
         structure/mesh/Mesh.cpp
