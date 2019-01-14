@@ -341,6 +341,7 @@ ASALocalRun/
 # End of https://www.gitignore.io/api/visualstudio
 
 cmake-build-debug/
+cmake-build-release/
 .idea/
 version.cc
 Thumbs.db

@@ -13,7 +13,8 @@ namespace tunage {
 	public:
 		virtual ~Node();
 		Node() : Object() {}
-		Node(std::string name) : Object(name) {};
+
+		explicit Node(const char* name) : Object(name) {};
 
 		//	Rendering methods
 		virtual void render() override;
@@ -35,8 +36,8 @@ namespace tunage {
 		glm::mat4 getMatrix() const;
 		void setFlipScene(bool flipScene);
 		bool getFlipScene() const;
-		void setAllMaterials(std::map<const std::string, Material*> allMaterials);
-		std::map<const std::string, Material*> getAllMaterials() const;
+        void setAllMaterials(std::vector<Material*> allMaterials);
+        std::vector<Material*> getAllMaterials() const;
 	private:
 		//	Scene methods
 		void setParent(Node *parent);

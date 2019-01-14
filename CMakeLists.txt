@@ -1,13 +1,20 @@
 cmake_minimum_required(VERSION 3.11)
 project(tuna_ge)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(GIT_EXECUTABLE git)
 set(CMAKE_CXX_COMPILER clang++)
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DDEBUG=1)
-    set(CMAKE_CXX_FLAGS -fsanitize=address)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+endif()
+
+if(CI MATCHES 1)
+    message("Running in CI mode")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCI=1")
+    set(CI_FLAG CI=1)
+    add_compile_options(-DCI=1)
 endif()
 
 # the commit's SHA1, and whether the building workspace was dirty or not
@@ -69,19 +76,11 @@ message("FreeImage: ${STATUS_FREEIMG}")
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_executable(NodeTest structure/object/Object.cpp structure/node/Node.cpp test/NodeTest.cpp)
-target_link_libraries(NodeTest ${GTEST_BOTH_LIBRARIES})
-
-add_test(NodeTest NodeTest)
 
 find_program(MEMORYCHECK_COMMAND valgrind)
 set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full" )
 
 find_program(VALGRIND "valgrind")
-if(VALGRIND)
-    add_custom_target(valgrind-tunage-nodetest
-            COMMAND "${VALGRIND}" --tool=memcheck --leak-check=full --show-reachable=yes --num-callers=20 --track-fds=yes $<TARGET_FILE:NodeTest>)
-endif()
 
 
 add_library(tuna_ge STATIC tuna-ge.cpp
@@ -107,9 +106,14 @@ IF(FREEIMAGE_FOUND)
     TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})
 ENDIF(FREEIMAGE_FOUND)
 
-add_executable(GeTest test/GeTest.cpp)
-target_link_libraries(GeTest tuna_ge ${GTEST_BOTH_LIBRARIES})
-add_test(GeTest GeTest)
+add_executable(Test test/Main.cpp)
+target_link_libraries(Test tuna_ge ${GTEST_BOTH_LIBRARIES})
+add_test(Test Test)
+
+if(VALGRIND)
+    add_custom_target(valgrind-tunage-nodetest
+            COMMAND "${VALGRIND}" --tool=memcheck --leak-check=full --show-reachable=yes --num-callers=20 --track-fds=yes $<TARGET_FILE:Test>)
+endif()
 
 target_sources(tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/version.hh ${CMAKE_CURRENT_BINARY_DIR}/version.cc)
 

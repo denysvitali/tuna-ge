@@ -8,7 +8,7 @@ namespace tunage {
 	public:
 		~Texture();
 		Texture() : Object{}{}
-		Texture(std::string name) : Object{ name }{}
+		Texture(const char* name) : Object{ name }{}
 
 		//	Rendering methods
 		void render() override;

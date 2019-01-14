@@ -14,7 +14,7 @@ namespace tunage {
 
 	public:
 		List() : Object() {}
-	    List(std::string name) : Object(name) {};
+	    List(const char* name) : Object(name) {};
 
 		void switchCamera();
 		Node* getSceneRoot() const;

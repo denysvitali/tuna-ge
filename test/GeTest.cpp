@@ -1,10 +1,10 @@
-#include "../stdafx.h"
-#include <gtest/gtest.h>
-#include <tuna-ge.h>
 #include <iomanip>
 
 #include <FreeImage.h>
-#include <structure/utils/CurrentDir.h>
+#include <gtest/gtest.h>
+
+#include "../tuna-ge.h"
+#include "../structure/utils/CurrentDir.h"
 
 
 using namespace tunage;
@@ -39,6 +39,21 @@ class GeTest : public ::testing::Test {
         // Objects declared here can be used by all tests in the test case for Foo.
     };
 
+	TEST(GeTest, interface_test) {
+		std::stringstream ss;
+		ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
+
+		char* version = TunaGE::version();
+		std::string ver = std::string(version);
+
+		// TODO: Check
+		//free(version);
+
+		std::string ourver = ss.str();
+
+		ASSERT_TRUE(strncmp(ver.data(), ourver.data(), ourver.size()) == 0);
+	}
+
     TEST(GeTest, scene_setup){
 
 		char dir[FILENAME_MAX];
@@ -46,59 +61,72 @@ class GeTest : public ::testing::Test {
 
 		std::cout << dir << std::endl;
 
-    	FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/1.bmp");
+#ifdef CI
+		std::cerr << "Running in CI" << std::endl;
+    	FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../test/expected_results/1.bmp");
+#else
+		FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../../tuna-ge/test/expected_results/1.bmp");
+#endif
     	ASSERT_NE(bmp, nullptr);
 
     	TunaGE::setDisplayWindow(true);
 		TunaGE::init();
 
-		Camera camera1{"camera 1"};
-		Camera camera2{"camera 2"};
+		Camera* camera1 = new Camera{"camera 1"};
+		Camera* camera2 = new Camera{"camera 2"};
 
-		camera1.setPos(glm::vec3(0.1, -7, 0.1));
-		ASSERT_EQ(glm::vec3(0.1, -7, 0.1), camera1.getPos());
+		camera1->setPos(glm::vec3(0.1, -7, 0.1));
+		ASSERT_EQ(glm::vec3(0.1, -7, 0.1), camera1->getPos());
 
-		camera1.setUp(glm::vec3(0.0f, -1.0f, 0.0f));
-		ASSERT_EQ(glm::vec3(0.0f, -1.0f, 0.0f), camera1.getUp());
+		camera1->setUp(glm::vec3(0.0f, -1.0f, 0.0f));
+		ASSERT_EQ(glm::vec3(0.0f, -1.0f, 0.0f), camera1->getUp());
 
-		camera1.lookAt(glm::vec3(0.0, -10, 0));
-		ASSERT_EQ(glm::vec3(0.0, -10, 0), camera1.getLookAtPoint());
+		camera1->lookAt(glm::vec3(0.0, -10, 0));
+		ASSERT_EQ(glm::vec3(0.0, -10, 0), camera1->getLookAtPoint());
 
-		camera1.setMode(CameraMode::LOOK_AT_POINT);
-		ASSERT_EQ(CameraMode::LOOK_AT_POINT, camera1.getMode());
+		camera1->setMode(CameraMode::LOOK_AT_POINT);
+		ASSERT_EQ(CameraMode::LOOK_AT_POINT, camera1->getMode());
 
-		camera2.setPos(glm::vec3(1.0, -5, 0));
-		ASSERT_EQ(glm::vec3(1.0, -5, 0), camera2.getPos());
+		camera2->setPos(glm::vec3(1.0, -5, 0));
+		ASSERT_EQ(glm::vec3(1.0, -5, 0), camera2->getPos());
 
-		camera2.lookAt(glm::vec3(0, -10, 0));
-		ASSERT_EQ(glm::vec3(0, -10, 0), camera2.getLookAtPoint());
+		camera2->lookAt(glm::vec3(0, -10, 0));
+		ASSERT_EQ(glm::vec3(0, -10, 0), camera2->getLookAtPoint());
 
-		camera2.setUp(glm::vec3(0.0f, 1.0f, 0.0f));
-		ASSERT_EQ(glm::vec3(0, 1.0, 0.0), camera2.getUp());
+		camera2->setUp(glm::vec3(0.0f, 1.0f, 0.0f));
+		ASSERT_EQ(glm::vec3(0, 1.0, 0.0), camera2->getUp());
 
 		Mesh mesh{ "plane" };
-		ASSERT_EQ("plane", mesh.getName());
+		ASSERT_EQ(std::string("plane"), std::string(mesh.getName()));
 
 
 		Material material{};
 		material.setAmbient(glm::vec3(0.0f, 0.0f, 0.0f));
-		ASSERT_EQ(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), material.getAmbient());
+		ASSERT_EQ(glm::vec3(0.0f, 0.0f, 0.0f), material.getAmbient());
 
 		material.setShininess(120);
 		ASSERT_EQ(120, material.getShininess());
 
 		material.setSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-		ASSERT_EQ(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), material.getSpecular());
+		ASSERT_EQ(glm::vec3(1.0f, 1.0f, 1.0f), material.getSpecular());
 
 		material.setDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
-		ASSERT_EQ(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), material.getDiffuse());
+		ASSERT_EQ(glm::vec3(0.5f, 0.5f, 0.5f), material.getDiffuse());
 
 		Texture tex{"a bad time"};
-		ASSERT_EQ("a bad time", tex.getName());
+		ASSERT_EQ(std::string("a bad time"), std::string(tex.getName()));
 
-#if _WINDOWS
+		std::cerr << "Hello :)" << std::endl;
+
+#ifdef _WINDOWS
 		tex.loadFromFile("../tuna-ge/assets/textures/sans.png");
+#endif
+
+#ifdef CI
+		std::cerr << "Running in CI" << std::endl;
+		tex.loadFromFile("../assets/textures/sans.png");
 #else
+		std::cerr << "Not running in CI" << std::endl;
 		tex.loadFromFile("../../tuna-ge/assets/textures/sans.png");
 #endif
 
@@ -106,7 +134,7 @@ class GeTest : public ::testing::Test {
 
 		material.setTexture(&tex);
 
-		mesh.setMaterial(material);
+		mesh.setMaterial(&material);
 		mesh.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, 0.0f)));
 
 		float width = 1;
@@ -127,8 +155,8 @@ class GeTest : public ::testing::Test {
 
 		Node root{"root"};
 		root.link(&mesh);
-		root.link(&camera1);
-		root.link(&camera2);
+		root.link(camera1);
+		root.link(camera2);
 
 		Light light{ "Light 1" };
 		light.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.2f, 0.0f)));
@@ -166,7 +194,7 @@ class GeTest : public ::testing::Test {
 
 		auto pixels = new uint8_t(w  * h * 3);
 
-		FIBITMAP* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
+		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
 
 		int r_w = FreeImage_GetWidth(rendered_bmp);
 		int r_h = FreeImage_GetHeight(rendered_bmp);
@@ -192,11 +220,9 @@ class GeTest : public ::testing::Test {
 		FreeImage_Unload(bmp);
 
 		delete pixels;
+
+		delete camera1;
+		delete camera2;
     }
 
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

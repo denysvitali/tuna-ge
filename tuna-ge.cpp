@@ -22,6 +22,18 @@
 
 #include <FreeImage.h>
 
+// Windows related shit:
+/*
+ *  There is nothing remotely unsafe about fopen(), but a few people at MS seem to have lost their collective marbles
+ *  over functions that take null-terminated strings as parameters. – anon
+ *
+ */
+#ifndef _WINDOWS
+#define fopen_s(pointer, path, mode) *pointer = fopen(path, mode)
+#define strcpy_s(dst, size, src) strncpy(dst, src, size)
+#define strncpy_s(dst, size, src, size2) strncpy(dst, src, size)
+#endif
+
 using namespace tunage;
 
 //Set default values//
@@ -47,8 +59,7 @@ List TunaGE::renderList = List{ "render list" };
 int TunaGE::screen_w = 0;
 int TunaGE::screen_h = 0;
 
-TunaGE TunaGE::init() {
-	TunaGE engine{};
+void TunaGE::init() {
 	std::cout << "TunaGE::init()" << std::endl;
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -68,9 +79,6 @@ TunaGE TunaGE::init() {
 
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
-
-
-	return engine;
 }
 
 void TunaGE::initGlut() {
@@ -104,7 +112,7 @@ bool TunaGE::free() {
 
 	if (renderList.getSceneRoot() != nullptr) {
 		for (auto mat : renderList.getSceneRoot()->getAllMaterials()) {
-			delete mat.second;
+			delete mat;
 		}
 		delete renderList.getSceneRoot();
 	}
@@ -152,7 +160,7 @@ void TunaGE::displayCB() {
 	if (TunaGE::debug) {
 		RGBColor color = RGBColor::getColor("#fafafa");
 
-		renderString(10, 10, GLUT_BITMAP_9_BY_15, color, TunaGE::version());
+		/*renderString(10, 10, GLUT_BITMAP_9_BY_15, color, TunaGE::version());
 
 		std::stringstream ss;
 
@@ -175,6 +183,7 @@ void TunaGE::displayCB() {
 		ss << " W: " << TunaGE::screen_w << "x" << TunaGE::screen_h;
 
 		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, ss.str());
+			*/
 	}
 
 	if (TunaGE::displayWindow) {
@@ -338,20 +347,27 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 }
 
 //	Returns the current version
-const std::string TunaGE::version() {
+char* TunaGE::version() {
 	std::stringstream ss{};
 	ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
 	if (!Version::GIT_SHA1.empty()) {
 		ss << "-" << Version::GIT_SHA1;
 	}
-	return ss.str();
+
+	std::string str = ss.str();
+
+	char* version = (char*) malloc(sizeof(char) * str.length() + 1);
+	strncpy_s(version, str.length() + 1, str.data(), str.length() + 1);
+
+	return version;
 }
 
 //	Load a full scene from a specified file OvO, this scene is then returned via the Root Node
 Node* TunaGE::loadOVO(const char* path) {
 
-	// Open file:
-	FILE* dat = fopen(path, "rb");
+	// Open file: 
+	FILE* dat;
+	fopen_s(&dat, path, "rb");
 	if (dat == nullptr) {
 		std::cout << "ERROR: unable to open file '" << path << "'" << std::endl;
 		return nullptr;
@@ -361,7 +377,7 @@ Node* TunaGE::loadOVO(const char* path) {
 	std::cout.precision(2);  // 2 decimals are enough
 	std::cout << std::fixed;      // Avoid scientific notation
 
-	std::map<const std::string, Material*> mats;
+	std::map<std::string, Material*> mats;
 	Node* root = nullptr;
 	std::stack<Node*> nodeStack;
 	std::map<Node*, int> nodeChildrenCount;
@@ -422,7 +438,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Node name:
 			char nodeName[FILENAME_MAX];
-			strcpy(nodeName, data + position);
+			strcpy_s(nodeName, FILENAME_MAX, data + position);
 			node->setName(nodeName);
 			position += (unsigned int)strlen(nodeName) + 1;
 
@@ -443,7 +459,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Optional target node, [none] if not used:
 			char targetName[FILENAME_MAX];
-			strcpy(targetName, data + position);
+			strcpy_s(targetName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(targetName) + 1;
 		}
 								   break;
@@ -455,7 +471,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Material name:
 			char materialName[FILENAME_MAX];
-			strcpy(materialName, data + position);
+			strcpy_s(materialName, FILENAME_MAX, data + position);
 			mat->setName(materialName);
 			position += (unsigned int)strlen(materialName) + 1;
 
@@ -491,7 +507,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Albedo texture filename, or [none] if not used:
 			char textureName[FILENAME_MAX];
-			strcpy(textureName, data + position);
+			strcpy_s(textureName, FILENAME_MAX, data + position);
 			if (std::string(textureName) != "[none]") {
 				Texture* texture = new Texture(textureName);
 #if _WINDOWS
@@ -509,22 +525,22 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Normal map filename, or [none] if not used:
 			char normalMapName[FILENAME_MAX];
-			strcpy(normalMapName, data + position);
+			strcpy_s(normalMapName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(normalMapName) + 1;
 
 			// Height map filename, or [none] if not used:
 			char heightMapName[FILENAME_MAX];
-			strcpy(heightMapName, data + position);
+			strcpy_s(heightMapName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(heightMapName) + 1;
 
 			// Roughness map filename, or [none] if not used:
 			char roughnessMapName[FILENAME_MAX];
-			strcpy(roughnessMapName, data + position);
+			strcpy_s(roughnessMapName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(roughnessMapName) + 1;
 
 			// Metalness map filename, or [none] if not used:
 			char metalnessMapName[FILENAME_MAX];
-			strcpy(metalnessMapName, data + position);
+			strcpy_s(metalnessMapName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(metalnessMapName) + 1;
 
 			mats[mat->getName()] = mat;
@@ -554,7 +570,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Mesh name:
 			char meshName[FILENAME_MAX];
-			strcpy(meshName, data + position);
+			strcpy_s(meshName, FILENAME_MAX, data + position);
 			mesh->setName(meshName);
 			position += (unsigned int)strlen(meshName) + 1;
 
@@ -575,7 +591,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Optional target node, or [none] if not used:
 			char targetName[FILENAME_MAX];
-			strcpy(targetName, data + position);
+			strcpy_s(targetName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(targetName) + 1;
 
 			// Mesh subtype (see OvMesh SUBTYPE enum):
@@ -584,16 +600,16 @@ Node* TunaGE::loadOVO(const char* path) {
 			char subtypeName[FILENAME_MAX];
 			switch ((OvMesh::Subtype) subtype) {
 			case OvMesh::Subtype::DEFAULT:
-				strcpy(subtypeName, "standard");
+				strcpy_s(subtypeName, FILENAME_MAX, "standard");
 				break;
 			case OvMesh::Subtype::NORMALMAPPED:
-				strcpy(subtypeName, "normal-mapped");
+				strcpy_s(subtypeName, FILENAME_MAX, "normal-mapped");
 				break;
 			case OvMesh::Subtype::TESSELLATED:
-				strcpy(subtypeName, "tessellated");
+				strcpy_s(subtypeName, FILENAME_MAX, "tessellated");
 				break;
 			default:
-				strcpy(subtypeName, "UNDEFINED");
+				strcpy_s(subtypeName, FILENAME_MAX, "UNDEFINED");
 			}
 			position += sizeof(unsigned char);
 
@@ -608,7 +624,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Material name, or [none] if not used:
 			char materialName[FILENAME_MAX];
-			strcpy(materialName, data + position);
+			strcpy_s(materialName, FILENAME_MAX, data + position);
 			std::string matName = std::string(materialName);
 			mesh->setMaterial(mats.find(matName)->second);
 			position += (unsigned int)strlen(materialName) + 1;
@@ -718,7 +734,7 @@ Node* TunaGE::loadOVO(const char* path) {
 				for (unsigned int c = 0; c < nrOfBones; c++) {
 					// Bone name:
 					char boneName[FILENAME_MAX];
-					strcpy(boneName, data + position);
+					strcpy_s(boneName, FILENAME_MAX, data + position);
 					position += (unsigned int)strlen(boneName) + 1;
 
 					// Initial bone pose matrix (already inverted):
@@ -763,7 +779,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Light name:
 			char lightName[FILENAME_MAX];
-			strcpy(lightName, data + position);
+			strcpy_s(lightName, FILENAME_MAX, data + position);
 			light->setName(lightName);
 			position += (unsigned int)strlen(lightName) + 1;
 
@@ -784,7 +800,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Optional target node name, or [none] if not used:
 			char targetName[FILENAME_MAX];
-			strcpy(targetName, data + position);
+			strcpy_s(targetName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(targetName) + 1;
 
 			// Light subtype (see OvLight SUBTYPE enum):
@@ -793,19 +809,19 @@ Node* TunaGE::loadOVO(const char* path) {
 			char subtypeName[FILENAME_MAX];
 			switch ((OvLight::Subtype) subtype) {
 			case OvLight::Subtype::DIRECTIONAL:
-				strcpy(subtypeName, "directional");
+				strcpy_s(subtypeName,FILENAME_MAX, "directional");
 				light->setType(0);
 				break;
 			case OvLight::Subtype::OMNI:
-				strcpy(subtypeName, "omni");
+				strcpy_s(subtypeName, FILENAME_MAX, "omni");
 				light->setType(1);
 				break;
 			case OvLight::Subtype::SPOT:
-				strcpy(subtypeName, "spot");
+				strcpy_s(subtypeName, FILENAME_MAX, "spot");
 				light->setType(2);
 				break;
 			default:
-				strcpy(subtypeName, "UNDEFINED");
+				strcpy_s(subtypeName, FILENAME_MAX, "UNDEFINED");
 				light->setType(0);
 			}
 			position += sizeof(unsigned char);
@@ -862,7 +878,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Bone name:
 			char boneName[FILENAME_MAX];
-			strcpy(boneName, data + position);
+			strcpy_s(boneName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(boneName) + 1;
 
 			// Bone matrix:
@@ -877,7 +893,7 @@ Node* TunaGE::loadOVO(const char* path) {
 
 			// Optional target node, or [none] if not used:
 			char targetName[FILENAME_MAX];
-			strcpy(targetName, data + position);
+			strcpy_s(targetName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(targetName) + 1;
 
 			// Mesh bounding box minimum corner:
@@ -906,7 +922,16 @@ Node* TunaGE::loadOVO(const char* path) {
 
 	// Done:
 	fclose(dat);
-	root->setAllMaterials(mats);
+
+	std::vector<Material*> materials{};
+	materials.reserve(mats.size());
+
+	for(const auto &mat : mats){
+		mat.second->setName(mat.first.data());
+		materials.push_back(mat.second);
+	}
+
+	root->setAllMaterials(materials);
 	return root;
 }
 

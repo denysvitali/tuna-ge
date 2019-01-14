@@ -1,6 +1,5 @@
-#include "../stdafx.h"
 #include <gtest/gtest.h>
-#include "../structure/node/Node.h"
+#include <tuna-ge.h>
 
 using namespace tunage;
 namespace {
@@ -94,9 +93,4 @@ class NodeTest : public ::testing::Test {
         ASSERT_THROW(n.render(), std::runtime_error);
     }
 
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

@@ -9,7 +9,7 @@ namespace tunage {
 	class LIB_API Mesh : public Node {
 	public:
 		Mesh() : Node{} {}
-		Mesh(std::string name) : Node{name} {}
+		Mesh(const char* name) : Node{name} {}
 
 		//	Rendering methods
 		void render() override;

@@ -13,13 +13,13 @@ namespace tunage {
 
     public:
 		Object();
-		explicit Object(std::string name);
+		explicit Object(const char* name);
 
         virtual void render() = 0;
 
         int getId();
-        std::string getName();
-        void setName(std::string newString);
+        char* getName();
+        void setName(const char* newString);
     private:
         static int idGenCount;
         int m_id;

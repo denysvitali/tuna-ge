@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
 
 using namespace tunage;
 
@@ -18,8 +19,13 @@ bool RGBColor::isHex(char c){
 RGBColor::RGBColor(float r, float g, float b) : m_r{r}, m_g{g}, m_b{b} {}
 
 RGBColor RGBColor::getColor(const char *color){
-    char* lc_color = new char[strlen(color) + 1];
-    strcpy(lc_color, color);
+	int size = strlen(color) + 1;
+    char* lc_color = new char[size];
+#ifdef _WINDOWS
+    strncpy_s(lc_color, size, color, size);
+#else
+    strncpy(lc_color, color, size);
+#endif
 
     int i = 0;
     while(lc_color[i]){
@@ -38,8 +44,11 @@ RGBColor RGBColor::getColor(const char *color){
             }
 
             char *output = new char[hexLen + 1];
-            sprintf(output, "0x%s", lc_color  + 2);
-
+#ifdef _WINDOWS
+            sprintf_s(output, hexLen + 1, "0x%s", lc_color  + 2);
+#else
+            snprintf(output, static_cast<size_t>(hexLen + 1), "0x%s", lc_color + 2);
+#endif
             int num = (int) strtol(output, nullptr, 0);
             delete[] output;
 
