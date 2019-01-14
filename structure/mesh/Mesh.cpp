@@ -1,9 +1,10 @@
 #include "Mesh.h"
 #include <GL/freeglut.h>
 
+using namespace tunage;
 
 //	Render method using the mesh render matrix and material
-void tunage::Mesh::render() {
+void Mesh::render() {
 
 	//	Render material
 	if (material != nullptr) {
@@ -22,7 +23,7 @@ void tunage::Mesh::render() {
 }
 
 //	Render method using a material and render matrix passed as parameters
-void tunage::Mesh::render(glm::mat4 pos, Material* mat) {
+void Mesh::render(glm::mat4 pos, Material* mat) {
 	//	Render material
 	if (mat != nullptr) {
 		mat->render();
@@ -38,19 +39,23 @@ void tunage::Mesh::render(glm::mat4 pos, Material* mat) {
 	glEnd();
 }
 
-void tunage::Mesh::addVertex(Vertex vertex) {
-	faces.push_back(vertex);
+void Mesh::addVertex(Vertex& vertex) {
+	faces.push_back(std::move(vertex));
 }
 
-void tunage::Mesh::setMaterial(Material* material) {
+void Mesh::setMaterial(Material* material) {
 	this->material = material;
 }
 
-tunage::Material* tunage::Mesh::getMaterial() const {
+Material* Mesh::getMaterial() const {
 	return material;
 }
 
-bool tunage::Mesh::isTransparent() {
+bool Mesh::isTransparent() {
 	return material->isTransparent();
+}
+
+Mesh::~Mesh() {
+	faces.clear();
 }
 

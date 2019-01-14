@@ -41,10 +41,10 @@ namespace tunage {
 		Material* lightMaterial;
 
 		//	Render lists
-		std::vector<Element> renderSequenceElements;
-		std::vector<Element> renderSequenceMirrored;
-		std::vector<Element> renderSequenceLights;
-		std::vector<Element> renderSequenceLightsMirrored;
-        std::vector<Camera*> renderCameras;
+		std::vector<Element> renderSequenceElements = std::vector<Element>{};
+		std::vector<Element> renderSequenceMirrored = std::vector<Element>{};
+		std::vector<Element> renderSequenceLights = std::vector<Element>{};
+		std::vector<Element> renderSequenceLightsMirrored = std::vector<Element>{};
+        std::vector<Camera*> renderCameras = std::vector<Camera*>{};
 	};
 }

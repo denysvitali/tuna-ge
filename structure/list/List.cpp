@@ -67,34 +67,38 @@ void tunage::List::render() {
 	if (!renderCameras.empty()) {
         renderCameras.front()->update();
         cameraMatrix = renderCameras.front()->getRenderMatrix();
+    } else {
+		// Create a default camera
+		auto camera = new Camera{"Default Camera"};
+		renderCameras.push_back(camera);
+	}
 
-        //	Mirrored elements needs to be rendered ClockWise
-        glFrontFace(GL_CW);
-        int countLight = 0;
-        for (auto &i : renderSequenceLightsMirrored) {
-            //	In case of mirrored lights we need to set the light number different from the normal lights.
-            //	This puts a limitation of 4 lights in a mirrored scenes.
-            auto *light = dynamic_cast<Light *>(&(*i.getNode()));
-            light->setLight(static_cast<int>(renderSequenceLights.size() + countLight));
-            countLight++;
-            light->enable();
-            (*i.getNode()).render(cameraMatrix * i.getMatrix(), i.getMaterial());
-        }
-        glFrontFace(GL_CCW);
-        for (auto &k : renderSequenceLights) {
-            (*k.getNode()).render(cameraMatrix * k.getMatrix(), k.getMaterial());
-        }
-        glFrontFace(GL_CW);
-        for (auto &i : renderSequenceMirrored) {
-            (*i.getNode())
-                    .render(cameraMatrix * i.getMatrix(), i.getMaterial());
-        }
-        glFrontFace(GL_CCW);
-        for (auto &j : renderSequenceElements) {
-            (*j.getNode())
-                    .render(cameraMatrix * j.getMatrix(), j.getMaterial());
-        }
-    }
+	//	Mirrored elements needs to be rendered ClockWise
+	glFrontFace(GL_CW);
+	int countLight = 0;
+	for (auto &i : renderSequenceLightsMirrored) {
+		//	In case of mirrored lights we need to set the light number different from the normal lights.
+		//	This puts a limitation of 4 lights in a mirrored scenes.
+		auto *light = dynamic_cast<Light *>(&(*i.getNode()));
+		light->setLight(static_cast<int>(renderSequenceLights.size() + countLight));
+		countLight++;
+		light->enable();
+		(*i.getNode()).render(cameraMatrix * i.getMatrix(), i.getMaterial());
+	}
+	glFrontFace(GL_CCW);
+	for (auto &k : renderSequenceLights) {
+		(*k.getNode()).render(cameraMatrix * k.getMatrix(), k.getMaterial());
+	}
+	glFrontFace(GL_CW);
+	for (auto &i : renderSequenceMirrored) {
+		(*i.getNode())
+				.render(cameraMatrix * i.getMatrix(), i.getMaterial());
+	}
+	glFrontFace(GL_CCW);
+	for (auto &j : renderSequenceElements) {
+		(*j.getNode())
+				.render(cameraMatrix * j.getMatrix(), j.getMaterial());
+	}
 }
 
 const std::vector<Element> &List::getRenderElements() const {

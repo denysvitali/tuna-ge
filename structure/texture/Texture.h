@@ -31,7 +31,7 @@ namespace tunage {
 		bool isAnisotropicSupported = false;
 		bool anisotropic = false;
 		int anisotropicLevel = 1;
-		void* bitmap = NULL;
+		void* bitmap = nullptr;
 		int bmp_w = 0;
 		int bmp_h = 0;
 	};
