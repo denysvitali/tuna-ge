@@ -9,6 +9,7 @@ int Object::idGenCount = 0;
 
 Object::Object() {
 	m_id = idGenCount;
+	m_name = String{""};
 	idGenCount++;
 }
 
@@ -21,10 +22,10 @@ int Object::getId() {
 	return m_id;
 }
 
-char* Object::getName() {
-	return m_name.data();
+String Object::getName() {
+	return m_name;
 }
 
 void Object::setName(const char* newName) {
-	m_name = newName;
+	m_name = String{newName};
 }

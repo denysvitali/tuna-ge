@@ -34,8 +34,9 @@ void tunage::Texture::render() {
 	}
 }
 
+
 //	Loads the bitmap of a texture from a file using FreeImage
-void Texture::loadFromFile(std::string path) {
+void Texture::loadFromFile(const char* path) {
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
 
@@ -60,7 +61,7 @@ void Texture::loadFromFile(std::string path) {
 		format = FIF_DDS;
 	}
 
-	FIBITMAP* bitmap = FreeImage_Load(format, path.c_str(), 0);
+	FIBITMAP* bitmap = FreeImage_Load(format, path, 0);
 	this->bmp_h = FreeImage_GetHeight(bitmap);
 	this->bmp_w = FreeImage_GetWidth(bitmap);
 

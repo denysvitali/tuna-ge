@@ -20,6 +20,7 @@
 #include "structure/mesh/Mesh.h"
 #include "structure/list/List.h"
 #include "structure/element/Element.h"
+#include "structure/string/String.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -56,7 +57,7 @@ namespace tunage {
 
 		//Debugging and Test methods
 		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
-		static char* version();
+		static String version();
 
 		//Fields//
 		static List renderList;

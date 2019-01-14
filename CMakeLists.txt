@@ -84,6 +84,7 @@ find_program(VALGRIND "valgrind")
 
 
 add_library(tuna_ge STATIC tuna-ge.cpp
+        structure/string/String.cpp
         structure/color/RGBColor.cpp
         structure/light/Light.cpp
         structure/mesh/Mesh.cpp
@@ -106,7 +107,7 @@ IF(FREEIMAGE_FOUND)
     TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})
 ENDIF(FREEIMAGE_FOUND)
 
-add_executable(Test test/Main.cpp)
+add_executable(Test test/GeTest.cpp test/NodeTest.cpp test/Main.cpp)
 target_link_libraries(Test tuna_ge ${GTEST_BOTH_LIBRARIES})
 add_test(Test Test)
 

@@ -347,7 +347,7 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 }
 
 //	Returns the current version
-char* TunaGE::version() {
+String TunaGE::version() {
 	std::stringstream ss{};
 	ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
 	if (!Version::GIT_SHA1.empty()) {
@@ -356,10 +356,7 @@ char* TunaGE::version() {
 
 	std::string str = ss.str();
 
-	char* version = (char*) malloc(sizeof(char) * str.length() + 1);
-	strncpy_s(version, str.length() + 1, str.data(), str.length() + 1);
-
-	return version;
+	return String{ss.str().data()};
 }
 
 //	Load a full scene from a specified file OvO, this scene is then returned via the Root Node
@@ -513,11 +510,11 @@ Node* TunaGE::loadOVO(const char* path) {
 #if _WINDOWS
 				std::stringstream ss;
 				ss << "../tuna-ge/assets/textures/" << textureName;
-				texture->loadFromFile(ss.str());
+				texture->loadFromFile(ss.str().data());
 #else
 				std::stringstream ss;
 				ss << "../../tuna-ge/assets/textures/" << textureName;
-				texture->loadFromFile(ss.str());
+				texture->loadFromFile(ss.str().data());
 #endif
 				mat->setTexture(texture);
 			}
@@ -543,7 +540,7 @@ Node* TunaGE::loadOVO(const char* path) {
 			strcpy_s(metalnessMapName, FILENAME_MAX, data + position);
 			position += (unsigned int)strlen(metalnessMapName) + 1;
 
-			mats[mat->getName()] = mat;
+			mats[std::string{mat->getName().data()}] = mat;
 		}
 									   break;
 		case OvObject::Type::MESH:

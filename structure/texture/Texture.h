@@ -14,7 +14,7 @@ namespace tunage {
 		void render() override;
 
 		//	Load texture methods
-		void loadFromFile(std::string path);
+		void loadFromFile(const char* path);
 		void loadTexture(void* bitmap);
 
 		//	Settings methods

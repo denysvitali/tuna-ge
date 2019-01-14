@@ -43,10 +43,8 @@ class GeTest : public ::testing::Test {
 		std::stringstream ss;
 		ss << LIB_MAJOR << "." << LIB_MINOR << "." << LIB_PATCH;
 
-		char* version = TunaGE::version();
-		std::string ver = std::string(version);
-
-		// TODO: Check
+		String version = TunaGE::version();
+		std::string ver = std::string(version.data());
 		//free(version);
 
 		std::string ourver = ss.str();
@@ -97,7 +95,7 @@ class GeTest : public ::testing::Test {
 		ASSERT_EQ(glm::vec3(0, 1.0, 0.0), camera2->getUp());
 
 		Mesh mesh{ "plane" };
-		ASSERT_EQ(std::string("plane"), std::string(mesh.getName()));
+		ASSERT_EQ(std::string("plane"), std::string(mesh.getName().data()));
 
 
 		Material material{};
@@ -114,7 +112,7 @@ class GeTest : public ::testing::Test {
 		ASSERT_EQ(glm::vec3(0.5f, 0.5f, 0.5f), material.getDiffuse());
 
 		Texture tex{"a bad time"};
-		ASSERT_EQ(std::string("a bad time"), std::string(tex.getName()));
+		ASSERT_EQ(std::string("a bad time"), std::string(tex.getName().data()));
 
 		std::cerr << "Hello :)" << std::endl;
 
@@ -188,7 +186,7 @@ class GeTest : public ::testing::Test {
 		ASSERT_EQ(1, TunaGE::renderList.getRenderElements().size());
 		ASSERT_EQ(2, TunaGE::renderList.getRenderLights().size());
 
-		std::cout << "Library Version: " << TunaGE::version() << std::endl;
+		std::cout << "Library Version: " << TunaGE::version().data() << std::endl;
 		int w = 700;
 		int h = 700;
 
@@ -216,6 +214,7 @@ class GeTest : public ::testing::Test {
 				ASSERT_EQ(sl1[j], sl2[j]);
 			}
 		}
+		
 		FreeImage_Unload(rendered_bmp);
 		FreeImage_Unload(bmp);
 
