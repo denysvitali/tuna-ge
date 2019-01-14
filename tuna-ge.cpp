@@ -139,6 +139,15 @@ bool TunaGE::free() {
 		}
 	}
 
+	TunaGE::allocatedObjects.clear();
+	if(TunaGE::windowId != -1){
+		glutDestroyWindow(TunaGE::windowId);
+		TunaGE::windowId = -1;
+		glutExit();
+	}
+
+	TunaGE::glutInitAlreadyCalled = false;
+
 	return true;
 }
 
