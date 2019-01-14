@@ -121,15 +121,15 @@ namespace {
         glm::mat4 m1 = glm::mat4{15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0};
         glm::mat4 m2 = glm::mat4{0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30};
         glm::mat4 m3 = glm::mat4{1,2,3,1,2,3,1,2,3,1,2,3,1,2,3,0};
-        //      n0
-        //      n1
-        //  n2      n3
 
         n0.setMatrix(m0);
         n1.setMatrix(m1);
         n2.setMatrix(m2);
         n3.setMatrix(m3);
 
+        //      n0
+        //      n1
+        //  n2      n3
         n0.link(&n1);
         n1.link(&n2);
         n1.link(&n3);
