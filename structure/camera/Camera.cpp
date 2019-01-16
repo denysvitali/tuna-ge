@@ -105,6 +105,17 @@ void Camera::update() {
 	}
 }
 
+//	Return the position of the camera relative to the scene
+glm::vec3 tunage::Camera::getRelativePosition() const
+{
+	glm::vec4 composedVec = glm::vec4(position,1);
+	if (getParent() != nullptr) {
+		composedVec = getParent()->getRenderMatrix() * composedVec;
+		return composedVec;
+	}
+	return composedVec;
+}
+
 //	Different from the getRenderMatrix method in node because of the inversion needed for the camera
 glm::mat4 Camera::getRenderMatrix() const {
 	glm::mat4 composedMatrix;

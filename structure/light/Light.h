@@ -16,6 +16,7 @@ namespace tunage {
 		//	Light on-off
 		void enable();
 		void disable();
+		bool isEnabled();
 
 		//	Light settings
 		void setLightAmbient(glm::vec3 lightAmbient);
@@ -30,8 +31,13 @@ namespace tunage {
 		void setRadius(float radius);
 		void setIntensity(float f);
 		void setType(unsigned int lightType);
+		void setReferenceLight(Light* referenceLight);
+		Light* getReferenceLight() const;
 
 	private:
+
+		Light* referenceLight = nullptr;
+
 		//	Default settings
 		int light = 0;	//	Light number used by FreeGLUT
 		glm::vec3 lightPosition = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -42,6 +48,7 @@ namespace tunage {
 		float lightCutoff;
 		float radius = 3.0f;
 		float intensity = 1;
+		bool enabled = false;
 		unsigned int lightType = 0;
     };
 }

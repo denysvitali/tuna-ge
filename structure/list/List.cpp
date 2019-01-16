@@ -38,6 +38,7 @@ void List::pass(Node* element) {
 		if (element->getFlipScene()) {
 			auto* mirroredLight = new Light();
 			*mirroredLight = *light;
+			mirroredLight->setReferenceLight(light);
 			mirroredLight->clearHierarchy();
 			Element mirrorElement{mirroredLight};
 			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * element->getRenderMatrix());
@@ -82,7 +83,12 @@ void tunage::List::render() {
 		auto *light = dynamic_cast<Light *>(&(*i.getNode()));
 		light->setLight(static_cast<int>(renderSequenceLights.size() + countLight));
 		countLight++;
-		light->enable();
+
+		if (light->getReferenceLight()->isEnabled())
+			light->enable();
+		else
+			light->disable();
+
 		(*i.getNode()).render(cameraMatrix * i.getMatrix(), i.getMaterial());
 	}
 	glFrontFace(GL_CCW);
