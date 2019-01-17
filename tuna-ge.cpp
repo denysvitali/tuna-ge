@@ -196,7 +196,7 @@ void TunaGE::displayCB() {
 
 		Camera* cam = TunaGE::getCurrentCamera();
 
-		glm::vec3 cp = cam->getPos();
+		glm::vec3 cp = cam->getRelativePosition();
 		ss << cam->getName().data() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
 		glm::vec3 point;
 		switch (cam->getMode()) {
@@ -565,7 +565,7 @@ Node* TunaGE::loadOVO(const char* path) {
 				allocatedObjects.push_back(texture);
 #if _WINDOWS
 				std::stringstream ss;
-				ss << "tuna-ge/assets/textures/" << textureName;
+				ss << "../tuna-ge/assets/textures/" << textureName;
 				texture->loadFromFile(ss.str().data());
 #else
 				std::stringstream ss;

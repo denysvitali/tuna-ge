@@ -118,10 +118,17 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 }
 
 void Light::enable() {
+	enabled = true;
 	glEnable(static_cast<GLenum>(light + GL_LIGHT0));
 }
 void Light::disable() {
+	enabled = false;
 	glDisable(static_cast<GLenum>(light + GL_LIGHT0));
+}
+
+bool tunage::Light::isEnabled()
+{
+	return enabled;
 }
 
 void Light::setIntensity(float f) {
@@ -183,4 +190,14 @@ void Light::setRadius(float radius) {
 
 void Light::setType(unsigned int lightType) {
 	this->lightType = lightType;
+}
+
+void tunage::Light::setReferenceLight(Light * referenceLight)
+{
+	this->referenceLight = referenceLight;
+}
+
+Light * tunage::Light::getReferenceLight() const
+{
+	return referenceLight;
 }
