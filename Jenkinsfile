@@ -33,7 +33,7 @@ pipeline {
         script {
           docker.image('dvitali/tuna-builder:latest').inside() {
             sh "Xvfb &"
-            sh "cd cmake-build-debug && DISPLAY=:99 make test"
+            sh "cd cmake-build-debug && DISPLAY=:99 ctest --verbose"
           }
         }
       }
