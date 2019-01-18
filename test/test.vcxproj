@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{37a273eb-6f90-4ac3-a4b6-defb0bb36444}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -48,13 +48,15 @@
   <ItemGroup>
     <ClInclude Include="utils\ImageComparator.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" />
     <Import Project="$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
-    <Import Project="$(SolutionDir)packages\googletest.redist.1.8.3\build\native\googletest.redist.targets" Condition="Exists('$(SolutionDir)packages\googletest.redist.1.8.3\build\native\googletest.redist.targets')" />
-    <Import Project="$(SolutionDir)packages\googletest.1.8.3\build\native\googletest.targets" Condition="Exists('$(SolutionDir)packages\googletest.1.8.3\build\native\googletest.targets')" />
+    <Import Project="..\..\packages\denysvitali.gtest.1.8.3\build\native\denysvitali.gtest.targets" Condition="Exists('..\..\packages\denysvitali.gtest.1.8.3\build\native\denysvitali.gtest.targets')" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,7 +137,6 @@
     <Error Condition="!Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets'))" />
-    <Error Condition="!Exists('$(SolutionDir)packages\googletest.redist.1.8.3\build\native\googletest.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\googletest.redist.1.8.3\build\native\googletest.redist.targets'))" />
-    <Error Condition="!Exists('$(SolutionDir)packages\googletest.1.8.3\build\native\googletest.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\googletest.1.8.3\build\native\googletest.targets'))" />
+    <Error Condition="!Exists('..\..\packages\denysvitali.gtest.1.8.3\build\native\denysvitali.gtest.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\denysvitali.gtest.1.8.3\build\native\denysvitali.gtest.targets'))" />
   </Target>
 </Project>

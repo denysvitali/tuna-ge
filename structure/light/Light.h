@@ -25,6 +25,9 @@ namespace tunage {
         glm::vec3 getLightDiffuse() const;
 		void setLightSpecular(glm::vec3 lightSpecular);
         glm::vec3 getLightSpecular() const;
+        int getSpotExponent();
+        float getInfluenceRadius();
+        void setSpotExponent(int val);
 		void setLightDirection(glm::vec3 lightDirection);
 		void setLightCutoff(float lightCutoff);
 		void setLight(int light);
@@ -33,6 +36,7 @@ namespace tunage {
 		void setType(unsigned int lightType);
 		void setReferenceLight(Light* referenceLight);
 		Light* getReferenceLight() const;
+		void setInfluenceRadius(float f);
 
 	private:
 
@@ -45,9 +49,11 @@ namespace tunage {
 		glm::vec4 lightDiffuse = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec4 lightSpecular = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::vec3 lightDirection = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		int spotExponent = 0; // Value from 0 to 128
 		float lightCutoff;
 		float radius = 3.0f;
 		float intensity = 1;
+		float influence = 0.0;
 		bool enabled = false;
 		unsigned int lightType = 0;
     };

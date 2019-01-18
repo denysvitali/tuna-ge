@@ -893,6 +893,7 @@ Node* TunaGE::loadOVO(const char* path) {
 			memcpy(&radius, data + position, sizeof(float));
 			//  light->setRadius(radius);
 			  //TODO: to implement
+			light->setInfluenceRadius(radius);
 			position += sizeof(float);
 
 			// Direction:
@@ -910,6 +911,8 @@ Node* TunaGE::loadOVO(const char* path) {
 			// Exponent:
 			float spotExponent;
 			memcpy(&spotExponent, data + position, sizeof(float));
+			std::cout << spotExponent << std::endl;
+			light->setSpotExponent(spotExponent);
 			position += sizeof(float);
 
 			// Cast shadow flag:
@@ -921,6 +924,7 @@ Node* TunaGE::loadOVO(const char* path) {
 			unsigned char isVolumetric;
 			memcpy(&isVolumetric, data + position, sizeof(unsigned char));
 			position += sizeof(unsigned char);
+
 
 			light->setLight(lightCount++);
 			light->setIntensity(1.0f);

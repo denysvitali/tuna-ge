@@ -52,6 +52,7 @@ void Light::render() {
 			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
 			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
 			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_DIRECTION, glm::value_ptr(lightDirection));
+			glLightf(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_EXPONENT, spotExponent);
 			break;
 		default:
 			break;
@@ -190,6 +191,22 @@ void Light::setRadius(float radius) {
 
 void Light::setType(unsigned int lightType) {
 	this->lightType = lightType;
+}
+
+void Light::setSpotExponent(int val) {
+	spotExponent = val;
+}
+
+int Light::getSpotExponent() {
+	return spotExponent;
+}
+
+void Light::setInfluenceRadius(float f) {
+	influence = f;
+}
+
+float Light::getInfluenceRadius() {
+	return influence;
 }
 
 void tunage::Light::setReferenceLight(Light * referenceLight)
