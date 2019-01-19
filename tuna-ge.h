@@ -8,6 +8,8 @@
 #define LIB_MINOR	1
 #define LIB_PATCH	0
 
+#define FPS_COUNTER_SIZE 10
+
 
 #include "libapi.h"
 
@@ -102,6 +104,10 @@ namespace tunage {
 
         static int screen_w;
         static int screen_h;
+
+        static double lastFPS;
+        static double lastFPSArr[FPS_COUNTER_SIZE];
+        static int lastFPS_idx;
 
         static bool stopRendering;
 

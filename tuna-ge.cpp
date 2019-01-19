@@ -3,6 +3,7 @@
 #include "version.hh"
 #include <sstream>
 #include <stack>
+#include <chrono>
 
 #include <glm/gtc/packing.hpp>
 
@@ -63,6 +64,12 @@ List TunaGE::renderList = List{"render list"};
 //	Screen size
 int TunaGE::screen_w = 100;
 int TunaGE::screen_h = 100;
+double TunaGE::lastFPS = -1;
+int TunaGE::lastFPS_idx = 0;
+double TunaGE::lastFPSArr[FPS_COUNTER_SIZE] = {};
+
+RGBColor debugColor = RGBColor::getColor("#fafafa");
+RGBColor fpsColor = RGBColor::getColor("#4CAF50");
 
 std::vector<Object*> TunaGE::allocatedObjects = std::vector<Object*>{};
 
@@ -120,12 +127,30 @@ void TunaGE::loopEvent() {
 
 // Enter the main FreeGLUT processing loop:
 void TunaGE::loop() {
-
+	lastFPS = -1;
 	while (!TunaGE::stopRendering) {
+		std::chrono::time_point<std::chrono::system_clock> start, end;
+		if(TunaGE::framerateVisible) {
+			start = std::chrono::high_resolution_clock::now();
+		}
 		glutMainLoopEvent();
 		TunaGE::loopEvent();
+
+		if(TunaGE::framerateVisible){
+			end = std::chrono::high_resolution_clock::now();
+			lastFPS_idx++;
+			lastFPS_idx = lastFPS_idx % FPS_COUNTER_SIZE;
+			lastFPSArr[lastFPS_idx] = pow(10,9)/(end - start).count();
+
+			if(lastFPS_idx == FPS_COUNTER_SIZE - 1){
+				double fpsSum = 0.0;
+				for(auto d : lastFPSArr){
+					fpsSum += d;
+				}
+				lastFPS = fpsSum / FPS_COUNTER_SIZE;
+			}
+		}
 	}
-	glutMainLoop();
 }
 
 //	Destroys all the elements of the scene (if any) and all the elements used in the list for additional features
@@ -192,42 +217,63 @@ void TunaGE::displayCB() {
 
 	TunaGE::renderList.render();
 
+	if(TunaGE::framerateVisible){
+		if(lastFPS != -1) {
+			char output[20];
+			sprintf(output, "%.0f", lastFPS);
+			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, GLUT_BITMAP_HELVETICA_18, fpsColor, String{output});
+		}
+	}
+
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		RGBColor color = RGBColor::getColor("#fafafa");
-
-		renderString(10, 10, GLUT_BITMAP_9_BY_15, color, String{TunaGE::version()});
+		renderString(10, 10, GLUT_BITMAP_9_BY_15, debugColor, String{TunaGE::version()});
 
 		std::stringstream ss;
+
+		char outputStr[200];
 
 		Camera* cam = TunaGE::getCurrentCamera();
 
 		glm::vec3 cp = cam->getRelativePosition();
-		ss << cam->getName().data() << ": " << cp[0] << ", " << cp[1] << ", " << cp[2] << "    ";
-		glm::vec3 point;
+
+		sprintf(outputStr, "%s: %.2f,%.2f,%.2f   ",
+				cam->getName().data(),
+				cp[0],
+				cp[1],
+				cp[2]);
+
 		switch (cam->getMode()) {
 			case LOOK_AT_POINT:
-				point = cam->getLookAtPoint();
-				ss << "LAP: " << point[0] << ", " << point[1] << ", " << point[2];
+				{
+					glm::vec3 point;
+					point = cam->getLookAtPoint();
+					sprintf(outputStr, "%s%s%.2f,%.2f,%.2f",
+							outputStr, "LAP: ", point[0], point[1], point[2]);
+				}
 				break;
 			case LOOK_AT_NODE:
 				if(cam->getLookAtNode() != nullptr){
-					std::string nodeName = "null";
-					nodeName = cam->getLookAtNode()->getName().data();
-					ss << "LAN: " << nodeName;
+					sprintf(outputStr, "%s%s%s",
+							outputStr, "LAN: ",
+							cam->getLookAtNode()->getName().data());
 				} else {
-					ss << "LAN: (null)";
+					sprintf(outputStr, "%s%s",
+							outputStr, "LAN: (null)");
 				}
 				break;
 			case LOOK_TOWARDS_VECTOR:
-				point = cam->getFront();
-				ss << "LTV: " << point[0] << ", " << point[1] << ", " << point[2];
+				{
+					glm::vec3 point = cam->getFront();
+					sprintf(outputStr, "%s%s%.2f,%.2f,%.2f",
+							outputStr, "LTV: ", point[0], point[1], point[2]);
+				}
 				break;
 		}
 
-		ss << " W: " << TunaGE::screen_w << "x" << TunaGE::screen_h;
+		sprintf(outputStr, "%s W: %d x %d", outputStr, TunaGE::screen_w, TunaGE::screen_h);
 
-		renderString(200, 10, GLUT_BITMAP_9_BY_15, color, String{ss.str().data()});
+		renderString(200, 10, GLUT_BITMAP_9_BY_15, debugColor, String{outputStr});
 	}
 
 	if (TunaGE::windowId != -1) {
@@ -348,6 +394,10 @@ void tunage::TunaGE::setLightning(bool enabled) {
 
 void TunaGE::setFPSCounter(bool enabled) {
 	TunaGE::framerateVisible = enabled;
+	if(!framerateVisible){
+		TunaGE::lastFPS = -1;
+		TunaGE::lastFPS_idx = 0;
+	}
 }
 
 void TunaGE::setDisplayWindow(bool enabled) {
