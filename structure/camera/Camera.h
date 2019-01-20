@@ -40,8 +40,11 @@ namespace tunage {
 		glm::vec3 getFront() const;
 		void setUp(glm::vec3 cameraUp);
 		glm::vec3 getUp() const;
+
 		void lookAt(glm::vec3 pointInSpace);
+		void lookAt(Node* node);
 		glm::vec3 getLookAtPoint() const;
+		Node* getLookAtNode() const;
 
 	private:
 		//	Default settings
@@ -57,5 +60,6 @@ namespace tunage {
 		glm::vec3 up = glm::vec3(0,1,0);		//	Camera Roll inclination (From the current render matrix)
 		glm::vec3 point = glm::vec3(0,0,0);		//	Alternative to front: Camera looks toward the specified point
 
+		Node* lookAtNode = nullptr;
 	};
 }

@@ -1,6 +1,11 @@
 #include "Camera.h"
 #include <GL/freeglut.h>
 
+#ifdef DEBUG
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext.hpp>
+#endif
+
 using namespace tunage;
 
 void Camera::setMode(CameraMode mode) {
@@ -93,9 +98,29 @@ glm::vec3 Camera::getUp() const {
 
 //	Updates the current camera matrix using the glm LookAt method
 void Camera::update() {
-	switch(mode){
+	switch(mode) {
 		case LOOK_AT_POINT:
 			this->setMatrix(glm::lookAt(position, point, up));
+			break;
+		case LOOK_AT_NODE: {
+				glm::vec4 lookAtPosition =  (this->lookAtNode->getRenderMatrix()) * glm::vec4(0,0,0, 1) ;
+				glm::vec3 lookAtPosition3 = glm::vec3(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
+
+	#ifdef DEBUG
+	#if 0
+			std::cout << "Looking at " << lookAtPosition3[0] << ", " << lookAtPosition3[1] << ","
+					<< lookAtPosition3[2] << std::endl;
+			std::cout << "-------DEBUG------------" << std::endl;
+			std::cout << glm::to_string(position) << std::endl;
+			std::cout << glm::to_string(lookAtPosition3) << std::endl;
+			std::cout << glm::to_string(this->lookAtNode->getRenderMatrix()) << std::endl;
+			std::cout << "-----------------------" << std::endl;
+	#endif
+	#endif
+			if (this->lookAtNode != nullptr) {
+					this->setMatrix(glm::lookAt(position, lookAtPosition3, up));
+				}
+			}
 			break;
 		case LOOK_TOWARDS_VECTOR:
 			this->setMatrix(glm::lookAt(position, position + front, up));
@@ -136,4 +161,12 @@ CameraMode Camera::getMode() {
 
 glm::vec3 Camera::getLookAtPoint() const {
 	return point;
+}
+
+void Camera::lookAt(Node* node){
+	this->lookAtNode = node;
+}
+
+Node* Camera::getLookAtNode() const {
+	return this->lookAtNode;
 }

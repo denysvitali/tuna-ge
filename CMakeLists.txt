@@ -107,13 +107,13 @@ IF(FREEIMAGE_FOUND)
     TARGET_LINK_LIBRARIES(tuna_ge ${FREEIMAGE_LIBRARY})
 ENDIF(FREEIMAGE_FOUND)
 
-add_executable(Test test/utils/ImageComparator.cpp test/GeTest.cpp test/CameraTest.cpp test/NodeTest.cpp test/OvoScene.cpp test/Main.cpp)
-target_link_libraries(Test tuna_ge ${GTEST_BOTH_LIBRARIES})
-add_test(Test Test)
+add_executable(my_test test/utils/ImageComparator.cpp test/GeTest.cpp test/CameraTest.cpp test/NodeTest.cpp test/OvoScene.cpp test/Main.cpp)
+target_link_libraries(my_test tuna_ge ${GTEST_BOTH_LIBRARIES})
+add_test(NAME my_test COMMAND my_test -v)
 
 if(VALGRIND)
     add_custom_target(valgrind-tunage-nodetest
-            COMMAND "${VALGRIND}" --tool=memcheck --leak-check=full --show-reachable=yes --num-callers=20 --track-fds=yes $<TARGET_FILE:Test>)
+            COMMAND "${VALGRIND}" --tool=memcheck --leak-check=full --show-reachable=yes --num-callers=20 --track-fds=yes $<TARGET_FILE:my_test>)
 endif()
 
 target_sources(tuna_ge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/version.hh ${CMAKE_CURRENT_BINARY_DIR}/version.cc)

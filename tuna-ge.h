@@ -5,14 +5,20 @@
 
 #define LIB_NAME	"TunaGE"
 #define LIB_MAJOR	1
-#define LIB_MINOR	0
+#define LIB_MINOR	1
 #define LIB_PATCH	0
+
+#define FPS_COUNTER_SIZE 10
 
 
 #include "libapi.h"
 
 #include <string>
 #include <glm/glm.hpp>
+#if DEBUG
+// GL Vector => String casting
+	#include <glm/ext.hpp>
+#endif
 
 #include "structure/light/Light.h"
 #include "structure/color/RGBColor.h"
@@ -38,6 +44,7 @@ namespace tunage {
 		static void setMouseCallback(void (* mouse_callback)( int, int, int, int ));
 		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
 		static void setSpecialCallback(void (* special_callback)( int, int, int ));
+		static void setLoopCallback(void (* loop_callback)());
 
 		// Window Settings
 		static void setWindowSize(int width, int height);
@@ -53,10 +60,11 @@ namespace tunage {
 
 		//Set Flags
 		static void enableCulling(bool enabled);
-		static void wireframeMode(bool enabled);
+		static void setWireframe(bool enabled);
 		static void setLightning(bool enabled);
         static void setDisplayWindow(bool enabled);		// Flag to display a window. When false, only the framebuffer is used (e.g: for tests)
-		static void displayFrameRate(bool enbabled);
+		static void setFPSCounter(bool enbabled);
+		static void setDebug(bool enabled);
 
 		//Debugging and Test methods
 		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
@@ -73,6 +81,7 @@ namespace tunage {
         static void initGlut();
         static void displayCB();
 		static void reshapeCB(int w, int h);
+		static void loopEvent();
 
 		//Fields//
 		static int windowId;
@@ -82,6 +91,7 @@ namespace tunage {
 		static void (* mouse_callback)( int, int, int, int );
 		static void (* special_callback)( int, int, int );
 		static void (* keyboard_callback)( unsigned char, int, int );
+		static void (* loop_callback)();
 
 		//Flags
 		static bool wireframe;
@@ -94,6 +104,12 @@ namespace tunage {
 
         static int screen_w;
         static int screen_h;
+
+        static double lastFPS;
+        static double lastFPSArr[FPS_COUNTER_SIZE];
+        static int lastFPS_idx;
+
+        static bool stopRendering;
 
         static bool glutInitAlreadyCalled;
 
