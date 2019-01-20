@@ -15,6 +15,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+
 #if DEBUG
 // GL Vector => String casting
 	#include <glm/ext.hpp>
@@ -27,6 +28,7 @@
 #include "structure/list/List.h"
 #include "structure/element/Element.h"
 #include "structure/string/String.h"
+#include "structure/font/Font.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -50,7 +52,7 @@ namespace tunage {
 		static void setWindowSize(int width, int height);
 
 		// Rendering Methods
-        static void renderString(float x, float y, void* font, RGBColor& color, String string);
+        static void renderString(float x, float y, FontType ft, RGBColor& color, String string);
 		static void redisplay();
 
         // Get Parameters
@@ -82,6 +84,7 @@ namespace tunage {
         static void displayCB();
 		static void reshapeCB(int w, int h);
 		static void loopEvent();
+		static void closeFunc();
 
 		//Fields//
 		static int windowId;
@@ -101,6 +104,7 @@ namespace tunage {
         static bool displayWindow;
 		static bool reshapeAlreadyCalled;
 		static bool framerateVisible;
+		static bool closeAlreadyCalled;
 
         static int screen_w;
         static int screen_h;

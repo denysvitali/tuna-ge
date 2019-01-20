@@ -14,6 +14,7 @@
 #include "structure/ovoreader/OvLight.h"
 
 #include <FreeImage.h>
+#include <structure/font/Font.h>
 
 
 // Save Image during renderSingleFrame in a temp dir (in order to generate expected test results)
@@ -44,6 +45,7 @@ void (* TunaGE::keyboard_callback)(unsigned char, int, int) = nullptr;
 
 void (* TunaGE::loop_callback)() = nullptr;
 
+
 bool TunaGE::wireframe = false;
 #ifdef DEBUG
 bool TunaGE::debug = true;
@@ -55,6 +57,7 @@ bool TunaGE::stopRendering = false;
 bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
+bool TunaGE::closeAlreadyCalled = false;
 bool TunaGE::framerateVisible = false;
 
 //	Display a window? Used during Tests to avoid generating GL windows
@@ -90,7 +93,7 @@ void TunaGE::init() {
 
 
 	// Set some optional flags:
-	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
@@ -106,6 +109,7 @@ void TunaGE::initGlut() {
 	glutReshapeFunc(TunaGE::reshapeCB);
 	glutSpecialFunc(special_callback);
 	glutKeyboardFunc(keyboard_callback);
+	glutCloseFunc(TunaGE::closeFunc);
 
 	// FreeGLUT default settings
 	glEnable(GL_CULL_FACE);
@@ -136,6 +140,11 @@ void TunaGE::loop() {
 		glutMainLoopEvent();
 		TunaGE::loopEvent();
 
+		if (TunaGE::windowId != -1) {
+			glutPostWindowRedisplay(windowId);
+			glutSwapBuffers();
+		}
+
 		if(TunaGE::framerateVisible){
 			end = std::chrono::high_resolution_clock::now();
 			lastFPS_idx++;
@@ -150,6 +159,15 @@ void TunaGE::loop() {
 				lastFPS = fpsSum / FPS_COUNTER_SIZE;
 			}
 		}
+	}
+}
+
+void TunaGE::closeFunc(){
+	if(!closeAlreadyCalled) {
+		closeAlreadyCalled = true;
+		std::cout << "Close Func" << std::endl;
+		TunaGE::stopRendering = true;
+		TunaGE::free();
 	}
 }
 
@@ -221,13 +239,13 @@ void TunaGE::displayCB() {
 		if(lastFPS != -1) {
 			char output[20];
 			sprintf(output, "%.0f", lastFPS);
-			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, GLUT_BITMAP_HELVETICA_18, fpsColor, String{output});
+			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, FontType::BITMAP_HELVETICA_18, fpsColor, String{output});
 		}
 	}
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		renderString(10, 10, GLUT_BITMAP_9_BY_15, debugColor, String{TunaGE::version()});
+		renderString(10, 10, FontType::BITMAP_9_BY_15, debugColor, String{TunaGE::version()});
 
 		std::stringstream ss;
 
@@ -273,12 +291,7 @@ void TunaGE::displayCB() {
 
 		sprintf(outputStr, "%s W: %d x %d", outputStr, TunaGE::screen_w, TunaGE::screen_h);
 
-		renderString(200, 10, GLUT_BITMAP_9_BY_15, debugColor, String{outputStr});
-	}
-
-	if (TunaGE::windowId != -1) {
-		glutPostWindowRedisplay(windowId);
-		glutSwapBuffers();
+		renderString(200, 10, FontType::BITMAP_9_BY_15, debugColor, String{outputStr});
 	}
 }
 
@@ -325,7 +338,9 @@ void TunaGE::setSpecialCallback(void(* special_callback)(int, int, int)) {
 }
 
 //	Renders a string on screen with position, color and font specified
-void TunaGE::renderString(float x, float y, void* font, RGBColor &color, String string) {
+void TunaGE::renderString(float x, float y, FontType ft, RGBColor &color, String string) {
+
+	void* font = Font::getFont(ft);
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
@@ -428,6 +443,11 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 	TunaGE::debug = false;
 
 	TunaGE::displayCB();
+
+	if (TunaGE::windowId != -1) {
+		glutPostWindowRedisplay(windowId);
+		glutSwapBuffers();
+	}
 
 	auto dib = FreeImage_Allocate(width, height, 24);
 	int bpp = FreeImage_GetBPP(dib);
