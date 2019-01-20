@@ -84,7 +84,18 @@ void Camera::setFront(glm::vec3 cameraFront) {
 	this->front = cameraFront;
 }
 
-glm::vec3 Camera::getFront() const {
+glm::vec3 Camera::getFront() {
+	switch (mode){
+		case LOOK_AT_NODE:
+			if(lookAtNode != nullptr){
+				glm::vec3 lanPos(lookAtNode->getRenderMatrix() * glm::vec4(0,0,0,1));
+				front = glm::normalize(lanPos - getRelativePosition());
+			}
+			break;
+		case LOOK_AT_POINT:
+			front = glm::normalize(point - getRelativePosition());
+			break;
+	}
 	return front;
 }
 

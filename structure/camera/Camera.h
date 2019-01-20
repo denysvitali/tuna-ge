@@ -37,7 +37,7 @@ namespace tunage {
 		void setPos(glm::vec3 cameraPos);
 		glm::vec3 getPos() const;
 		void setFront(glm::vec3 cameraFront);
-		glm::vec3 getFront() const;
+		glm::vec3 getFront();
 		void setUp(glm::vec3 cameraUp);
 		glm::vec3 getUp() const;
 
