@@ -989,7 +989,6 @@ Node* TunaGE::loadOVO(const char* path) {
 		materials.push_back(mat.second);
 	}
 
-	root->setAllMaterials(materials);
 	return root;
 }
 

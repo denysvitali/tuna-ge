@@ -13,7 +13,6 @@ namespace tunage {
 	public:
 		virtual ~Node();
 		Node() : Object() {}
-
 		explicit Node(const char* name) : Object(name) {};
 
 		//	Rendering methods
@@ -36,8 +35,7 @@ namespace tunage {
 		glm::mat4 getMatrix() const;
 		void setFlipScene(bool flipScene);
 		bool getFlipScene() const;
-        void setAllMaterials(std::vector<Material*> allMaterials);
-        std::vector<Material*> getAllMaterials() const;
+
 	private:
 		//	Scene methods
 		void setParent(Node *parent);
@@ -46,7 +44,6 @@ namespace tunage {
 		std::vector<Node*> m_hierarchy;
 		Node *m_parent = nullptr;
 
-		std::map<const std::string, Material*> allMaterials;
 		glm::mat4 m_matrix = glm::mat4(1.0f);
 		bool flipScene = false;	//	Flag to indicate at the rendering list from which node to start mirroring the scene
 	};

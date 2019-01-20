@@ -99,18 +99,4 @@ namespace tunage {
 		}
 		return m_matrix;
 	}
-
-	void Node::setAllMaterials(std::vector<Material*> allMaterials) {
-		for(auto* material : allMaterials){
-			this->allMaterials[std::string{material->getName().data()}] = material;
-		}
-	}
-
-	std::vector<Material*> Node::getAllMaterials() const {
-		std::vector<Material*> materials{};
-		for(const auto &material : allMaterials){
-			materials.push_back(material.second);
-		}
-		return materials;
-	}
 };
