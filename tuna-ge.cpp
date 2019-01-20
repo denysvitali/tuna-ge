@@ -14,7 +14,6 @@
 #include "structure/ovoreader/OvLight.h"
 
 #include <FreeImage.h>
-#include <structure/font/Font.h>
 
 
 // Save Image during renderSingleFrame in a temp dir (in order to generate expected test results)
@@ -37,9 +36,9 @@ using namespace tunage;
 //Set default values//
 void (* TunaGE::motion_callback)(int, int) = nullptr;
 
-void (* TunaGE::mouse_callback)(int, int, int, int) = nullptr;
+void (* TunaGE::mouse_callback)(Mouse::Button, Button::State, int, int) = nullptr;
 
-void (* TunaGE::special_callback)(int, int, int) = nullptr;
+void (* TunaGE::special_callback)(Keyboard::Key, int x, int y) = nullptr;
 
 void (* TunaGE::keyboard_callback)(unsigned char, int, int) = nullptr;
 
@@ -104,10 +103,10 @@ void TunaGE::initGlut() {
 
 	// Set callback functions:
 	glutMotionFunc(motion_callback);
-	glutMouseFunc(mouse_callback);
+	glutMouseFunc(TunaGE::mouseCB);
 	glutDisplayFunc(TunaGE::displayCB);
 	glutReshapeFunc(TunaGE::reshapeCB);
-	glutSpecialFunc(special_callback);
+	glutSpecialFunc(TunaGE::specialKeyCB);
 	glutKeyboardFunc(keyboard_callback);
 	glutCloseFunc(TunaGE::closeFunc);
 
@@ -133,7 +132,11 @@ void TunaGE::loopEvent() {
 void TunaGE::loop() {
 	lastFPS = -1;
 	while (!TunaGE::stopRendering) {
+#ifdef _WINDOWS
+		std::chrono::time_point<std::chrono::steady_clock> start, end;
+#else
 		std::chrono::time_point<std::chrono::system_clock> start, end;
+#endif
 		if(TunaGE::framerateVisible) {
 			start = std::chrono::high_resolution_clock::now();
 		}
@@ -295,6 +298,18 @@ void TunaGE::displayCB() {
 	}
 }
 
+void TunaGE::specialKeyCB(int button, int x, int y) {
+	if(keyboard_callback != nullptr){
+		keyboard_callback(Keyboard::getKey(button), x, y);
+	}
+}
+
+void TunaGE::mouseCB(int button, int state, int x, int y) {
+	if(mouse_callback != nullptr){
+		mouse_callback(Mouse::getButton(button), Button::getState(state), x, y);
+	}
+}
+
 //	Callback called by FreeGLUT one time before starting and everytime the window size changes.
 //	It is responsible to adapt the projection of the sceen using the parameters stored in the current camera
 void TunaGE::reshapeCB(int w, int h) {
@@ -325,7 +340,7 @@ void TunaGE::setMotionCallback(void(* motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
 }
 
-void TunaGE::setMouseCallback(void(* mouse_callback)(int, int, int, int)) {
+void TunaGE::setMouseCallback(void(* mouse_callback)(Mouse::Button, Button::State, int, int)) {
 	TunaGE::mouse_callback = mouse_callback;
 }
 
@@ -333,7 +348,7 @@ void TunaGE::setKeyboardCallback(void(* keyboard_callback)(unsigned char, int, i
 	TunaGE::keyboard_callback = keyboard_callback;
 }
 
-void TunaGE::setSpecialCallback(void(* special_callback)(int, int, int)) {
+void TunaGE::setSpecialCallback(void(* special_callback)(Keyboard::Key k, int x, int y)) {
 	TunaGE::special_callback = special_callback;
 }
 

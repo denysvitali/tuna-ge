@@ -96,7 +96,7 @@ add_library(tuna_ge STATIC tuna-ge.cpp
         structure/object/Object.cpp
         structure/element/Element.cpp
         structure/list/List.cpp
-        structure/font/Font.cpp structure/font/Font.h)
+        structure/font/Font.cpp structure/font/Font.h structure/mouse/Mouse.cpp structure/mouse/Mouse.h structure/button/Button.cpp structure/button/Button.h structure/keyboard/Keyboard.cpp structure/keyboard/Keyboard.h)
 include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
 

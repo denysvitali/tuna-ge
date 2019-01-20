@@ -176,6 +176,7 @@
     <ClCompile Include="structure\camera\Camera.cpp" />
     <ClCompile Include="structure\color\RGBColor.cpp" />
     <ClCompile Include="structure\element\Element.cpp" />
+    <ClCompile Include="structure\font\Font.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
     <ClCompile Include="structure\list\List.cpp" />
     <ClCompile Include="structure\material\Material.cpp" />
@@ -192,16 +193,23 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="structure\camera\Camera.h" />
+    <ClInclude Include="structure\camera\CameraMode.h" />
+    <ClInclude Include="structure\camera\ProjectionMode.h" />
     <ClInclude Include="structure\color\RGBColor.h" />
     <ClInclude Include="structure\element\Element.h" />
+    <ClInclude Include="structure\font\Font.h" />
     <ClInclude Include="structure\light\Light.h" />
     <ClInclude Include="structure\list\List.h" />
     <ClInclude Include="structure\material\Material.h" />
     <ClInclude Include="structure\mesh\Mesh.h" />
     <ClInclude Include="structure\node\Node.h" />
     <ClInclude Include="structure\object\Object.h" />
+    <ClInclude Include="structure\ovoreader\OvLight.h" />
+    <ClInclude Include="structure\ovoreader\OvMesh.h" />
+    <ClInclude Include="structure\ovoreader\OvObject.h" />
     <ClInclude Include="structure\string\String.h" />
     <ClInclude Include="structure\texture\Texture.h" />
+    <ClInclude Include="structure\utils\CurrentDir.h" />
     <ClInclude Include="structure\vertex\Vertex.h" />
     <ClInclude Include="tuna-ge.h" />
     <ClInclude Include="version.hh" />
