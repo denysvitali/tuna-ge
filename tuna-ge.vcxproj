@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;TUNAGE_EXPORTS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;TUNAGE_EXPORTS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -173,14 +173,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="structure\button\Button.cpp" />
     <ClCompile Include="structure\camera\Camera.cpp" />
     <ClCompile Include="structure\color\RGBColor.cpp" />
     <ClCompile Include="structure\element\Element.cpp" />
     <ClCompile Include="structure\font\Font.cpp" />
+    <ClCompile Include="structure\keyboard\Keyboard.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
     <ClCompile Include="structure\list\List.cpp" />
     <ClCompile Include="structure\material\Material.cpp" />
     <ClCompile Include="structure\mesh\Mesh.cpp" />
+    <ClCompile Include="structure\mouse\Mouse.cpp" />
     <ClCompile Include="structure\node\Node.cpp" />
     <ClCompile Include="structure\object\Object.cpp" />
     <ClCompile Include="structure\string\String.cpp" />
@@ -192,16 +195,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="structure\button\Button.h" />
     <ClInclude Include="structure\camera\Camera.h" />
     <ClInclude Include="structure\camera\CameraMode.h" />
     <ClInclude Include="structure\camera\ProjectionMode.h" />
     <ClInclude Include="structure\color\RGBColor.h" />
     <ClInclude Include="structure\element\Element.h" />
     <ClInclude Include="structure\font\Font.h" />
+    <ClInclude Include="structure\keyboard\Keyboard.h" />
     <ClInclude Include="structure\light\Light.h" />
     <ClInclude Include="structure\list\List.h" />
     <ClInclude Include="structure\material\Material.h" />
     <ClInclude Include="structure\mesh\Mesh.h" />
+    <ClInclude Include="structure\mouse\Mouse.h" />
     <ClInclude Include="structure\node\Node.h" />
     <ClInclude Include="structure\object\Object.h" />
     <ClInclude Include="structure\ovoreader\OvLight.h" />

@@ -69,6 +69,15 @@
     <ClCompile Include="structure\font\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="structure\button\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structure\keyboard\Keyboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="structure\mouse\Mouse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structure\object\Object.h">
@@ -135,6 +144,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="structure\utils\CurrentDir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\button\Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\keyboard\Keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\mouse\Mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

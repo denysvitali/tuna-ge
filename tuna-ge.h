@@ -15,9 +15,6 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include <structure/mouse/Mouse.h>
-#include <structure/button/Button.h>
-#include <structure/keyboard/Keyboard.h>
 
 #if DEBUG
 // GL Vector => String casting
@@ -32,6 +29,9 @@
 #include "structure/element/Element.h"
 #include "structure/string/String.h"
 #include "structure/font/Font.h"
+#include "structure/mouse/Mouse.h"
+#include "structure/button/Button.h"
+#include "structure/keyboard/Keyboard.h"
 
 namespace tunage {
     class LIB_API TunaGE {

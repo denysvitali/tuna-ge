@@ -21,7 +21,7 @@ namespace tunage {
 
 		//	Scene methods
 		void link(Node *child);
-		std::vector<Node *> getChildren();
+		std::vector<Node *>& getChildren();
 		Node* unlinkById(int id);
 		Node* unlink();
 		void clearHierarchy();

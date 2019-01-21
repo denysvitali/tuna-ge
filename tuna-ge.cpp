@@ -672,7 +672,7 @@ Node* TunaGE::loadOVO(const char* path) {
 					allocatedObjects.push_back(texture);
 #if _WINDOWS
 					std::stringstream ss;
-					ss << "../tuna-ge/assets/textures/" << textureName;
+					ss << "../../tuna-ge/assets/textures/" << textureName;
 					texture->loadFromFile(ss.str().data());
 #else
 					std::stringstream ss;

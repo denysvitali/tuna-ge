@@ -36,7 +36,7 @@ namespace tunage {
 		return m_parent;
 	}
 
-	std::vector<Node*> Node::getChildren() {
+	std::vector<Node*>& Node::getChildren() {
 		return m_hierarchy;
 	}
 
