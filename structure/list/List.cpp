@@ -154,3 +154,10 @@ Node* List::getSceneRoot() const {
 	return sceneRoot;
 }
 
+const std::vector<Element>& List::getRenderElementsMirrored() const {
+	return renderSequenceMirrored;
+}
+
+const std::vector<Element>& List::getRenderLightsMirrored() const {
+	return renderSequenceLightsMirrored;
+}
