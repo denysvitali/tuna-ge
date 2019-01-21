@@ -60,8 +60,6 @@ class GeTest : public ::testing::Test {
 		char dir[FILENAME_MAX];
 		GetCurrentDir(dir, FILENAME_MAX);
 
-		std::cout << dir << std::endl;
-
 #ifdef CI
 		std::cerr << "Running in CI" << std::endl;
     	FIBITMAP* bmp = FreeImage_Load(FIF_BMP, "../test/expected_results/1.bmp");

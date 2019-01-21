@@ -15,6 +15,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+
 #if DEBUG
 // GL Vector => String casting
 	#include <glm/ext.hpp>
@@ -27,6 +28,10 @@
 #include "structure/list/List.h"
 #include "structure/element/Element.h"
 #include "structure/string/String.h"
+#include "structure/font/Font.h"
+#include "structure/mouse/Mouse.h"
+#include "structure/button/Button.h"
+#include "structure/keyboard/Keyboard.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -41,16 +46,16 @@ namespace tunage {
 
 		// Setting Callbacks
 		static void setMotionCallback(void (* motion_callback)( int, int ));
-		static void setMouseCallback(void (* mouse_callback)( int, int, int, int ));
-		static void setKeyboardCallback(void (* keyboard_callback)( unsigned char, int, int ));
-		static void setSpecialCallback(void (* special_callback)( int, int, int ));
+		static void setMouseCallback(void (* mouse_callback)( Mouse::Button, Button::State, int, int ));
+		static void setKeyboardCallback(void (* keyboard_callback)(unsigned char c, int x, int y));
+		static void setSpecialCallback(void (* special_callback)( Keyboard::Key k, int x, int y));
 		static void setLoopCallback(void (* loop_callback)());
 
 		// Window Settings
 		static void setWindowSize(int width, int height);
 
 		// Rendering Methods
-        static void renderString(float x, float y, void* font, RGBColor& color, String string);
+        static void renderString(float x, float y, FontType ft, RGBColor& color, String string);
 		static void redisplay();
 
         // Get Parameters
@@ -81,15 +86,18 @@ namespace tunage {
         static void initGlut();
         static void displayCB();
 		static void reshapeCB(int w, int h);
+		static void mouseCB(int button, int state, int x, int y);
+		static void specialKeyCB(int button, int x, int y);
 		static void loopEvent();
+		static void closeFunc();
 
 		//Fields//
 		static int windowId;
 
 		//Callbacks
 		static void (* motion_callback)( int, int );
-		static void (* mouse_callback)( int, int, int, int );
-		static void (* special_callback)( int, int, int );
+		static void (* mouse_callback)( Mouse::Button, Button::State, int, int );
+		static void (* special_callback)( Keyboard::Key k, int x, int y);
 		static void (* keyboard_callback)( unsigned char, int, int );
 		static void (* loop_callback)();
 
@@ -101,6 +109,7 @@ namespace tunage {
         static bool displayWindow;
 		static bool reshapeAlreadyCalled;
 		static bool framerateVisible;
+		static bool closeAlreadyCalled;
 
         static int screen_w;
         static int screen_h;

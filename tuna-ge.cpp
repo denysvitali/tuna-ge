@@ -36,13 +36,14 @@ using namespace tunage;
 //Set default values//
 void (* TunaGE::motion_callback)(int, int) = nullptr;
 
-void (* TunaGE::mouse_callback)(int, int, int, int) = nullptr;
+void (* TunaGE::mouse_callback)(Mouse::Button, Button::State, int, int) = nullptr;
 
-void (* TunaGE::special_callback)(int, int, int) = nullptr;
+void (* TunaGE::special_callback)(Keyboard::Key, int x, int y) = nullptr;
 
 void (* TunaGE::keyboard_callback)(unsigned char, int, int) = nullptr;
 
 void (* TunaGE::loop_callback)() = nullptr;
+
 
 bool TunaGE::wireframe = false;
 #ifdef DEBUG
@@ -55,6 +56,7 @@ bool TunaGE::stopRendering = false;
 bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
+bool TunaGE::closeAlreadyCalled = false;
 bool TunaGE::framerateVisible = false;
 
 //	Display a window? Used during Tests to avoid generating GL windows
@@ -101,11 +103,12 @@ void TunaGE::initGlut() {
 
 	// Set callback functions:
 	glutMotionFunc(motion_callback);
-	glutMouseFunc(mouse_callback);
+	glutMouseFunc(TunaGE::mouseCB);
 	glutDisplayFunc(TunaGE::displayCB);
 	glutReshapeFunc(TunaGE::reshapeCB);
-	glutSpecialFunc(special_callback);
+	glutSpecialFunc(TunaGE::specialKeyCB);
 	glutKeyboardFunc(keyboard_callback);
+	glutCloseFunc(TunaGE::closeFunc);
 
 	// FreeGLUT default settings
 	glEnable(GL_CULL_FACE);
@@ -129,12 +132,21 @@ void TunaGE::loopEvent() {
 void TunaGE::loop() {
 	lastFPS = -1;
 	while (!TunaGE::stopRendering) {
+#ifdef _WINDOWS
 		std::chrono::time_point<std::chrono::steady_clock> start, end;
+#else
+		std::chrono::time_point<std::chrono::system_clock> start, end;
+#endif
 		if(TunaGE::framerateVisible) {
 			start = std::chrono::high_resolution_clock::now();
 		}
-		glutMainLoopEvent();
-		TunaGE::loopEvent();
+
+		if(TunaGE::windowId != -1) {
+			glutMainLoopEvent();
+			TunaGE::loopEvent();
+			glutPostWindowRedisplay(windowId);
+			glutSwapBuffers();
+		}
 
 		if(TunaGE::framerateVisible){
 			end = std::chrono::high_resolution_clock::now();
@@ -150,6 +162,15 @@ void TunaGE::loop() {
 				lastFPS = fpsSum / FPS_COUNTER_SIZE;
 			}
 		}
+	}
+}
+
+void TunaGE::closeFunc(){
+	if(!closeAlreadyCalled) {
+		closeAlreadyCalled = true;
+		std::cout << "Close Func" << std::endl;
+		TunaGE::stopRendering = true;
+		TunaGE::free();
 	}
 }
 
@@ -221,13 +242,13 @@ void TunaGE::displayCB() {
 		if(lastFPS != -1) {
 			char output[20];
 			sprintf(output, "%.0f", lastFPS);
-			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, GLUT_BITMAP_HELVETICA_18, fpsColor, String{output});
+			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, FontType::BITMAP_HELVETICA_18, fpsColor, String{output});
 		}
 	}
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		renderString(10, 10, GLUT_BITMAP_9_BY_15, debugColor, String{TunaGE::version()});
+		renderString(10, 10, FontType::BITMAP_9_BY_15, debugColor, String{TunaGE::version()});
 
 		std::stringstream ss;
 
@@ -273,12 +294,19 @@ void TunaGE::displayCB() {
 
 		sprintf(outputStr, "%s W: %d x %d", outputStr, TunaGE::screen_w, TunaGE::screen_h);
 
-		renderString(200, 10, GLUT_BITMAP_9_BY_15, debugColor, String{outputStr});
+		renderString(200, 10, FontType::BITMAP_9_BY_15, debugColor, String{outputStr});
 	}
+}
 
-	if (TunaGE::windowId != -1) {
-		glutPostWindowRedisplay(windowId);
-		glutSwapBuffers();
+void TunaGE::specialKeyCB(int button, int x, int y) {
+	if(keyboard_callback != nullptr){
+		keyboard_callback(Keyboard::getKey(button), x, y);
+	}
+}
+
+void TunaGE::mouseCB(int button, int state, int x, int y) {
+	if(mouse_callback != nullptr){
+		mouse_callback(Mouse::getButton(button), Button::getState(state), x, y);
 	}
 }
 
@@ -312,7 +340,7 @@ void TunaGE::setMotionCallback(void(* motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
 }
 
-void TunaGE::setMouseCallback(void(* mouse_callback)(int, int, int, int)) {
+void TunaGE::setMouseCallback(void(* mouse_callback)(Mouse::Button, Button::State, int, int)) {
 	TunaGE::mouse_callback = mouse_callback;
 }
 
@@ -320,12 +348,14 @@ void TunaGE::setKeyboardCallback(void(* keyboard_callback)(unsigned char, int, i
 	TunaGE::keyboard_callback = keyboard_callback;
 }
 
-void TunaGE::setSpecialCallback(void(* special_callback)(int, int, int)) {
+void TunaGE::setSpecialCallback(void(* special_callback)(Keyboard::Key k, int x, int y)) {
 	TunaGE::special_callback = special_callback;
 }
 
 //	Renders a string on screen with position, color and font specified
-void TunaGE::renderString(float x, float y, void* font, RGBColor &color, String string) {
+void TunaGE::renderString(float x, float y, FontType ft, RGBColor &color, String string) {
+
+	void* font = Font::getFont(ft);
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
@@ -428,6 +458,11 @@ void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
 	TunaGE::debug = false;
 
 	TunaGE::displayCB();
+
+	if (TunaGE::windowId != -1) {
+		glutPostWindowRedisplay(windowId);
+		glutSwapBuffers();
+	}
 
 	auto dib = FreeImage_Allocate(width, height, 24);
 	int bpp = FreeImage_GetBPP(dib);
@@ -637,7 +672,7 @@ Node* TunaGE::loadOVO(const char* path) {
 					allocatedObjects.push_back(texture);
 #if _WINDOWS
 					std::stringstream ss;
-					ss << "../tuna-ge/assets/textures/" << textureName;
+					ss << "../../tuna-ge/assets/textures/" << textureName;
 					texture->loadFromFile(ss.str().data());
 #else
 					std::stringstream ss;

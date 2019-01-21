@@ -33,6 +33,8 @@ glm::mat4 Camera::getProjectionMatrix() const {
 			// TODO: Test
 			return glm::ortho(0.0f, (float) screen_w, (float) screen_h, 0.0f, nearPlane, farPlane);
 	}
+
+	throw std::runtime_error("Camera::getProjectionMatrix() on an invalid camera (doens't have a valid Projection Mode)");
 }
 
 //	Loads the projection matrix used by FreeGLUT to render the scene
