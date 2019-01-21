@@ -92,7 +92,7 @@ void TunaGE::init() {
 
 
 	// Set some optional flags:
-	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
+	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlut();
@@ -140,10 +140,10 @@ void TunaGE::loop() {
 		if(TunaGE::framerateVisible) {
 			start = std::chrono::high_resolution_clock::now();
 		}
-		glutMainLoopEvent();
-		TunaGE::loopEvent();
 
-		if (TunaGE::windowId != -1) {
+		if(TunaGE::windowId != -1) {
+			glutMainLoopEvent();
+			TunaGE::loopEvent();
 			glutPostWindowRedisplay(windowId);
 			glutSwapBuffers();
 		}
