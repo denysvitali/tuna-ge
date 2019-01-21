@@ -129,7 +129,7 @@ void TunaGE::loopEvent() {
 void TunaGE::loop() {
 	lastFPS = -1;
 	while (!TunaGE::stopRendering) {
-		std::chrono::time_point<std::chrono::system_clock> start, end;
+		std::chrono::time_point<std::chrono::steady_clock> start, end;
 		if(TunaGE::framerateVisible) {
 			start = std::chrono::high_resolution_clock::now();
 		}
@@ -615,7 +615,7 @@ Node* TunaGE::loadOVO(const char* path) {
 				// Roughness factor:
 				float roughness;
 				memcpy(&roughness, data + position, sizeof(float));
-				mat->setShininess((int) ((1 - sqrt(roughness)) * 128));
+				mat->setShininess((1 - sqrt(roughness)) * 128);
 				position += sizeof(float);
 
 				// Metalness factor:
