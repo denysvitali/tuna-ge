@@ -34,7 +34,7 @@ namespace tunage {
     private:
 		//	Default settings
 		Texture* texture = nullptr;
-        int shininess{};
+        int shininess;
 		float alpha = 1.0f;	//	Alpha channel used for material transparency
         glm::vec3 ambient = glm::vec3{0,0,0};
         glm::vec3 diffuse = glm::vec3{0,0,0};

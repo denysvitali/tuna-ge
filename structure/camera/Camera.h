@@ -16,7 +16,7 @@ namespace tunage {
 		glm::mat4 getRenderMatrix() const override;
 		glm::mat4 getInverseMatrix() const;
 		void update();
-		glm::vec3 getRelativePosition() const;
+		glm::vec3 getAbsolutePosition() const;
 		
 		//	Projection methods
 		glm::mat4 getProjectionMatrix() const;

@@ -281,7 +281,7 @@ void TunaGE::displayCB() {
 
 		Camera* cam = TunaGE::getCurrentCamera();
 
-		glm::vec3 cp = cam->getRelativePosition();
+		glm::vec3 cp = cam->getAbsolutePosition();
 
 		sprintf(outputStr, "%s: %.2f,%.2f,%.2f   ",
 				cam->getName().data(),
@@ -675,7 +675,7 @@ Node* TunaGE::loadOVO(const char* path) {
 				// Roughness factor:
 				float roughness;
 				memcpy(&roughness, data + position, sizeof(float));
-				mat->setShininess((int) ((1 - sqrt(roughness)) * 128));
+				mat->setShininess((1 - sqrt(roughness)) * 128);
 				position += sizeof(float);
 
 				// Metalness factor:

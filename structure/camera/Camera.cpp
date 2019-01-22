@@ -91,11 +91,11 @@ glm::vec3 Camera::getFront() {
 		case LOOK_AT_NODE:
 			if(lookAtNode != nullptr){
 				glm::vec3 lanPos(lookAtNode->getRenderMatrix() * glm::vec4(0,0,0,1));
-				front = glm::normalize(lanPos - getRelativePosition());
+				front = glm::normalize(lanPos - getAbsolutePosition());
 			}
 			break;
 		case LOOK_AT_POINT:
-			front = glm::normalize(point - getRelativePosition());
+			front = glm::normalize(point - getAbsolutePosition());
 			break;
 	}
 	return front;
@@ -144,7 +144,7 @@ void Camera::update() {
 }
 
 //	Return the position of the camera relative to the scene
-glm::vec3 tunage::Camera::getRelativePosition() const
+glm::vec3 tunage::Camera::getAbsolutePosition() const
 {
 	glm::vec4 composedVec = glm::vec4(position,1);
 	if (getParent() != nullptr) {

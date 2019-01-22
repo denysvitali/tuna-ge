@@ -42,7 +42,6 @@ namespace {
         glm::vec3 up{0, 1, 0};
 
         c0.setMode(CameraMode::LOOK_AT_POINT);
-        c0.setProjMode(ProjectionMode::PERSPECTIVE);
 
         c0.setPos(position);
         c0.setUp(up);
@@ -60,7 +59,6 @@ namespace {
         glm::vec3 up{0, 1, 0};
 
         c0.setMode(CameraMode::LOOK_TOWARDS_VECTOR);
-        c0.setProjMode(ProjectionMode::PERSPECTIVE);
 
         c0.setPos(position);
         c0.setUp(up);
@@ -93,10 +91,10 @@ namespace {
         Node n3{"Node 3"};
         Camera c0{"Camera 0"};
 
-        glm::mat4 m0 = glm::translate(glm::mat4(1.0f), glm::vec3(1,5,5));
-        glm::mat4 m1 = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(1,0,0));
-        glm::mat4 m2 = glm::translate(glm::mat4(1.0f), glm::vec3(4,5,-5));
-        glm::mat4 m3 = glm::translate(glm::mat4(1.0f), glm::vec3(4,0,-5));
+        glm::mat4 m0 = glm::translate(glm::mat4(1.0f), glm::vec3(1, 5, 5));
+        glm::mat4 m1 = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(1, 0, 0));
+        glm::mat4 m2 = glm::translate(glm::mat4(1.0f), glm::vec3(4, 5, -5));
+        glm::mat4 m3 = glm::translate(glm::mat4(1.0f), glm::vec3(4, 0, -5));
 
         n0.setMatrix(m0);
         n1.setMatrix(m1);
@@ -113,8 +111,14 @@ namespace {
         c0.setPos(position);
 
         //      n0
+        //      |
+        //      v
         //      n1
-        //  n2      n3
+        //      |
+        //      v
+        // n2 <- -> n3
+        //          |
+        //          v
         //          c0
         n0.link(&n1);
         n1.link(&n2);
@@ -123,6 +127,90 @@ namespace {
 
         c0.update();
 
-        ASSERT_EQ(c0.getRenderMatrix(), c0.getMatrix() * glm::inverse(m0*m1*m3));
+        ASSERT_EQ(c0.getRenderMatrix(), c0.getMatrix() * glm::inverse(m0 * m1 * m3));
+    }
+
+    TEST(CameraTest, camera_relative_position_no_parent) {
+        Camera c0{"Camera 0"};
+        c0.setPos(glm::vec3{5, 5, 5});
+
+        glm::vec3 expected{5, 5, 5};
+
+        ASSERT_EQ(c0.getAbsolutePosition(), expected);
+    }
+
+    TEST(CameraTest, camera_relative_position_with_parent) {
+        Camera c0{"Camera 0"};
+        Node n0{"Node 0"};
+        n0.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3{1, 1, 1}));
+        c0.setPos(glm::vec3{5, 5, 5});
+
+        n0.link(&c0);
+
+        glm::vec3 expected{6, 6, 6};
+
+        ASSERT_EQ(c0.getAbsolutePosition(), expected);
+    }
+
+    TEST(CameraTest, camera_getfront_lookat_node) {
+        glm::vec3 point{1, 0, 0};
+        Camera c0{"Camera 0"};
+        Node target{"target"};
+        target.setMatrix(glm::translate(glm::mat4{1.0f}, point));
+        c0.setMode(CameraMode::LOOK_AT_NODE);
+        c0.lookAt(&target);
+
+        ASSERT_EQ(c0.getFront(), point);
+
+        c0.setPos(glm::vec3{2,0,0});
+        c0.lookAt(&target);
+
+        glm::vec3 expected{-1,0,0};
+
+        ASSERT_EQ(c0.getFront(), expected);
+
+        Node n0{"Node 0"};
+        n0.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3{0,1,0}));
+        n0.link(&c0);
+        c0.setPos(glm::vec3{1,0,0});
+        target.setMatrix(glm::translate(glm::mat4{1.0f}, glm::vec3{0,0,0}));
+        c0.lookAt(&target);
+
+        expected = glm::normalize(glm::vec3{-1,-1,0});
+        ASSERT_EQ(c0.getFront(), expected);
+    }
+
+    TEST(CameraTest, camera_getfront_lookat_point) {
+        glm::vec3 point{1, 0, 0};
+        Camera c0{"Camera 0"};
+        c0.setMode(CameraMode::LOOK_AT_POINT);
+        c0.lookAt(point);
+
+        ASSERT_EQ(c0.getFront(), point);
+
+        c0.setPos(glm::vec3{2,0,0});
+        c0.lookAt(point);
+
+        glm::vec3 expected{-1,0,0};
+
+        ASSERT_EQ(c0.getFront(), expected);
+
+        Node n0{"Node 0"};
+        n0.setMatrix(glm::translate(glm::mat4(1.0f), glm::vec3{0,1,0}));
+        n0.link(&c0);
+        c0.setPos(glm::vec3{1,0,0});
+        c0.lookAt(glm::vec3{0,0,0});
+
+        expected = glm::normalize(glm::vec3{-1,-1,0});
+        ASSERT_EQ(c0.getFront(), expected);
+    }
+
+    TEST(CameraTest, camera_getfront_lookat_front) {
+        glm::vec3 front{1, 0, 0};
+        Camera c0{"Camera 0"};
+        c0.setMode(CameraMode::LOOK_TOWARDS_VECTOR);
+        c0.setFront(front);
+
+        ASSERT_EQ(c0.getFront(), front);
     }
 }

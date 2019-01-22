@@ -19,7 +19,9 @@ namespace tunage {
 		void switchCamera();
 		Node* getSceneRoot() const;
 		const std::vector<Element>& getRenderElements() const;
+		const std::vector<Element>& getRenderElementsMirrored() const;
 		const std::vector<Element>& getRenderLights() const;
+		const std::vector<Element>& getRenderLightsMirrored() const;
 		std::vector<Camera*>& getRenderCameras();
 
 		//	Fill and render methods
