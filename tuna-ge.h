@@ -6,7 +6,7 @@
 #define LIB_NAME	"TunaGE"
 #define LIB_MAJOR	2
 #define LIB_MINOR	1
-#define LIB_PATCH	0
+#define LIB_PATCH	1
 
 #define FPS_COUNTER_SIZE 10
 
