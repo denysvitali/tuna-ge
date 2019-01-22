@@ -98,11 +98,9 @@ namespace {
 		int w = 900;
 		int h = 900;
 
-		auto pixels = new uint8_t(w  * h * 3);
-
 		TunaGE::setWindowSize(w, h);
 
-		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
+		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(w, h);
 
 		ImageComparator::compare(bmp, rendered_bmp);
 
@@ -112,7 +110,6 @@ namespace {
 		TunaGE::free();
 
 		delete c;
-		delete pixels;
 	}
 
 }

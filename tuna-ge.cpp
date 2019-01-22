@@ -57,6 +57,7 @@ bool TunaGE::culling = true;
 bool TunaGE::lighting = true;
 bool TunaGE::reshapeAlreadyCalled = false;
 bool TunaGE::closeAlreadyCalled = false;
+bool TunaGE::freeAlreadyCalled = true;
 bool TunaGE::framerateVisible = false;
 
 //	Display a window? Used during Tests to avoid generating GL windows
@@ -74,10 +75,15 @@ RGBColor debugColor = RGBColor::getColor("#fafafa");
 RGBColor fpsColor = RGBColor::getColor("#4CAF50");
 
 std::vector<Object*> TunaGE::allocatedObjects = std::vector<Object*>{};
-
 bool TunaGE::glutInitAlreadyCalled = false;
 
 void TunaGE::init() {
+	if(!TunaGE::freeAlreadyCalled){
+		throw std::runtime_error("Cannot init TunaGE without first freeing it. Use TunaGE::free()");
+	}
+
+	TunaGE::freeAlreadyCalled = false;
+
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
 	TunaGE::setWindowSize(TunaGE::screen_w, TunaGE::screen_h);
@@ -180,11 +186,13 @@ void TunaGE::closeFunc(){
 		std::cout << "Close Func" << std::endl;
 		TunaGE::stopRendering = true;
 		TunaGE::windowId = -1;
+		TunaGE::free();
 	}
 }
 
 //	Destroys all the elements of the scene (if any) and all the elements used in the list for additional features
 bool TunaGE::free() {
+	if(!freeAlreadyCalled){
 	renderList.clearRenderElements();
 	renderList.clearCameras();
 
@@ -205,14 +213,25 @@ bool TunaGE::free() {
 	}
 
 	TunaGE::allocatedObjects.clear();
+
+	glutCloseFunc(nullptr);
+	glutWMCloseFunc(nullptr);
+	glutLeaveMainLoop();
+
 	if (TunaGE::windowId != -1) {
-		//glutDestroyWindow(TunaGE::windowId);
+		glutDestroyWindow(TunaGE::windowId);
 		TunaGE::windowId = -1;
 	}
+	glutExit();
 
 	TunaGE::glutInitAlreadyCalled = false;
-
+	TunaGE::freeAlreadyCalled = true;
 	return true;
+
+	} else {
+		return false;
+	}
+
 }
 
 //	Main callback called by FreeGLUT each frame to render the scene
@@ -443,7 +462,7 @@ void TunaGE::setDisplayWindow(bool enabled) {
 }
 
 //	Renders a single frame, used for debugging and testing
-void* TunaGE::renderSingleFrame(unsigned char*&p, int &width, int &height) {
+void* TunaGE::renderSingleFrame(int &width, int &height) {
 
 	int old_w = TunaGE::screen_w;
 	int old_h = TunaGE::screen_h;
