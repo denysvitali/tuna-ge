@@ -15,10 +15,6 @@ namespace tunage {
 		Node() : Object() {}
 		explicit Node(const char* name) : Object(name) {};
 
-		//	Rendering methods
-		virtual void render() override;
-		virtual void render(glm::mat4 pos, Material* mat);
-
 		//	Scene methods
 		void link(Node *child);
 		std::vector<Node *>& getChildren();
@@ -37,6 +33,11 @@ namespace tunage {
 		bool getFlipScene() const;
 
 	private:
+		friend class List;
+		//	Rendering methods
+		virtual void render() override;
+		virtual void render(glm::mat4 pos, Material* mat);
+
 		//	Scene methods
 		void setParent(Node *parent);
 
