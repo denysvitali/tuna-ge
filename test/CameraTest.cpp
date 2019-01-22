@@ -136,7 +136,7 @@ namespace {
 
         glm::vec3 expected{5, 5, 5};
 
-        ASSERT_EQ(c0.getRelativePosition(), expected);
+        ASSERT_EQ(c0.getAbsolutePosition(), expected);
     }
 
     TEST(CameraTest, camera_relative_position_with_parent) {
@@ -149,7 +149,7 @@ namespace {
 
         glm::vec3 expected{6, 6, 6};
 
-        ASSERT_EQ(c0.getRelativePosition(), expected);
+        ASSERT_EQ(c0.getAbsolutePosition(), expected);
     }
 
     TEST(CameraTest, camera_getfront_lookat_node) {

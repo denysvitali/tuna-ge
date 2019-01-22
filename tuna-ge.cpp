@@ -256,7 +256,7 @@ void TunaGE::displayCB() {
 
 		Camera* cam = TunaGE::getCurrentCamera();
 
-		glm::vec3 cp = cam->getRelativePosition();
+		glm::vec3 cp = cam->getAbsolutePosition();
 
 		sprintf(outputStr, "%s: %.2f,%.2f,%.2f   ",
 				cam->getName().data(),
