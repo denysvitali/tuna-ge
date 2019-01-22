@@ -9,10 +9,6 @@ namespace tunage {
     	explicit Light() : Node{} {};
 		explicit Light(const char* name) : Node{ name }{}
 
-		//	Rendering methods
-		void render() override;
-		void render(glm::mat4 pos, Material* mat) override;
-
 		//	Light on-off
 		void enable();
 		void disable();
@@ -39,7 +35,9 @@ namespace tunage {
 		void setInfluenceRadius(float f);
 
 	private:
-
+		//	Rendering methods
+		void render() override;
+		void render(glm::mat4 pos, Material* mat) override;
 		Light* referenceLight = nullptr;
 
 		//	Default settings

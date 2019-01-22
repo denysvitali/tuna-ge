@@ -16,13 +16,12 @@ namespace tunage {
 		Object();
 		explicit Object(const char* name);
 
-        virtual void render() = 0;
-
         int getId();
         String getName();
         void setName(const char* newString);
     private:
-        static int idGenCount;
+		virtual void render() = 0;
+		static int idGenCount;
         int m_id;
         String m_name{""};
     };

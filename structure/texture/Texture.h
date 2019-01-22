@@ -8,10 +8,8 @@ namespace tunage {
 	public:
 		~Texture();
 		Texture() : Object{}{}
-		Texture(const char* name) : Object{ name }{}
 
-		//	Rendering methods
-		void render() override;
+		explicit Texture(const char* name) : Object{ name }{}
 
 		//	Load texture methods
 		void loadFromFile(const char* path);
@@ -23,6 +21,11 @@ namespace tunage {
 		void setAnisotropicLevel(int anisotropicLevel);
 	private:
 		void init();
+
+		friend class Material;
+
+		//	Rendering methods
+		void render() override;
 
 		//	Default settings
 		bool initialized = false;

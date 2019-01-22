@@ -11,9 +11,6 @@ namespace tunage {
 		~Material();
 		Material() : Object() {};
 
-		//	Rendering methods
-		void render() override;
-
 		//	Material settings
         void setAmbient(glm::vec3 light);
 		glm::vec3 getAmbient() const;
@@ -32,6 +29,10 @@ namespace tunage {
 		void setTexture(Texture* texture);
 		Texture* getTexture() const;
     private:
+		friend class Mesh;
+		friend class Light;
+		//	Rendering methods
+		void render() override;
 		//	Default settings
 		Texture* texture = nullptr;
         int shininess;
