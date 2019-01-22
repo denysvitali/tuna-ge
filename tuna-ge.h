@@ -89,6 +89,7 @@ namespace tunage {
 		static void mouseCB(int button, int state, int x, int y);
 		static void specialKeyCB(int button, int x, int y);
 		static void loopEvent();
+		static void loop_inner(bool swapBuffers);
 		static void closeFunc();
 
 		//Fields//
