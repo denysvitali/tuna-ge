@@ -204,11 +204,6 @@ void TunaGE::displayCB() {
 	} else {
 		glDisable(GL_LIGHTING);
 	}
-	if (TunaGE::culling) {
-		glEnable(GL_CULL_FACE);
-	} else {
-		glDisable(GL_CULL_FACE);
-	}
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	} else {
