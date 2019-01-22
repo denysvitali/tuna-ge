@@ -108,7 +108,7 @@ void TunaGE::initGlut() {
 	glutReshapeFunc(TunaGE::reshapeCB);
 	glutSpecialFunc(TunaGE::specialKeyCB);
 	glutKeyboardFunc(keyboard_callback);
-	glutCloseFunc(TunaGE::closeFunc);
+	glutWMCloseFunc(TunaGE::closeFunc);
 
 	// FreeGLUT default settings
 	glEnable(GL_CULL_FACE);
@@ -128,40 +128,49 @@ void TunaGE::loopEvent() {
 	}
 }
 
+void TunaGE::loop_inner(bool swapBuffers){
+#ifdef _WINDOWS
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
+#else
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+#endif
+	if(TunaGE::framerateVisible) {
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	if(TunaGE::windowId != -1) {
+		glutMainLoopEvent();
+		if (TunaGE::windowId != -1) {
+		TunaGE::loopEvent();
+
+			if(swapBuffers) {
+				glutPostWindowRedisplay(windowId);
+				glutSwapBuffers();
+			}
+		}
+	}
+
+	if(TunaGE::framerateVisible){
+		end = std::chrono::high_resolution_clock::now();
+		lastFPS_idx++;
+		lastFPS_idx = lastFPS_idx % FPS_COUNTER_SIZE;
+		lastFPSArr[lastFPS_idx] = pow(10,9)/(end - start).count();
+
+		if(lastFPS_idx == FPS_COUNTER_SIZE - 1){
+			double fpsSum = 0.0;
+			for(auto d : lastFPSArr){
+				fpsSum += d;
+			}
+			lastFPS = fpsSum / FPS_COUNTER_SIZE;
+		}
+	}
+}
+
 // Enter the main FreeGLUT processing loop:
 void TunaGE::loop() {
 	lastFPS = -1;
 	while (!TunaGE::stopRendering) {
-#ifdef _WINDOWS
-		std::chrono::time_point<std::chrono::steady_clock> start, end;
-#else
-		std::chrono::time_point<std::chrono::system_clock> start, end;
-#endif
-		if(TunaGE::framerateVisible) {
-			start = std::chrono::high_resolution_clock::now();
-		}
-
-		if(TunaGE::windowId != -1) {
-			glutMainLoopEvent();
-			TunaGE::loopEvent();
-			glutPostWindowRedisplay(windowId);
-			glutSwapBuffers();
-		}
-
-		if(TunaGE::framerateVisible){
-			end = std::chrono::high_resolution_clock::now();
-			lastFPS_idx++;
-			lastFPS_idx = lastFPS_idx % FPS_COUNTER_SIZE;
-			lastFPSArr[lastFPS_idx] = pow(10,9)/(end - start).count();
-
-			if(lastFPS_idx == FPS_COUNTER_SIZE - 1){
-				double fpsSum = 0.0;
-				for(auto d : lastFPSArr){
-					fpsSum += d;
-				}
-				lastFPS = fpsSum / FPS_COUNTER_SIZE;
-			}
-		}
+		TunaGE::loop_inner(true);
 	}
 }
 
@@ -170,7 +179,7 @@ void TunaGE::closeFunc(){
 		closeAlreadyCalled = true;
 		std::cout << "Close Func" << std::endl;
 		TunaGE::stopRendering = true;
-		TunaGE::free();
+		TunaGE::windowId = -1;
 	}
 }
 
@@ -197,9 +206,8 @@ bool TunaGE::free() {
 
 	TunaGE::allocatedObjects.clear();
 	if (TunaGE::windowId != -1) {
-		glutDestroyWindow(TunaGE::windowId);
+		//glutDestroyWindow(TunaGE::windowId);
 		TunaGE::windowId = -1;
-		glutExit();
 	}
 
 	TunaGE::glutInitAlreadyCalled = false;
@@ -1103,10 +1111,7 @@ void TunaGE::setWindowSize(int width, int height) {
 	screen_h = height;
 
 	glViewport(0, 0, width, height);
-	if (TunaGE::windowId != -1) {
-		glutReshapeWindow(width, height);
-		glutMainLoopEvent();
-	} else {
+	if (TunaGE::windowId == -1){
 		if (!glutInitAlreadyCalled) {
 			return;
 		} else {
@@ -1115,7 +1120,10 @@ void TunaGE::setWindowSize(int width, int height) {
 			glutInitWindowSize(width, height);
 			glutSetWindow(TunaGE::windowId);
 		}
+	} else {
+		glutReshapeWindow(width, height);
 	}
+	TunaGE::loop_inner(false);
 }
 
 void TunaGE::setLoopCallback(void (* loop_callback)()) {
