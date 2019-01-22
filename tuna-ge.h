@@ -4,8 +4,8 @@
 // Generic info:
 
 #define LIB_NAME	"TunaGE"
-#define LIB_MAJOR	1
-#define LIB_MINOR	1
+#define LIB_MAJOR	2
+#define LIB_MINOR	0
 #define LIB_PATCH	0
 
 #define FPS_COUNTER_SIZE 10
