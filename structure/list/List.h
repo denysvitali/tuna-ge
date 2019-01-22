@@ -26,13 +26,15 @@ namespace tunage {
 
 		//	Fill and render methods
 		void pass(Node* element);
-		void render() override;
 
 		//	Clear methods
 		void clearRenderElements();
 		void clearCameras();
 
 	private:
+		friend class TunaGE;
+		void render() override;
+
 		//	Root of the current scene passed in the list
 		Node* sceneRoot = nullptr;
 

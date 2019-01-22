@@ -144,9 +144,9 @@ void TunaGE::loop_inner(bool swapBuffers){
 		start = std::chrono::high_resolution_clock::now();
 	}
 
-	if(TunaGE::windowId != -1) {
+	if(!stopRendering) {
 		glutMainLoopEvent();
-		if (TunaGE::windowId != -1) {
+		if (!stopRendering) {
 		TunaGE::loopEvent();
 
 			if(swapBuffers) {
@@ -185,8 +185,6 @@ void TunaGE::closeFunc(){
 		closeAlreadyCalled = true;
 		std::cout << "Close Func" << std::endl;
 		TunaGE::stopRendering = true;
-		TunaGE::windowId = -1;
-		TunaGE::free();
 	}
 }
 
