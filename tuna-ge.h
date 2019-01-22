@@ -5,7 +5,7 @@
 
 #define LIB_NAME	"TunaGE"
 #define LIB_MAJOR	2
-#define LIB_MINOR	0
+#define LIB_MINOR	1
 #define LIB_PATCH	0
 
 #define FPS_COUNTER_SIZE 10
@@ -32,6 +32,7 @@
 #include "structure/mouse/Mouse.h"
 #include "structure/button/Button.h"
 #include "structure/keyboard/Keyboard.h"
+#include "structure/ovoreader/OvoReader.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -91,6 +92,10 @@ namespace tunage {
 		static void loopEvent();
 		static void loop_inner(bool swapBuffers);
 		static void closeFunc();
+
+		static std::vector<Object*>& getAllocatedObjects();
+
+		friend Node* OvoReader::parse(const char* path);
 
 		//Fields//
 		static int windowId;
