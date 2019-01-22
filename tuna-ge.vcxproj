@@ -186,6 +186,7 @@
     <ClCompile Include="structure\mouse\Mouse.cpp" />
     <ClCompile Include="structure\node\Node.cpp" />
     <ClCompile Include="structure\object\Object.cpp" />
+    <ClCompile Include="structure\ovoreader\OvoReader.cpp" />
     <ClCompile Include="structure\string\String.cpp" />
     <ClCompile Include="structure\texture\Texture.cpp" />
     <ClCompile Include="structure\vertex\Vertex.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="structure\ovoreader\OvLight.h" />
     <ClInclude Include="structure\ovoreader\OvMesh.h" />
     <ClInclude Include="structure\ovoreader\OvObject.h" />
+    <ClInclude Include="structure\ovoreader\OvoReader.h" />
     <ClInclude Include="structure\string\String.h" />
     <ClInclude Include="structure\texture\Texture.h" />
     <ClInclude Include="structure\utils\CurrentDir.h" />
