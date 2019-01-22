@@ -72,7 +72,7 @@ namespace tunage {
 		static void setDebug(bool enabled);
 
 		//Debugging and Test methods
-		static void* renderSingleFrame(unsigned char*& p, int& width, int& height);
+		static void* renderSingleFrame(int& width, int& height);
 		static String version();
 
 		//Fields//
@@ -122,6 +122,7 @@ namespace tunage {
         static bool stopRendering;
 
         static bool glutInitAlreadyCalled;
+        static bool freeAlreadyCalled;
 
         static std::vector<Object*> allocatedObjects;
 

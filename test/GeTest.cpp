@@ -187,18 +187,14 @@ class GeTest : public ::testing::Test {
 		int w = 900;
 		int h = 900;
 
-		auto pixels = new uint8_t(w  * h * 3);
-
 		TunaGE::setWindowSize(w, h);
 
-		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(pixels, w, h);
+		auto* rendered_bmp = (FIBITMAP*) TunaGE::renderSingleFrame(w, h);
 
 		ImageComparator::compare(bmp, rendered_bmp);
 		
 		FreeImage_Unload(rendered_bmp);
 		FreeImage_Unload(bmp);
-
-		delete pixels;
 
 		delete camera1;
 		delete camera2;
