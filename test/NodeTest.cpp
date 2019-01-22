@@ -106,10 +106,6 @@ namespace {
         ASSERT_EQ(0, n.getChildren().size());
     }
 
-    TEST(NodeTest, node_render) {
-        Node n{"Node 1"};
-        ASSERT_THROW(n.render(), std::runtime_error);
-    }
 
     TEST(NodeTest, node_render_matrix) {
         Node n0{"Node 0"};
