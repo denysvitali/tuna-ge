@@ -48,7 +48,6 @@ class GeTest : public ::testing::Test {
 
 		String version = TunaGE::version();
 		std::string ver = std::string(version.data());
-		//free(version);
 
 		std::string ourver = ss.str();
 
@@ -56,7 +55,6 @@ class GeTest : public ::testing::Test {
 	}
 
     TEST(GeTest, scene_setup){
-
 		char dir[FILENAME_MAX];
 		GetCurrentDir(dir, FILENAME_MAX);
 
