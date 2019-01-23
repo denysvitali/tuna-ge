@@ -5,6 +5,6 @@
 #endif
 
 using namespace tunage;
-const std::string& Version::GIT_SHA1 = "NO_SHA1_COMMIT";
-const std::string& Version::GIT_DATE = "NO_DATE";
+const std::string& Version::GIT_SHA1 = "";
+const std::string& Version::GIT_DATE = "";
 const std::string& Version::GIT_COMMIT_SUBJECT = "[NO COMMIT FOUND]";
