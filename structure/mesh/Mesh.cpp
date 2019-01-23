@@ -15,9 +15,9 @@ void Mesh::render() {
 
 	glBegin(GL_TRIANGLES);
 	for (auto &face : faces) {
-		glNormal3f(face.getNorm().x, -face.getNorm().y, face.getNorm().z);
-		glTexCoord2f(face.getUV().x, -face.getUV().y);
-		glVertex3f(face.getPos().x, -face.getPos().y, face.getPos().z);
+		glNormal3f(face.getNorm().x, face.getNorm().y, face.getNorm().z);
+		glTexCoord2f(face.getUV().x, face.getUV().y);
+		glVertex3f(face.getPos().x, face.getPos().y, face.getPos().z);
 	}
 	glEnd();
 }

@@ -240,6 +240,9 @@ void TunaGE::displayCB() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	Node* root = TunaGE::renderList.getSceneRoot();
+	TunaGE::renderList.clearRenderElements();
+	TunaGE::renderList.pass(root);
 	TunaGE::renderList.render();
 
 	if(TunaGE::framerateVisible){
