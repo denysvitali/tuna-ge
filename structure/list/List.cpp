@@ -6,8 +6,9 @@
 
 using namespace tunage;
 
-//	Recursive method to save an entire scene in the render lists by passing the root as paramether. 
-//	Meshes, Lights, and Cameras are separated in different lists to order the rendering process (lights must be rendered before meshes).
+//	Recursive method to save an entire scene in the render lists by passing the root as parameter.
+//	Meshes, Lights, and Cameras are separated in different lists to order the rendering process
+//	(lights must be rendered before meshes).
 //	The Camera list is used to determinate the current Camera in use.
 //	If the mirrored flag is set, the current node will be saved in a "renderMirrored" list to simulate a reflection plane on the y=0 axis; 
 //	all his childrens mirrored flag will be set before calling the pass method on them.
@@ -16,6 +17,7 @@ void List::pass(Node* element) {
 	if (sceneRoot == nullptr) {
 		sceneRoot = element;
 	}
+
 	Element listElement{element};
 	listElement.setMatrix(element->getRenderMatrix());
 
@@ -49,7 +51,7 @@ void List::pass(Node* element) {
 		listElement.setMaterial(lightMaterial);
 		renderSequenceLights.push_back(listElement);
 	} else if (dynamic_cast<Camera*>(element) != nullptr) {
-		Camera* camera = dynamic_cast<Camera*>(element);
+		auto* camera = dynamic_cast<Camera*>(element);
 		if (std::find(renderCameras.begin(), renderCameras.end(), camera) == renderCameras.end()) {
 			renderCameras.push_back(camera);
 		}
