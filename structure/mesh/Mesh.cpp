@@ -52,7 +52,7 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 	glNormalPointer(GL_FLOAT, 0, (void*)nOffset);
 
 	glDrawElements(GL_TRIANGLES,            // primitive type
-		numFaces,                      // # of indices
+		numFaces * 3 ,                      // # of indices
 		GL_UNSIGNED_INT,         // data type
 		(void*)0);               // offset to indices
 
@@ -134,11 +134,11 @@ void Mesh::init()
 	glBindBuffer(GL_ARRAY_BUFFER, vboVer);
 	glBufferData(GL_ARRAY_BUFFER, numVertices * (3 + 2 + 3) * sizeof(float), 0, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * 3 * sizeof(float), positionArr);
-	glBufferSubData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(float), numVertices * sizeof(glm::vec2), texcoordArr);
-	glBufferSubData(GL_ARRAY_BUFFER, numVertices * (3 + 2) * sizeof(float), numVertices * sizeof(glm::vec3), normalArr);
+	glBufferSubData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(float), numVertices * 2 * sizeof(float), texcoordArr);
+	glBufferSubData(GL_ARRAY_BUFFER, numVertices * (3 + 2) * sizeof(float), numVertices * 3 * sizeof(float), normalArr);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboInd);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * sizeof(unsigned int), facesArr, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned int), facesArr, GL_STATIC_DRAW);
 	/*
 	// Copy the vertex data from system to video memory:
 	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(glm::vec3),

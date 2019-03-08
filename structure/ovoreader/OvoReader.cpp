@@ -366,14 +366,14 @@ Node* OvoReader::parse(const char* path) {
 					glm::vec2 texture;
 					texture.x = glm::unpackHalf1x16(textureData[0]);
 					texture.y = glm::unpackHalf1x16(textureData[1]);
-					vertexesPos[c] = vertex.x;
-					vertexesPos[c+1] = vertex.y;
-					vertexesPos[c+2] = vertex.z;
-					vertexesUv[c] = texture.x;
-					vertexesUv[c+1] = texture.y;
-					vertexesNorm[c] = normal.x;
-					vertexesNorm[c+1] = normal.y;
-					vertexesNorm[c+2] = normal.z;
+					vertexesPos[c*3] = vertex.x;
+					vertexesPos[c*3+1] = vertex.y;
+					vertexesPos[c*3+2] = vertex.z;
+					vertexesUv[c*2] = texture.x;
+					vertexesUv[c*2+1] = texture.y;
+					vertexesNorm[c*3] = normal.x;
+					vertexesNorm[c*3+1] = normal.y;
+					vertexesNorm[c*3+2] = normal.z;
 					v.emplace_back(
 							Vertex{vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z, texture.x, texture.y});
 				}
@@ -384,9 +384,9 @@ Node* OvoReader::parse(const char* path) {
 					// Face indexes:
 					unsigned int face[3];
 					memcpy(face, data + position, sizeof(unsigned int) * 3);
-					facesArr[c] = face[0];
-					facesArr[c+1] = face[1];
-					facesArr[c+2] = face[2];
+					facesArr[c*3] = face[0];
+					facesArr[c*3+1] = face[1];
+					facesArr[c*3+2] = face[2];
 					for (auto i : face) {
 						mesh->addVertex(v[i]);
 					}
