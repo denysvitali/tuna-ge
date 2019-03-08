@@ -56,46 +56,10 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 		GL_UNSIGNED_INT,         // data type
 		(void*)0);               // offset to indices
 
-// disable vertex arrays
+	// disable vertex arrays
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	/*
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-	glTexCoordPointer(2, GL_FLOAT, 0, 0);
-	glNormalPointer(GL_FLOAT, 0, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
-	glDrawElements(GL_TRIANGLES, numFaces, GL_UNSIGNED_INT, 0);
-
-	/*
-	// Use it for rendering:
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glVertexPointer(3, GL_FLOAT, 0, nullptr);
-	//glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
-	//glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glNormalPointer(GL_FLOAT, 0, nullptr);
-
-	glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
-	
-	/*
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glBegin(GL_TRIANGLES);
-	for (auto &face : faces) {
-		glNormal3f(face.getNorm().x, face.getNorm().y, face.getNorm().z);
-		glTexCoord2f(face.getUV().x, face.getUV().y);
-		glVertex3f(face.getPos().x, face.getPos().y, face.getPos().z);
-	}
-	glEnd();*/
 }
 
 void Mesh::addVertex(Vertex& vertex) {
@@ -126,7 +90,6 @@ bool Mesh::isTransparent() {
 
 void Mesh::init()
 {
-
 	// Generate a vertex buffer and bind it:
 	glGenBuffers(1, &vboVer);
 	glGenBuffers(1, &vboInd);
@@ -139,19 +102,6 @@ void Mesh::init()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboInd);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned int), facesArr, GL_STATIC_DRAW);
-	/*
-	// Copy the vertex data from system to video memory:
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(glm::vec3),
-		positionArr, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	// Copy the texture data from system to video memory:
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(glm::vec2),
-		texcoordArr, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	// Copy the normals data from system to video memory:
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(glm::vec3),
-		normalArr, GL_STATIC_DRAW);
-		*/
 }
 
 Mesh::~Mesh() {
