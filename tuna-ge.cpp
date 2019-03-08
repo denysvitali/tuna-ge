@@ -4,6 +4,7 @@
 #include <sstream>
 #include <chrono>
 
+#include <GL/glew.h>
 #include <GL/freeglut.h>
 
 #include "structure/ovoreader/OvObject.h"
@@ -86,7 +87,20 @@ void TunaGE::init() {
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
 	TunaGE::windowId = glutCreateWindow("Tuna");
+	TunaGE::initGlew();
 	TunaGE::initGlut();
+}
+void TunaGE::initGlew() {
+	// Init Glew (*after* the context creation):
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	// OpenGL 2.1 is required:
+	if (!glewIsSupported("GL_VERSION_2_1"))
+	{
+		std::cout << "OpenGL 2.1 not supported" << std::endl;
+		exit;
+	}
 }
 
 void TunaGE::initGlut() {

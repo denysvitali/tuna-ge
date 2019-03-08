@@ -20,6 +20,8 @@ namespace tunage {
 
 		void addVertex(Vertex& vertex);
 
+		void addVertexes(float* positionArr, float* texcoordArr, float* normalArr, unsigned int* facesArr, int numVertices, int numFaces);
+
 		void setMaterial(Material* material);
 
 		Material* getMaterial() const;
@@ -27,6 +29,16 @@ namespace tunage {
 		bool isTransparent();
 
 	private:
+		void init();
+		unsigned int vboVer;
+		unsigned int vboInd;
+		bool initialized = false;
+		float* positionArr;
+		float* texcoordArr;
+		float* normalArr;
+		unsigned int* facesArr;
+		int numVertices;
+		int numFaces;
 		Material* material = nullptr;
 		std::vector<Vertex> faces;	//	Vertexes of the mesh object
 	};

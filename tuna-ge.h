@@ -84,6 +84,7 @@ namespace tunage {
 		TunaGE() {};
 
 		//Methods//
+		static void initGlew();
         static void initGlut();
         static void displayCB();
 		static void reshapeCB(int w, int h);

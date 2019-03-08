@@ -334,6 +334,10 @@ Node* OvoReader::parse(const char* path) {
 				}
 
 				std::vector<Vertex> v;
+				float* vertexesPos = new float[vertices*3];
+				float* vertexesUv = new float[vertices * 2];
+				float* vertexesNorm = new float[vertices * 3];
+				
 
 				// Interleaved and compressed vertex/normal/UV/tangent data:
 				for (unsigned int c = 0; c < vertices; c++) {
@@ -362,18 +366,34 @@ Node* OvoReader::parse(const char* path) {
 					glm::vec2 texture;
 					texture.x = glm::unpackHalf1x16(textureData[0]);
 					texture.y = glm::unpackHalf1x16(textureData[1]);
+					vertexesPos[c] = vertex.x;
+					vertexesPos[c+1] = vertex.y;
+					vertexesPos[c+2] = vertex.z;
+					vertexesUv[c] = texture.x;
+					vertexesUv[c+1] = texture.y;
+					vertexesNorm[c] = normal.x;
+					vertexesNorm[c+1] = normal.y;
+					vertexesNorm[c+2] = normal.z;
 					v.emplace_back(
 							Vertex{vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z, texture.x, texture.y});
 				}
 
+				unsigned int* facesArr = new unsigned int[faces*3];
 				// Faces:
 				for (unsigned int c = 0; c < faces; c++) {
 					// Face indexes:
 					unsigned int face[3];
 					memcpy(face, data + position, sizeof(unsigned int) * 3);
-					for (auto i : face) mesh->addVertex(v[i]);
+					facesArr[c] = face[0];
+					facesArr[c+1] = face[1];
+					facesArr[c+2] = face[2];
+					for (auto i : face) {
+						mesh->addVertex(v[i]);
+					}
 					position += sizeof(unsigned int) * 3;
 				}
+
+				mesh->addVertexes(vertexesPos, vertexesUv, vertexesNorm, facesArr, vertices, faces);
 
 				// Extra information for skinned meshes:
 				if (isSkinned) {
