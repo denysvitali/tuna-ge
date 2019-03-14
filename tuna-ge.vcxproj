@@ -23,7 +23,7 @@
     <ProjectGuid>{AEF94EA7-0B7D-4E3B-93E4-60626104A469}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>tunage</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -191,6 +191,7 @@
     <ClCompile Include="structure\texture\Texture.cpp" />
     <ClCompile Include="structure\vertex\Vertex.cpp" />
     <ClCompile Include="tuna-ge.cpp" />
+    <ClCompile Include="VAO.cpp" />
     <ClCompile Include="version.cc" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
@@ -220,6 +221,7 @@
     <ClInclude Include="structure\utils\CurrentDir.h" />
     <ClInclude Include="structure\vertex\Vertex.h" />
     <ClInclude Include="tuna-ge.h" />
+    <ClInclude Include="VAO.h" />
     <ClInclude Include="version.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

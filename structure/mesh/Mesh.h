@@ -8,7 +8,7 @@
 namespace tunage {
 	class LIB_API Mesh : public Node {
 	public:
-		Mesh() : Node{} {}
+		Mesh();
 		~Mesh();
 
 		explicit Mesh(const char* name) : Node{name} {}
@@ -18,9 +18,7 @@ namespace tunage {
 
 		void render(glm::mat4 pos, Material* mat) override;
 
-		void addVertex(Vertex& vertex);
-
-		void addVertexes(float* positionArr, float* texcoordArr, float* normalArr, unsigned int* facesArr, int numVertices, int numFaces);
+		void init(float* positionArr, float* texcoordArr, float* normalArr, unsigned int* facesArr, int numVertices, int numFaces);
 
 		void setMaterial(Material* material);
 
@@ -29,17 +27,11 @@ namespace tunage {
 		bool isTransparent();
 
 	private:
-		void init();
-		unsigned int vboVer;
-		unsigned int vboInd;
-		bool initialized = false;
-		float* positionArr;
-		float* texcoordArr;
-		float* normalArr;
-		unsigned int* facesArr;
+		unsigned int vaoId;
+		unsigned int vertVboId;
+		unsigned int faceVboId;
 		int numVertices;
 		int numFaces;
 		Material* material = nullptr;
-		std::vector<Vertex> faces;	//	Vertexes of the mesh object
 	};
 }

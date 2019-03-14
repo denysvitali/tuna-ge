@@ -1,15 +1,12 @@
 
-#include "tuna-ge.h"
-#include "version.hh"
 #include <sstream>
 #include <chrono>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "structure/ovoreader/OvObject.h"
-#include "structure/ovoreader/OvMesh.h"
-#include "structure/ovoreader/OvLight.h"
+#include "tuna-ge.h"
+#include "version.hh"
 
 #include <FreeImage.h>
 
