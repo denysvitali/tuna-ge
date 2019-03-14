@@ -101,6 +101,11 @@ void TunaGE::initGlew() {
 		std::cout << "OpenGL 2.1 not supported" << std::endl;
 		exit;
 	}
+
+	// enable vertex arrays
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void TunaGE::initGlut() {

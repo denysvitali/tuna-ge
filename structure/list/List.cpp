@@ -19,14 +19,15 @@ void List::pass(Node* element) {
 	}
 
 	Element listElement{element};
-	listElement.setMatrix(element->getRenderMatrix());
+	glm::mat4 currentRenderMatrix = parentMatrix * element->getMatrix();
+	listElement.setMatrix(currentRenderMatrix);
 
 	if (dynamic_cast<Mesh*>(element) != nullptr) {
 		Mesh* mesh = dynamic_cast<Mesh*>(element);
 		Material* mat = mesh->getMaterial();
 		if (element->getFlipScene()) {
 			Element mirrorElement{element};
-			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * element->getRenderMatrix());
+			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * currentRenderMatrix);
 			mirrorElement.setMaterial(mat);
 			renderSequenceMirrored.push_back(mirrorElement);
 		}
@@ -43,7 +44,7 @@ void List::pass(Node* element) {
 			mirroredLight->setReferenceLight(light);
 			mirroredLight->clearHierarchy();
 			Element mirrorElement{mirroredLight};
-			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * element->getRenderMatrix());
+			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * currentRenderMatrix);
 			mirrorElement.setMaterial(lightMaterial);
 			renderSequenceLightsMirrored.push_back(mirrorElement);
 		}
@@ -57,12 +58,17 @@ void List::pass(Node* element) {
 		}
 	}
 
+	glm::mat4 parentTemp = parentMatrix;
+	parentMatrix = currentRenderMatrix;
+
 	for (auto i : element->getChildren()) {
 		if (element->getFlipScene()) {
 			i->setFlipScene(true);
 		}
 		pass(i);
 	}
+
+	parentMatrix = parentTemp;
 }
 
 //	Renders the elements saved in the various render lists using the first camera in the renderCamera list

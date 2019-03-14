@@ -4,6 +4,7 @@
 
 using namespace tunage;
 
+//  DEPRECATED
 //	Render method using the mesh render matrix and material
 //	(Not used, because we're using the list)
 void Mesh::render() {
@@ -14,13 +15,27 @@ void Mesh::render() {
 	glm::mat4 composedMatrix = getRenderMatrix();
 	glLoadMatrixf(glm::value_ptr(composedMatrix));
 
-	glBegin(GL_TRIANGLES);
-	for (auto &face : faces) {
-		glNormal3f(face.getNorm().x, face.getNorm().y, face.getNorm().z);
-		glTexCoord2f(face.getUV().x, face.getUV().y);
-		glVertex3f(face.getPos().x, face.getPos().y, face.getPos().z);
+	if (!initialized) {
+		initialized = true;
+		init();
 	}
-	glEnd();
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboVer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboInd);
+
+	size_t tOffset = numVertices * 3 * sizeof(float);
+	size_t nOffset = tOffset + numVertices * 2 * sizeof(float);
+
+	// specify vertex arrays with their offsets
+	glVertexPointer(3, GL_FLOAT, 0, (void*)0);
+	glTexCoordPointer(2, GL_FLOAT, 0, (void*)tOffset);
+	glNormalPointer(GL_FLOAT, 0, (void*)nOffset);
+
+	glDrawElements(GL_TRIANGLES,            // primitive type
+		numFaces * 3,                      // # of indices
+		GL_UNSIGNED_INT,         // data type
+		(void*)0);               // offset to indices
+
 }
 
 //	Render method using a material and render matrix passed as parameters
@@ -38,11 +53,6 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 	glBindBuffer(GL_ARRAY_BUFFER, vboVer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboInd);
 
-	// enable vertex arrays
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
 	size_t tOffset = numVertices * 3 * sizeof(float);
 	size_t nOffset = tOffset + numVertices * 2 * sizeof(float);
 	
@@ -56,10 +66,6 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 		GL_UNSIGNED_INT,         // data type
 		(void*)0);               // offset to indices
 
-	// disable vertex arrays
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Mesh::addVertex(Vertex& vertex) {
