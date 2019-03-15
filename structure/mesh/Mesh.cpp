@@ -1,7 +1,5 @@
 #include "Mesh.h"
 #include "../program/Program.h"
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 
 using namespace tunage;
 
@@ -62,15 +60,15 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 	glBindVertexArray(vaoId);
 
 	glDrawElements(GL_TRIANGLES,            // primitive type
-		numFaces * 3,                      // # of indices
-		GL_UNSIGNED_INT,         // data type
-		(void*)0);               // offset to indices
+	numFaces * 3,                      // # of indices
+	GL_UNSIGNED_INT,         // data type
+	(void*) nullptr);               // offset to indices
 
 	glBindVertexArray(0);
 }
 
-void Mesh::init(float* positionArr, float* texcoordArr, float* normalArr, unsigned int* facesArr, int numVertices, int numFaces)
-{
+void Mesh::init(float* positionArr, float* texcoordArr, float* normalArr, unsigned int* facesArr, int numVertices,
+				int numFaces) {
 	this->numVertices = numVertices;
 	this->numFaces = numFaces;
 
@@ -81,24 +79,44 @@ void Mesh::init(float* positionArr, float* texcoordArr, float* normalArr, unsign
 
 	// Vertex coordinates buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, positionArr, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	// Vertex texture coordinates buffer
+
+	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, positionArr, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	unsigned char *color = nullptr;
+	color = new unsigned char[numVertices * 4];
+	for (int c = 0; c < numVertices * 4; c++) {
+		color[c] = rand() % 255;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboId[1]);
+
+	glBufferData(GL_ARRAY_BUFFER, numVertices * 4 *sizeof(unsigned char), color, GL_STATIC_DRAW);
+	glVertexAttribPointer((GLuint) 1, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboId[2]);
+
+	glEnable(GL_DEPTH_TEST);
+
+	Program::getCurrent()->setMatrix("modelview", getRenderMatrix());
+
+	/*// Vertex texture coordinates buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[1]);
 	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 2, texcoordArr, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
 
 	// Vertex normals buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[2]);
 	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, normalArr, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(2);*/
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * sizeof(unsigned int) * 3, facesArr, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[3]);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * sizeof(unsigned int) * 3, facesArr, GL_STATIC_DRAW);
 
 	//glBufferData(GL_ARRAY_BUFFER, numVertices * (3 + 2 + 3) * sizeof(float), 0, GL_STATIC_DRAW);
 	//glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * 3 * sizeof(float), positionArr);

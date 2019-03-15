@@ -90,6 +90,27 @@ void main(void)
     gl_Position = projection * modelview * vec4(in_Position, 1.0f);
     texCoord = in_TexCoord;
 })";
+/*
+const char* vertShader = R"(
+#version 440 core
+
+   uniform mat4 projection;
+   uniform mat4 modelview;
+
+   layout(location = 0) in vec3 in_Position;
+   layout(location = 1) in vec4 in_Color;
+
+   out vec3 out_Color;
+   out float dist;
+
+   void main(void)
+   {
+		gl_Position = projection * modelview * vec4(in_Position, 1.0f);
+		dist = 1.0f;
+      	out_Color = in_Color.rgb;
+   }
+)";*/
+
 const char* fragShader = R"(
 #version 440 core
 
@@ -100,8 +121,9 @@ out vec4 fragOutput;
 
 void main(void)
 {
-	fragOutput = texture(tex, texCoord);
-})";
+  fragOutput = texture(tex, texCoord);
+}
+)";
 
 void TunaGE::init() {
 	if (!TunaGE::freeAlreadyCalled) {
@@ -144,8 +166,8 @@ void TunaGE::init() {
 	Program* ps = new Program();
 	Program::build(*vs, *fs, *ps);
 	ps->render();
-	ps->bind(0, "in_position");
-	//ps->bind(1, "in_tex_coord");
+	ps->bind(0, "in_Position");
+	ps->bind(1, "in_Color");
 	ps->bind(2, "in_normal");
 }
 void TunaGE::initGlew() {
@@ -162,8 +184,8 @@ void TunaGE::initGlew() {
 		// OpenGL 2.1 is required:
 		if (!glewIsSupported("GL_VERSION_4_4"))
 		{
-			std::cout << "OpenGL 4.4 not supported" << std::endl;
-			exit;
+			std::cerr << "OpenGL 4.4 not supported" << std::endl;
+			exit(-1);
 		}
 }
 
@@ -419,6 +441,7 @@ void TunaGE::reshapeCB(int w, int h) {
 	if (TunaGE::getCurrentCamera() != nullptr) {
 		TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
 		TunaGE::getCurrentCamera()->loadProjectionMatrix();
+		Program::getCurrent()->setMatrix("projection", TunaGE::getCurrentCamera()->getProjectionMatrix());
 	}
 
 	if (windowId != -1) {
@@ -450,6 +473,7 @@ void TunaGE::setSpecialCallback(void(*special_callback)(Keyboard::Key k, int x, 
 //	Renders a string on screen with position, color and font specified
 void TunaGE::renderString(float x, float y, FontType ft, RGBColor &color, String string) {
 
+	/*
 	void* font = Font::getFont(ft);
 
 	glDisable(GL_LIGHTING);
@@ -478,6 +502,7 @@ void TunaGE::renderString(float x, float y, FontType ft, RGBColor &color, String
 		glEnable(GL_LIGHTING);
 	}
 	glColor3f(255, 255, 255); // Reset to White
+	 */
 }
 
 // Forces a call on displayCallback, usable client-side

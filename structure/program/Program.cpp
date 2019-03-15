@@ -1,6 +1,9 @@
 #include "Program.h"
 
+Program* Program::current = nullptr;
+
 Program::Program() : glId(0) {}
+
 Program::~Program() {
 	if (glId) {
 		glDeleteProgram(glId);
@@ -11,8 +14,7 @@ GLuint Program::getId() {
 	return glId;
 }
 
-Program* Program::getCurrent()
-{
+Program* Program::getCurrent() {
 	return Program::current;
 }
 
@@ -21,7 +23,7 @@ void Program::setMatrix(const char* name, glm::mat4 mat) {
 	glUniformMatrix4fv(getUniformLocation(name), 0, GL_FALSE, glm::value_ptr<float>(mat));
 }
 
-GLuint Program::getUniformLocation(const char* name) {
+GLint Program::getUniformLocation(const char* name) {
 	if (!name) return -1;
 	return glGetUniformLocation(glId, name);
 }
@@ -30,29 +32,24 @@ void Program::bind(GLuint location, const char* name) {
 	glBindAttribLocation(glId, location, name);
 }
 
-bool Program::build(Shader& vert, Shader& frag, Program& out)
-{
-	if (vert.getType() != Shader::TYPE_VERTEX)
-	{
+bool Program::build(Shader &vert, Shader &frag, Program &out) {
+	if (vert.getType() != Shader::TYPE_VERTEX) {
 		std::cout << "[Program] ERROR: invalid vertex shader." << std::endl;
 		return false;
 	}
-	if (frag.getType() != Shader::TYPE_FRAGMENT)
-	{
+	if (frag.getType() != Shader::TYPE_FRAGMENT) {
 		std::cout << " [Program] ERROR: invalid fragment shader." << std::endl;
 		return false;
 	}
 
 	// Delete if already used:
-	if (out.glId)
-	{
+	if (out.glId) {
 		glDeleteProgram(out.glId);
 	}
 
 	// Create program:
 	out.glId = glCreateProgram();
-	if (out.glId == 0)
-	{
+	if (out.glId == 0) {
 		std::cout << "[Program] ERROR: unable to create pipeline." << std::endl;
 		return false;
 	}
@@ -74,15 +71,13 @@ bool Program::build(Shader& vert, Shader& frag, Program& out)
 
 	glGetProgramiv(out.glId, GL_LINK_STATUS, &status);
 	glGetProgramInfoLog(out.glId, MAX_LOGSIZE, &length, buffer);
-	if (status == false)
-	{
+	if (status == false) {
 		std::cout << "[Program] ERROR: " << buffer << std::endl;
 		return false;
 	}
 	glValidateProgram(out.glId);
 	glGetProgramiv(out.glId, GL_VALIDATE_STATUS, &status);
-	if (status == GL_FALSE)
-	{
+	if (status == GL_FALSE) {
 		std::cout << "[Program] ERROR: Unable to validate program." << std::endl;
 		return false;
 	}
@@ -91,13 +86,11 @@ bool Program::build(Shader& vert, Shader& frag, Program& out)
 	return true;
 }
 
-bool Program::render()
-{
+bool Program::render() {
 	if (glId) {
 		glUseProgram(glId);
 		Program::current = this;
-	}
-	else {
+	} else {
 		std::cout << "[Program] ERROR: render() method called on invalid Program." << std::endl;
 		return false;
 	}

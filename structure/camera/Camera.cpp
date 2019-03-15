@@ -39,11 +39,11 @@ glm::mat4 Camera::getProjectionMatrix() const {
 
 //	Loads the projection matrix used by FreeGLUT to render the scene
 void Camera::loadProjectionMatrix() {
-	glMatrixMode(GL_PROJECTION);
+	//glMatrixMode(GL_PROJECTION);
 	glm::mat4 Projection = getProjectionMatrix();
-	glLoadMatrixf(glm::value_ptr(Projection));
+	//glLoadMatrixf(glm::value_ptr(Projection));
 	
-	glMatrixMode(GL_MODELVIEW);
+	//glMatrixMode(GL_MODELVIEW);
 }
 
 void Camera::setFOV(float FOVangle) {

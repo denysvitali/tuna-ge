@@ -13,7 +13,7 @@ public:
 
 	const static int MAX_LOGSIZE = 4096;
 
-	enum
+	enum ShaderType
 	{
 		TYPE_UNDEFINED = 0,
 		TYPE_VERTEX,
@@ -27,8 +27,8 @@ public:
 	int getType();
 	GLuint getId();
 
-	static bool loadFromFile(int type, const char* path, Shader& out);
-	static bool loadFromMemory(int type, const char* data, Shader& out);
+	static bool loadFromFile(ShaderType type, const char* path, Shader& out);
+	static bool loadFromMemory(ShaderType type, const char* data, Shader& out);
 
 
 private:

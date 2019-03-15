@@ -1,4 +1,4 @@
-#include "../Shader/shader.h"
+#include "../shader/Shader.h"
 
 class Program {
 public:
@@ -14,7 +14,7 @@ public:
 	static bool build(Shader& vert, Shader& frag, Program& out);
 	void bind(GLuint location, const char* name);
 	void setMatrix(const char* name, glm::mat4 mat);
-	GLuint getUniformLocation(const char* name);
+	GLint getUniformLocation(const char* name);
 	bool render();
 
 private:

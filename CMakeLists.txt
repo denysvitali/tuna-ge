@@ -49,6 +49,7 @@ list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/version.cc" version.hh)
 find_package(glm REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 
 # look for freeimage
 FIND_PATH(FREEIMAGE_INCLUDE_DIR FreeImage.h
@@ -84,6 +85,8 @@ find_program(VALGRIND "valgrind")
 
 
 add_library(tuna_ge STATIC tuna-ge.cpp
+        structure/shader/Shader.cpp
+        structure/program/Program.cpp
         structure/string/String.cpp
         structure/color/RGBColor.cpp
         structure/light/Light.cpp
@@ -102,7 +105,7 @@ add_library(tuna_ge STATIC tuna-ge.cpp
         structure/keyboard/Keyboard.cpp
         structure/ovoreader/OvoReader.cpp)
 include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS})
-target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} )
+target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${GLEW_LIBRARY} )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/ DESTINATION ${CMAKE_BINARY_DIR}/tuna-gui)
 
