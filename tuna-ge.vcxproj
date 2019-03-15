@@ -199,7 +199,6 @@
     <ClCompile Include="structure\texture\Texture.cpp" />
     <ClCompile Include="structure\vertex\Vertex.cpp" />
     <ClCompile Include="tuna-ge.cpp" />
-    <ClCompile Include="VAO.cpp" />
     <ClCompile Include="version.cc" />
     <ClCompile Include="version.cpp" />
   </ItemGroup>
@@ -231,7 +230,6 @@
     <ClInclude Include="structure\utils\CurrentDir.h" />
     <ClInclude Include="structure\vertex\Vertex.h" />
     <ClInclude Include="tuna-ge.h" />
-    <ClInclude Include="VAO.h" />
     <ClInclude Include="version.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

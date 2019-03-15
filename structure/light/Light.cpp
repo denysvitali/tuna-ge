@@ -119,7 +119,6 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
 
 	Program::getCurrent()->setLight(this);
-
 }
 
 void Light::enable() {

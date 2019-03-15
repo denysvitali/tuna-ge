@@ -361,6 +361,8 @@ void TunaGE::displayCB() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	Program::getCurrent()->render();
+
 	Node* root = TunaGE::renderList.getSceneRoot();
 	TunaGE::renderList.clearRenderElements();
 	TunaGE::renderList.pass(root);
@@ -453,7 +455,7 @@ void TunaGE::reshapeCB(int w, int h) {
 	if (TunaGE::getCurrentCamera() != nullptr) {
 		TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
 		TunaGE::getCurrentCamera()->loadProjectionMatrix();
-		Program::getCurrent()->setMatrix("projection", TunaGE::getCurrentCamera()->getProjectionMatrix());
+		Program::getCurrent()->setMatrix4x4("projection", TunaGE::getCurrentCamera()->getProjectionMatrix());
 	}
 
 	if (windowId != -1) {

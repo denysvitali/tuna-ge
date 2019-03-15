@@ -22,26 +22,27 @@ Program* Program::getCurrent()
 }
 
 
-void Program::setMatrix(const char* name, glm::mat4 mat) {
-	glUniformMatrix4fv(getUniformLocation(name), 0, GL_FALSE, glm::value_ptr<float>(mat));
+void Program::setMatrix4x4(const char* name, glm::mat4 mat) {
+	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr<float>(mat));
 }
 
-void Program::setNormalMatrix(glm::mat3 mat) {
-	glUniformMatrix3fv(getUniformLocation("normal_matrix"), 0, GL_FALSE, glm::value_ptr<float>(mat));
+void Program::setMatrix3x3(const char* name, glm::mat3 mat) {
+	glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr<float>(mat));
 }
 
 void Program::setLight(Light * light) {
-	glUniform3fv(glGetUniformLocation(glId, "light_position"), 0, glm::value_ptr<float>(light->getRenderMatrix()));
-	glUniform3fv(glGetUniformLocation(glId, "light_ambient"), 0, glm::value_ptr<float>(light->getLightAmbient()));
-	glUniform3fv(glGetUniformLocation(glId, "light_diffuse"), 0, glm::value_ptr<float>(light->getLightDiffuse()));
-	glUniform3fv(glGetUniformLocation(glId, "light_specular"), 0, glm::value_ptr<float>(light->getLightSpecular()));
+	const float* test = glm::value_ptr<float>(light->getRenderMatrix());
+	glUniform3fv(glGetUniformLocation(glId, "light_position"), 1, glm::value_ptr<float>(glm::vec3(2.f,2.f,2.f)));
+	glUniform3fv(glGetUniformLocation(glId, "light_ambient"), 1, glm::value_ptr<float>(light->getLightAmbient()));
+	glUniform3fv(glGetUniformLocation(glId, "light_diffuse"), 1, glm::value_ptr<float>(light->getLightDiffuse()));
+	glUniform3fv(glGetUniformLocation(glId, "light_specular"), 1, glm::value_ptr<float>(light->getLightSpecular()));
 }
 
 void Program::setMaterial(Material* material) {
-	glUniform3fv(glGetUniformLocation(glId, "material_ambient"), 0, glm::value_ptr<float>(material->getAmbient()));
-	glUniform3fv(glGetUniformLocation(glId, "material_diffuse"), 0, glm::value_ptr<float>(material->getDiffuse()));
-	glUniform3fv(glGetUniformLocation(glId, "material_emissive"), 0, glm::value_ptr<float>(material->getEmission()));
-	glUniform3fv(glGetUniformLocation(glId, "material_specular"), 0, glm::value_ptr<float>(material->getSpecular()));
+	glUniform3fv(glGetUniformLocation(glId, "material_ambient"), 1, glm::value_ptr<float>(material->getAmbient()));
+	glUniform3fv(glGetUniformLocation(glId, "material_diffuse"), 1, glm::value_ptr<float>(material->getDiffuse()));
+	glUniform3fv(glGetUniformLocation(glId, "material_emissive"), 1, glm::value_ptr<float>(material->getEmission()));
+	glUniform3fv(glGetUniformLocation(glId, "material_specular"), 1, glm::value_ptr<float>(material->getSpecular()));
 	glUniform1i(glGetUniformLocation(glId, "material_shininess"), material->getShininess());
 }
 

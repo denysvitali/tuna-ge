@@ -58,10 +58,10 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 		mat->render();
 	}
 
-	Program::getCurrent()->setMatrix("modelview", pos);
+	Program::getCurrent()->setMatrix4x4("modelview", pos);
 	glm::mat3 normal_matrix = glm::inverseTranspose(glm::mat3(pos));
 
-	Program::getCurrent()->setNormalMatrix(normal_matrix);
+	Program::getCurrent()->setMatrix3x3("normal_matrix", normal_matrix);
 
 	glBindVertexArray(vaoId);
 
@@ -80,37 +80,47 @@ void Mesh::init(float* positionArr, float* texcoordArr, float* normalArr, unsign
 
 	glBindVertexArray(vaoId);
 
-	glGenBuffers(4, vboId);
-	//glGenBuffers(1, &vboId[1]);
+	//glGenBuffers(4, vboId);
 
-	// Vertex coordinates buffer
+	//// Vertex coordinates buffer
+	//glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
+	//glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, positionArr, GL_STATIC_DRAW);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	//// Vertex texture coordinates buffer
+	//glBindBuffer(GL_ARRAY_BUFFER, vboId[1]);
+	//glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 2, texcoordArr, GL_STATIC_DRAW);
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	//// Vertex normals buffer
+	//glBindBuffer(GL_ARRAY_BUFFER, vboId[2]);
+	//glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, normalArr, GL_STATIC_DRAW);
+	//glEnableVertexAttribArray(2);
+	//glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[3]);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * sizeof(unsigned int) * 3, facesArr, GL_STATIC_DRAW);
+
+	glGenBuffers(2, vboId);
+
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, positionArr, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glBufferData(GL_ARRAY_BUFFER, numVertices * (3 + 2 + 3) * sizeof(float), 0, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * 3 * sizeof(float), positionArr);
+	glBufferSubData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(float), numVertices * 2 * sizeof(float), texcoordArr);
+	glBufferSubData(GL_ARRAY_BUFFER, numVertices * (3 + 2) * sizeof(float), numVertices * 3 * sizeof(float), normalArr);
+	
+	size_t tOffset = numVertices * 3 * sizeof(float);
+	size_t nOffset = tOffset + numVertices * 2 * sizeof(float);
 
-	// Vertex texture coordinates buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vboId[1]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 2, texcoordArr, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	// Vertex normals buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vboId[2]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float) * 3, normalArr, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * sizeof(unsigned int) * 3, facesArr, GL_STATIC_DRAW);
-
-	//glBufferData(GL_ARRAY_BUFFER, numVertices * (3 + 2 + 3) * sizeof(float), 0, GL_STATIC_DRAW);
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * 3 * sizeof(float), positionArr);
-	//glBufferSubData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(float), numVertices * 2 * sizeof(float), texcoordArr);
-	//glBufferSubData(GL_ARRAY_BUFFER, numVertices * (3 + 2) * sizeof(float), numVertices * 3 * sizeof(float), normalArr);
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceVboId);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned int), facesArr, GL_STATIC_DRAW);
+	// specify vertex arrays with their offsets
+	glVertexPointer(3, GL_FLOAT, 0, (void*)0);
+	glTexCoordPointer(2, GL_FLOAT, 0, (void*)tOffset);
+	glNormalPointer(GL_FLOAT, 0, (void*)nOffset);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned int), facesArr, GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 }
