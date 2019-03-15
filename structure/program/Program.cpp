@@ -11,6 +11,25 @@ GLuint Program::getId() {
 	return glId;
 }
 
+Program* Program::getCurrent()
+{
+	return Program::current;
+}
+
+
+void Program::setMatrix(const char* name, glm::mat4 mat) {
+	glUniformMatrix4fv(getUniformLocation(name), 0, GL_FALSE, glm::value_ptr<float>(mat));
+}
+
+GLuint Program::getUniformLocation(const char* name) {
+	if (!name) return -1;
+	return glGetUniformLocation(glId, name);
+}
+
+void Program::bind(GLuint location, const char* name) {
+	glBindAttribLocation(glId, location, name);
+}
+
 bool Program::build(Shader& vert, Shader& frag, Program& out)
 {
 	if (vert.getType() != Shader::TYPE_VERTEX)
@@ -39,10 +58,10 @@ bool Program::build(Shader& vert, Shader& frag, Program& out)
 	}
 
 	// Bind vertex shader:
-		glAttachShader(out.glId, vert.getId());
+	glAttachShader(out.glId, vert.getId());
 
 	// Bind fragment shader:
-		glAttachShader(out.glId, frag.getId());
+	glAttachShader(out.glId, frag.getId());
 
 	// Link program:
 	glLinkProgram(out.glId);
@@ -74,10 +93,11 @@ bool Program::build(Shader& vert, Shader& frag, Program& out)
 
 bool Program::render()
 {
-	if (glId)
+	if (glId) {
 		glUseProgram(glId);
-	else
-	{
+		Program::current = this;
+	}
+	else {
 		std::cout << "[Program] ERROR: render() method called on invalid Program." << std::endl;
 		return false;
 	}

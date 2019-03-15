@@ -80,29 +80,27 @@ uniform mat4 projection;
 uniform mat4 modelview;
 
 layout(location = 0) in vec3 in_Position;
-layout(location = 1) in vec4 in_Color;
+layout(location = 1) in vec2 in_TexCoord;
+layout(location = 2) in vec3 in_Normal;
 
-out vec3 out_Color;
-out float dist;
+out vec2 texCoord;
 
 void main(void)
 {
-	gl_Position = projection * modelview * vec4(in_Position, 1.0f);
-	dist = abs(gl_Position.z / 100.0f);
-	out_Color = in_Color.rgb;
+    gl_Position = projection * modelview * vec4(in_Position, 1.0f);
+    texCoord = in_TexCoord;
 })";
 const char* fragShader = R"(
 #version 440 core
 
-in vec3 out_Color;
-in float dist;
-   
+uniform sampler2D tex;
+in vec2 texCoord;
+
 out vec4 fragOutput;
 
 void main(void)
 {
-    vec3 fog = vec3(1.0f, 1.0f, 1.0f);
-    fragOutput = vec4(mix(out_Color, fog, dist), 1.0f);
+	fragOutput = texture(tex, texCoord);
 })";
 
 void TunaGE::init() {
@@ -146,7 +144,9 @@ void TunaGE::init() {
 	Program* ps = new Program();
 	Program::build(*vs, *fs, *ps);
 	ps->render();
-	glBindAttribLocation(ps->getId(), 0, "in_Position");
+	ps->bind(0, "in_position");
+	//ps->bind(1, "in_tex_coord");
+	ps->bind(2, "in_normal");
 }
 void TunaGE::initGlew() {
 	// Init Glew (*after* the context creation):
@@ -181,9 +181,10 @@ void TunaGE::initGlut() {
 
 	// FreeGLUT default settings
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_LIGHTING);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	// TODO: glLightModeli is deprecated in OGL4.4
+	//glEnable(GL_LIGHTING);
+	//glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+	//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);

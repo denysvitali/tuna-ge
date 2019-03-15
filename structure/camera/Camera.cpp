@@ -42,6 +42,7 @@ void Camera::loadProjectionMatrix() {
 	glMatrixMode(GL_PROJECTION);
 	glm::mat4 Projection = getProjectionMatrix();
 	glLoadMatrixf(glm::value_ptr(Projection));
+	
 	glMatrixMode(GL_MODELVIEW);
 }
 

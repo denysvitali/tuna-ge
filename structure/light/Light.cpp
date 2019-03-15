@@ -39,27 +39,29 @@ void Light::render() {
 			lightSpecular[2] * intensity,
 			1.0f);
 
-	//	Sets various FreeGLUT options based on the light type (0 = DIRECTIONAL, 1 = OMNI, 2 = SPOT)
-	switch (lightType){
-		case 0:
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-			break;
-		case 1:
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
-			break;
-		case 2:
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_DIRECTION, glm::value_ptr(lightDirection));
-			glLightf(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_EXPONENT, spotExponent);
-			break;
-		default:
-			break;
-	}
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
+	////	Sets various FreeGLUT options based on the light type (0 = DIRECTIONAL, 1 = OMNI, 2 = SPOT)
+	//switch (lightType){
+	//	case 0:
+	//		glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+	//		break;
+	//	case 1:
+	//		glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+	//		glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
+	//		break;
+	//	case 2:
+	//		glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+	//		glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
+	//		glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_DIRECTION, glm::value_ptr(lightDirection));
+	//		glLightf(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_EXPONENT, spotExponent);
+	//		break;
+	//	default:
+	//		break;
+	//}
+	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
+	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
+	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
+
+	
 }
 
 //	Render method using a material and render matrix passed as parameters
@@ -74,7 +76,7 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 	}
 
 	//	Draw a small emissive sphere to show light position:
-	glutSolidSphere(radius, 40, 40);
+	//glutSolidSphere(radius, 40, 40);
 
 	glm::vec4 ambient_wi = glm::vec4(
 		lightAmbient[0] * intensity,

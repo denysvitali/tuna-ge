@@ -91,12 +91,13 @@ void Texture::setAnisotropicLevel(int anisotropicLevel) {
 
 //	Loads the texture bitmap on FreeGLUT with the current settings
 void Texture::init() {
-	if (strstr((const char *) glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic")) {
-		isAnisotropicSupported = true;
-		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropicLevel);
-	} else {
-		isAnisotropicSupported = false;
-	}
+	//if (strstr((const char *) glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic")) {
+	//	isAnisotropicSupported = true;
+	//	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropicLevel);
+	//} else {
+	//	isAnisotropicSupported = false;
+	//}
+	isAnisotropicSupported = false;
 
 	glGenTextures(1, &texId);
 
