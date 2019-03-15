@@ -28,6 +28,7 @@ namespace tunage {
 
 	private:
 		unsigned int vaoId;
+		unsigned int vboId[4];
 		unsigned int vertVboId;
 		unsigned int faceVboId;
 		int numVertices;

@@ -10,6 +10,9 @@
 
 #include <FreeImage.h>
 
+#include "structure/shader/Shader.h"
+#include "structure/program/Program.h"
+
 
 // Save Image during renderSingleFrame in a temp dir (in order to generate expected test results)
 #define SAVE_IMAGE 1
@@ -17,15 +20,15 @@
 using namespace tunage;
 
 //Set default values//
-void (* TunaGE::motion_callback)(int, int) = nullptr;
+void(*TunaGE::motion_callback)(int, int) = nullptr;
 
-void (* TunaGE::mouse_callback)(Mouse::Button, Button::State, int, int) = nullptr;
+void(*TunaGE::mouse_callback)(Mouse::Button, Button::State, int, int) = nullptr;
 
-void (* TunaGE::special_callback)(Keyboard::Key, int x, int y) = nullptr;
+void(*TunaGE::special_callback)(Keyboard::Key, int x, int y) = nullptr;
 
-void (* TunaGE::keyboard_callback)(unsigned char, int, int) = nullptr;
+void(*TunaGE::keyboard_callback)(unsigned char, int, int) = nullptr;
 
-void (* TunaGE::loop_callback)() = nullptr;
+void(*TunaGE::loop_callback)() = nullptr;
 
 
 bool TunaGE::wireframe = false;
@@ -46,7 +49,7 @@ bool TunaGE::framerateVisible = false;
 //	Display a window? Used during Tests to avoid generating GL windows
 bool TunaGE::displayWindow = true;
 int TunaGE::windowId = -1;
-List TunaGE::renderList = List{"render list"};
+List TunaGE::renderList = List{ "render list" };
 //	Screen size
 int TunaGE::screen_w = 100;
 int TunaGE::screen_h = 100;
@@ -60,44 +63,108 @@ RGBColor fpsColor = RGBColor::getColor("#4CAF50");
 std::vector<Object*> TunaGE::allocatedObjects = std::vector<Object*>{};
 bool TunaGE::glutInitAlreadyCalled = false;
 
+// ARB DEBUG CALLBACK FUNCTION
+void __stdcall debugCallback(GLenum source, GLenum type,
+	GLuint id, GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	GLvoid* userParam) {
+	printf("ARB_debug: %s\n", message);
+}
+
+// SHADERS
+const char* vertShader = R"(
+#version 440 core
+
+uniform mat4 projection;
+uniform mat4 modelview;
+
+layout(location = 0) in vec3 in_Position;
+layout(location = 1) in vec4 in_Color;
+
+out vec3 out_Color;
+out float dist;
+
+void main(void)
+{
+	gl_Position = projection * modelview * vec4(in_Position, 1.0f);
+	dist = abs(gl_Position.z / 100.0f);
+	out_Color = in_Color.rgb;
+})";
+const char* fragShader = R"(
+#version 440 core
+
+in vec3 out_Color;
+in float dist;
+   
+out vec4 fragOutput;
+
+void main(void)
+{
+    vec3 fog = vec3(1.0f, 1.0f, 1.0f);
+    fragOutput = vec4(mix(out_Color, fog, dist), 1.0f);
+})";
+
 void TunaGE::init() {
-	if(!TunaGE::freeAlreadyCalled){
+	if (!TunaGE::freeAlreadyCalled) {
 		throw std::runtime_error("Cannot init TunaGE without first freeing it. Use TunaGE::free()");
 	}
 
 	TunaGE::freeAlreadyCalled = false;
-
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
 	TunaGE::setWindowSize(TunaGE::screen_w, TunaGE::screen_h);
 
 	if (!glutInitAlreadyCalled) {
 		// FreeGLUT can parse command-line params, in case:
 		int argc = 1;
-		char* argv[1] = {(char*) "Tuna"};
+		char* argv[1] = { (char*) "Tuna" };
 		glutInit(&argc, argv);
 		glutInitAlreadyCalled = true;
 	}
 
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitContextVersion(4, 4);
+	glutInitContextFlags(GLUT_CORE_PROFILE | GLUT_DEBUG);
 
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlew();
+
+#ifdef _DEBUG
+	glDebugMessageCallback((GLDEBUGPROC)debugCallback, nullptr);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
 	TunaGE::initGlut();
+
+	Shader* vs = new Shader();
+	Shader::loadFromMemory(Shader::TYPE_VERTEX, vertShader, *vs);
+	Shader* fs = new Shader();
+	Shader::loadFromMemory(Shader::TYPE_FRAGMENT, fragShader, *fs);
+
+	Program* ps = new Program();
+	Program::build(*vs, *fs, *ps);
+	ps->render();
+	glBindAttribLocation(ps->getId(), 0, "in_Position");
 }
 void TunaGE::initGlew() {
 	// Init Glew (*after* the context creation):
 	glewExperimental = GL_TRUE;
-	glewInit();
+	GLenum error = glewInit();
 
-	// OpenGL 2.1 is required:
-	if (!glewIsSupported("GL_VERSION_2_1"))
+	if (error != GLEW_OK)
 	{
-		std::cout << "OpenGL 2.1 not supported" << std::endl;
-		exit;
+		std::cout << "Error: " << glewGetErrorString(error) << std::endl;
+		exit(-1);
 	}
+	else
+		// OpenGL 2.1 is required:
+		if (!glewIsSupported("GL_VERSION_4_4"))
+		{
+			std::cout << "OpenGL 4.4 not supported" << std::endl;
+			exit;
+		}
 }
 
 void TunaGE::initGlut() {
@@ -130,37 +197,37 @@ void TunaGE::loopEvent() {
 	}
 }
 
-void TunaGE::loop_inner(bool swapBuffers){
+void TunaGE::loop_inner(bool swapBuffers) {
 #ifdef _WINDOWS
 	std::chrono::time_point<std::chrono::steady_clock> start, end;
 #else
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 #endif
-	if(TunaGE::framerateVisible) {
+	if (TunaGE::framerateVisible) {
 		start = std::chrono::high_resolution_clock::now();
 	}
 
-	if(!stopRendering) {
+	if (!stopRendering) {
 		glutMainLoopEvent();
 		if (!stopRendering) {
-		TunaGE::loopEvent();
+			TunaGE::loopEvent();
 
-			if(swapBuffers) {
+			if (swapBuffers) {
 				glutPostWindowRedisplay(windowId);
 				glutSwapBuffers();
 			}
 		}
 	}
 
-	if(TunaGE::framerateVisible){
+	if (TunaGE::framerateVisible) {
 		end = std::chrono::high_resolution_clock::now();
 		lastFPS_idx++;
 		lastFPS_idx = lastFPS_idx % FPS_COUNTER_SIZE;
-		lastFPSArr[lastFPS_idx] = pow(10,9)/(end - start).count();
+		lastFPSArr[lastFPS_idx] = pow(10, 9) / (end - start).count();
 
-		if(lastFPS_idx == FPS_COUNTER_SIZE - 1){
+		if (lastFPS_idx == FPS_COUNTER_SIZE - 1) {
 			double fpsSum = 0.0;
-			for(auto d : lastFPSArr){
+			for (auto d : lastFPSArr) {
 				fpsSum += d;
 			}
 			lastFPS = fpsSum / FPS_COUNTER_SIZE;
@@ -176,8 +243,8 @@ void TunaGE::loop() {
 	}
 }
 
-void TunaGE::closeFunc(){
-	if(!closeAlreadyCalled) {
+void TunaGE::closeFunc() {
+	if (!closeAlreadyCalled) {
 		closeAlreadyCalled = true;
 		TunaGE::stopRendering = true;
 	}
@@ -185,43 +252,48 @@ void TunaGE::closeFunc(){
 
 //	Destroys all the elements of the scene (if any) and all the elements used in the list for additional features
 bool TunaGE::free() {
-	if(!freeAlreadyCalled){
-	renderList.clearRenderElements();
-	renderList.clearCameras();
+	if (!freeAlreadyCalled) {
+		renderList.clearRenderElements();
+		renderList.clearCameras();
 
-	delete TunaGE::renderList.getSceneRoot();
+		delete TunaGE::renderList.getSceneRoot();
 
-	for (auto o : allocatedObjects) {
-		if (dynamic_cast<Texture*>(o)) {
-			delete (Texture*) o;
-		} else if (dynamic_cast<Mesh*>(o)) {
-			delete (Mesh*) o;
-		} else if (dynamic_cast<Material*>(o)) {
-			delete (Material*) o;
-		} else if (dynamic_cast<Light*>(o)) {
-			delete (Light*) o;
-		} else if (dynamic_cast<Node*>(o)) {
-			delete (Node*) o;
+		for (auto o : allocatedObjects) {
+			if (dynamic_cast<Texture*>(o)) {
+				delete (Texture*)o;
+			}
+			else if (dynamic_cast<Mesh*>(o)) {
+				delete (Mesh*)o;
+			}
+			else if (dynamic_cast<Material*>(o)) {
+				delete (Material*)o;
+			}
+			else if (dynamic_cast<Light*>(o)) {
+				delete (Light*)o;
+			}
+			else if (dynamic_cast<Node*>(o)) {
+				delete (Node*)o;
+			}
 		}
+
+		TunaGE::allocatedObjects.clear();
+
+		glutCloseFunc(nullptr);
+		glutWMCloseFunc(nullptr);
+		glutLeaveMainLoop();
+
+		if (TunaGE::windowId != -1) {
+			glutDestroyWindow(TunaGE::windowId);
+			TunaGE::windowId = -1;
+		}
+		glutExit();
+
+		TunaGE::glutInitAlreadyCalled = false;
+		TunaGE::freeAlreadyCalled = true;
+		return true;
+
 	}
-
-	TunaGE::allocatedObjects.clear();
-
-	glutCloseFunc(nullptr);
-	glutWMCloseFunc(nullptr);
-	glutLeaveMainLoop();
-
-	if (TunaGE::windowId != -1) {
-		glutDestroyWindow(TunaGE::windowId);
-		TunaGE::windowId = -1;
-	}
-	glutExit();
-
-	TunaGE::glutInitAlreadyCalled = false;
-	TunaGE::freeAlreadyCalled = true;
-	return true;
-
-	} else {
+	else {
 		return false;
 	}
 
@@ -237,17 +309,20 @@ void TunaGE::displayCB() {
 
 	if (TunaGE::culling) {
 		glEnable(GL_CULL_FACE);
-	} else {
+	}
+	else {
 		glDisable(GL_CULL_FACE);
 	}
 	if (TunaGE::lighting) {
 		glEnable(GL_LIGHTING);
-	} else {
+	}
+	else {
 		glDisable(GL_LIGHTING);
 	}
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	} else {
+	}
+	else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
@@ -256,17 +331,17 @@ void TunaGE::displayCB() {
 	TunaGE::renderList.pass(root);
 	TunaGE::renderList.render();
 
-	if(TunaGE::framerateVisible){
-		if(lastFPS != -1) {
+	if (TunaGE::framerateVisible) {
+		if (lastFPS != -1) {
 			char output[20];
 			sprintf(output, "%.0f", lastFPS);
-			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, FontType::BITMAP_HELVETICA_18, fpsColor, String{output});
+			renderString(TunaGE::screen_w - 60, TunaGE::screen_h - 30, FontType::BITMAP_HELVETICA_18, fpsColor, String{ output });
 		}
 	}
 
 	// Keep me as last rendering item
 	if (TunaGE::debug) {
-		renderString(10, 10, FontType::BITMAP_9_BY_15, debugColor, String{TunaGE::version()});
+		renderString(10, 10, FontType::BITMAP_9_BY_15, debugColor, String{ TunaGE::version() });
 
 		std::stringstream ss;
 
@@ -277,53 +352,54 @@ void TunaGE::displayCB() {
 		glm::vec3 cp = cam->getAbsolutePosition();
 
 		sprintf(outputStr, "%s: %.2f,%.2f,%.2f   ",
-				cam->getName().data(),
-				cp[0],
-				cp[1],
-				cp[2]);
+			cam->getName().data(),
+			cp[0],
+			cp[1],
+			cp[2]);
 
 		switch (cam->getMode()) {
-			case LOOK_AT_POINT:
-				{
-					glm::vec3 point;
-					point = cam->getLookAtPoint();
-					sprintf(outputStr, "%s%s%.2f,%.2f,%.2f",
-							outputStr, "LAP: ", point[0], point[1], point[2]);
-				}
-				break;
-			case LOOK_AT_NODE:
-				if(cam->getLookAtNode() != nullptr){
-					sprintf(outputStr, "%s%s%s",
-							outputStr, "LAN: ",
-							cam->getLookAtNode()->getName().data());
-				} else {
-					sprintf(outputStr, "%s%s",
-							outputStr, "LAN: (null)");
-				}
-				break;
-			case LOOK_TOWARDS_VECTOR:
-				{
-					glm::vec3 point = cam->getFront();
-					sprintf(outputStr, "%s%s%.2f,%.2f,%.2f",
-							outputStr, "LTV: ", point[0], point[1], point[2]);
-				}
-				break;
+		case LOOK_AT_POINT:
+		{
+			glm::vec3 point;
+			point = cam->getLookAtPoint();
+			sprintf(outputStr, "%s%s%.2f,%.2f,%.2f",
+				outputStr, "LAP: ", point[0], point[1], point[2]);
+		}
+		break;
+		case LOOK_AT_NODE:
+			if (cam->getLookAtNode() != nullptr) {
+				sprintf(outputStr, "%s%s%s",
+					outputStr, "LAN: ",
+					cam->getLookAtNode()->getName().data());
+			}
+			else {
+				sprintf(outputStr, "%s%s",
+					outputStr, "LAN: (null)");
+			}
+			break;
+		case LOOK_TOWARDS_VECTOR:
+		{
+			glm::vec3 point = cam->getFront();
+			sprintf(outputStr, "%s%s%.2f,%.2f,%.2f",
+				outputStr, "LTV: ", point[0], point[1], point[2]);
+		}
+		break;
 		}
 
 		sprintf(outputStr, "%s W: %d x %d", outputStr, TunaGE::screen_w, TunaGE::screen_h);
 
-		renderString(200, 10, FontType::BITMAP_9_BY_15, debugColor, String{outputStr});
+		renderString(200, 10, FontType::BITMAP_9_BY_15, debugColor, String{ outputStr });
 	}
 }
 
 void TunaGE::specialKeyCB(int button, int x, int y) {
-	if(keyboard_callback != nullptr){
+	if (keyboard_callback != nullptr) {
 		keyboard_callback(Keyboard::getKey(button), x, y);
 	}
 }
 
 void TunaGE::mouseCB(int button, int state, int x, int y) {
-	if(mouse_callback != nullptr){
+	if (mouse_callback != nullptr) {
 		mouse_callback(Mouse::getButton(button), Button::getState(state), x, y);
 	}
 }
@@ -354,19 +430,19 @@ void TunaGE::reshapeCB(int w, int h) {
 }
 
 //	Setters of the user-defined callbacks called by FreeGLUT accordingly
-void TunaGE::setMotionCallback(void(* motion_callback)(int, int)) {
+void TunaGE::setMotionCallback(void(*motion_callback)(int, int)) {
 	TunaGE::motion_callback = motion_callback;
 }
 
-void TunaGE::setMouseCallback(void(* mouse_callback)(Mouse::Button, Button::State, int, int)) {
+void TunaGE::setMouseCallback(void(*mouse_callback)(Mouse::Button, Button::State, int, int)) {
 	TunaGE::mouse_callback = mouse_callback;
 }
 
-void TunaGE::setKeyboardCallback(void(* keyboard_callback)(unsigned char, int, int)) {
+void TunaGE::setKeyboardCallback(void(*keyboard_callback)(unsigned char, int, int)) {
 	TunaGE::keyboard_callback = keyboard_callback;
 }
 
-void TunaGE::setSpecialCallback(void(* special_callback)(Keyboard::Key k, int x, int y)) {
+void TunaGE::setSpecialCallback(void(*special_callback)(Keyboard::Key k, int x, int y)) {
 	TunaGE::special_callback = special_callback;
 }
 
@@ -442,7 +518,7 @@ void tunage::TunaGE::setLightning(bool enabled) {
 
 void TunaGE::setFPSCounter(bool enabled) {
 	TunaGE::framerateVisible = enabled;
-	if(!framerateVisible){
+	if (!framerateVisible) {
 		TunaGE::lastFPS = -1;
 		TunaGE::lastFPS_idx = 0;
 	}
@@ -486,7 +562,7 @@ void* TunaGE::renderSingleFrame(int &width, int &height) {
 	int bpp = FreeImage_GetBPP(dib);
 	int Bpp = bpp / 8;
 
-	auto* seed = (GLubyte*) malloc(sizeof(GLubyte) * width * height * Bpp);
+	auto* seed = (GLubyte*)malloc(sizeof(GLubyte) * width * height * Bpp);
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, seed);
 
 	for (unsigned y = 0; y < height; y++) {
@@ -534,7 +610,7 @@ String TunaGE::version() {
 	}
 
 	std::string str = ss.str();
-	return String{ss.str().data()};
+	return String{ ss.str().data() };
 }
 
 //	Load a full scene from a specified file OvO, this scene is then returned via the Root Node
@@ -547,26 +623,28 @@ void TunaGE::setWindowSize(int width, int height) {
 	screen_h = height;
 
 	glViewport(0, 0, width, height);
-	if (TunaGE::windowId == -1){
+	if (TunaGE::windowId == -1) {
 		if (!glutInitAlreadyCalled) {
 			return;
-		} else {
+		}
+		else {
 			glutDestroyWindow(TunaGE::windowId);
 			TunaGE::windowId = glutCreateWindow("Tuna");
 			glutInitWindowSize(width, height);
 			glutSetWindow(TunaGE::windowId);
 		}
-	} else {
+	}
+	else {
 		glutReshapeWindow(width, height);
 	}
 	TunaGE::loop_inner(false);
 }
 
-void TunaGE::setLoopCallback(void (* loop_callback)()) {
+void TunaGE::setLoopCallback(void(*loop_callback)()) {
 	TunaGE::loop_callback = loop_callback;
 }
 
-void TunaGE::setDebug(bool enabled){
+void TunaGE::setDebug(bool enabled) {
 	TunaGE::debug = enabled;
 }
 
