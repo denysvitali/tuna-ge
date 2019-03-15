@@ -10,11 +10,11 @@ Material::~Material() {
 
 void Material::render() {
 	//	Render texture
-	if (texture != nullptr) {
-		texture->render();
-	} else {
-		glDisable(GL_TEXTURE_2D);
-	}
+	//if (texture != nullptr) {
+	//	texture->render();
+	//} else {
+	//	glDisable(GL_TEXTURE_2D);
+	//}
 
 	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
 	//			 glm::value_ptr(glm::vec4(ambient, alpha)));
@@ -27,13 +27,7 @@ void Material::render() {
 	//glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,
 	//			shininess);
 
-	Program* p = Program::getCurrent();
-	assert(p != nullptr);
-	GLuint id = p->getId();
-	glUniformMatrix3fv(glGetUniformLocation(id, "ambient"), 0, GL_FALSE, glm::value_ptr<float>(ambient));
-	glUniformMatrix3fv(glGetUniformLocation(id, "diffuse"), 0, GL_FALSE, glm::value_ptr<float>(diffuse));
-	glUniformMatrix3fv(glGetUniformLocation(id, "emissive"), 0, GL_FALSE, glm::value_ptr<float>(emission));
-	glUniformMatrix3fv(glGetUniformLocation(id, "specular"), 0, GL_FALSE, glm::value_ptr<float>(specular));
+	Program::getCurrent()->setMaterial(this);
 }
 
 void Material::setAmbient(glm::vec3 light) {

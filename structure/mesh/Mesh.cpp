@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "../program/Program.h"
 #include <GL/glew.h>
+#include <glm/gtc/matrix_inverse.hpp>
 #include <GL/freeglut.h>
 
 using namespace tunage;
@@ -57,7 +58,10 @@ void Mesh::render(glm::mat4 pos, Material* mat) {
 		mat->render();
 	}
 
-	glLoadMatrixf(glm::value_ptr(pos));
+	Program::getCurrent()->setMatrix("modelview", pos);
+	glm::mat3 normal_matrix = glm::inverseTranspose(glm::mat3(pos));
+
+	Program::getCurrent()->setNormalMatrix(normal_matrix);
 
 	glBindVertexArray(vaoId);
 
@@ -128,8 +132,8 @@ Mesh::Mesh() : Node{} {
 }
 
 Mesh::~Mesh() {
-	glDeleteVertexArrays(1, &vaoId);
 	glDeleteBuffers(4, vboId);
+	glDeleteVertexArrays(1, &vaoId);
 	//faces.clear();
 	//if (initialized) {
 	//	// Dispose buffer:

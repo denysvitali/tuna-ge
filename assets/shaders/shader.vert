@@ -14,7 +14,7 @@ out vec3 normal;
 
 void main(void)
 {
-frag_position = modelview * vec4(in_position, 1.0f);
+	frag_position = modelview * vec4(in_position, 1.0f);
     gl_Position = projection * frag_position;
 	normal = normal_matrix * in_normal;
 //    texCoord = in_tex_coord;

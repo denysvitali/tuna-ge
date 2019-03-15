@@ -78,29 +78,63 @@ const char* vertShader = R"(
 
 uniform mat4 projection;
 uniform mat4 modelview;
+uniform mat3 normal_matrix;
 
-layout(location = 0) in vec3 in_Position;
-layout(location = 1) in vec2 in_TexCoord;
-layout(location = 2) in vec3 in_Normal;
+layout(location = 0) in vec3 in_position;
+//layout(location = 1) in vec2 in_tex_coord;
+layout(location = 2) in vec3 in_normal;
 
-out vec2 texCoord;
+//out vec2 tex_coord;
+out vec4 frag_position;
+out vec3 normal;
 
 void main(void)
 {
-    gl_Position = projection * modelview * vec4(in_Position, 1.0f);
-    texCoord = in_TexCoord;
+frag_position = modelview * vec4(in_position, 1.0f);
+    gl_Position = projection * frag_position;
+	normal = normal_matrix * in_normal;
+//    texCoord = in_tex_coord;
 })";
+
 const char* fragShader = R"(
 #version 440 core
 
-uniform sampler2D tex;
-in vec2 texCoord;
+//uniform sampler2D tex;
 
-out vec4 fragOutput;
+uniform vec3 material_ambient;
+uniform vec3 material_diffuse;
+uniform vec3 material_emissive;
+uniform vec3 material_specular;
+uniform int material_shininess;
+
+uniform vec3 light_position; // in eye coordinates
+uniform vec3 light_ambient;
+uniform vec3 light_diffuse;
+uniform vec3 light_specular;
+
+//in vec2 tex_coord;
+
+in vec4 frag_position;
+in vec3 normal;
+
+out vec4 frag_out;
 
 void main(void)
 {
-	fragOutput = texture(tex, texCoord);
+	// Ambient term:
+	vec3 frag_color = material_ambient * light_ambient;
+	// Diffuse term:
+	vec3 _normal = normalize(normal);
+	vec3 light_direction = normalize(light_position - frag_position.xyz);
+	float nDotL = dot(light_direction, _normal);
+	if (nDotL > 0.0f) {
+		frag_color += material_diffuse * nDotL * light_diffuse;
+		// Specular term:
+		vec3 halfVector = normalize(light_direction + normalize(-frag_position.xyz));
+		float nDotHV = dot(_normal, halfVector);
+		frag_color += material_specular * pow(nDotHV, material_shininess) * light_specular;
+	}
+	frag_out = vec4(frag_color, 1.0f);
 })";
 
 void TunaGE::init() {
@@ -314,12 +348,12 @@ void TunaGE::displayCB() {
 	else {
 		glDisable(GL_CULL_FACE);
 	}
-	if (TunaGE::lighting) {
-		glEnable(GL_LIGHTING);
-	}
-	else {
-		glDisable(GL_LIGHTING);
-	}
+	//if (TunaGE::lighting) {
+	//	glEnable(GL_LIGHTING);
+	//}
+	//else {
+	//	glDisable(GL_LIGHTING);
+	//}
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -419,6 +453,7 @@ void TunaGE::reshapeCB(int w, int h) {
 	if (TunaGE::getCurrentCamera() != nullptr) {
 		TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
 		TunaGE::getCurrentCamera()->loadProjectionMatrix();
+		Program::getCurrent()->setMatrix("projection", TunaGE::getCurrentCamera()->getProjectionMatrix());
 	}
 
 	if (windowId != -1) {
@@ -450,34 +485,34 @@ void TunaGE::setSpecialCallback(void(*special_callback)(Keyboard::Key k, int x, 
 //	Renders a string on screen with position, color and font specified
 void TunaGE::renderString(float x, float y, FontType ft, RGBColor &color, String string) {
 
-	void* font = Font::getFont(ft);
+	//void* font = Font::getFont(ft);
 
-	glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE_2D);
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
+	////glDisable(GL_LIGHTING);
+	//glDisable(GL_TEXTURE_2D);
+	//glMatrixMode(GL_PROJECTION);
+	//glPushMatrix();
+	//glLoadIdentity();
+	//gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
+	//glMatrixMode(GL_MODELVIEW);
+	//glPushMatrix();
+	//glLoadIdentity();
 
-	glColor3f(color.r(), color.g(), color.b());
-	glRasterPos2f(x, y);
+	//glColor3f(color.r(), color.g(), color.b());
+	//glRasterPos2f(x, y);
 
-	for (char c : std::string(string.data())) {
-		glutBitmapCharacter(font, c);
-	}
+	//for (char c : std::string(string.data())) {
+	//	glutBitmapCharacter(font, c);
+	//}
 
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+	//glMatrixMode(GL_PROJECTION);
+	//glPopMatrix();
+	//glMatrixMode(GL_MODELVIEW);
+	//glPopMatrix();
 
-	if (TunaGE::lighting) {
-		glEnable(GL_LIGHTING);
-	}
-	glColor3f(255, 255, 255); // Reset to White
+	////if (TunaGE::lighting) {
+	////	glEnable(GL_LIGHTING);
+	////}
+	//glColor3f(255, 255, 255); // Reset to White
 }
 
 // Forces a call on displayCallback, usable client-side

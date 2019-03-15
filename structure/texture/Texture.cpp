@@ -22,15 +22,15 @@ Texture::~Texture() {
 
 //	Binds the texture
 void tunage::Texture::render() {
-	glEnable(GL_TEXTURE_2D);
-	//	The first call of this render method will call the init method
-	if (!initialized) {
-		initialized = true;
-		init();
-	} else {
-		// Update texture content:
-		glBindTexture(GL_TEXTURE_2D, texId);
-	}
+	//glEnable(GL_TEXTURE_2D);
+	////	The first call of this render method will call the init method
+	//if (!initialized) {
+	//	initialized = true;
+	//	init();
+	//} else {
+	//	// Update texture content:
+	//	glBindTexture(GL_TEXTURE_2D, texId);
+	//}
 }
 
 
