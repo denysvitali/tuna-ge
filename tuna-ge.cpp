@@ -192,13 +192,18 @@ void TunaGE::initGlew() {
 		std::cout << "Error: " << glewGetErrorString(error) << std::endl;
 		exit(-1);
 	}
-	else
+	else {
 		// OpenGL 2.1 is required:
 		if (!glewIsSupported("GL_VERSION_4_4"))
 		{
 			std::cout << "OpenGL 4.4 not supported" << std::endl;
 			exit;
 		}
+	}
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void TunaGE::initGlut() {
@@ -454,7 +459,7 @@ void TunaGE::reshapeCB(int w, int h) {
 
 	if (TunaGE::getCurrentCamera() != nullptr) {
 		TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
-		TunaGE::getCurrentCamera()->loadProjectionMatrix();
+	//	TunaGE::getCurrentCamera()->loadProjectionMatrix();
 		Program::getCurrent()->setMatrix4x4("projection", TunaGE::getCurrentCamera()->getProjectionMatrix());
 	}
 

@@ -105,8 +105,6 @@ void Mesh::init(float* positionArr, float* texcoordArr, float* normalArr, unsign
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[3]);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * sizeof(unsigned int) * 3, facesArr, GL_STATIC_DRAW);
 
-	glGenBuffers(2, vboId);
-
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
 	glBufferData(GL_ARRAY_BUFFER, numVertices * (3 + 2 + 3) * sizeof(float), 0, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * 3 * sizeof(float), positionArr);
@@ -116,10 +114,12 @@ void Mesh::init(float* positionArr, float* texcoordArr, float* normalArr, unsign
 	size_t tOffset = numVertices * 3 * sizeof(float);
 	size_t nOffset = tOffset + numVertices * 2 * sizeof(float);
 
-	// specify vertex arrays with their offsets
-	glVertexPointer(3, GL_FLOAT, 0, (void*)0);
-	glTexCoordPointer(2, GL_FLOAT, 0, (void*)tOffset);
-	glNormalPointer(GL_FLOAT, 0, (void*)nOffset);
+	glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glVertexAttribPointer((GLuint)1, 2, GL_FLOAT, GL_FALSE, 0, (void*)tOffset);
+	glVertexAttribPointer((GLuint)2, 3, GL_FLOAT, GL_FALSE, 0, (void*)nOffset);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[1]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned int), facesArr, GL_STATIC_DRAW);
@@ -141,10 +141,11 @@ bool Mesh::isTransparent() {
 
 Mesh::Mesh() : Node{} {
 	glGenVertexArrays(1, &vaoId);
+	glGenBuffers(2, vboId);
 }
 
 Mesh::~Mesh() {
-	glDeleteBuffers(4, vboId);
+	glDeleteBuffers(2, vboId);
 	glDeleteVertexArrays(1, &vaoId);
 	//faces.clear();
 	//if (initialized) {

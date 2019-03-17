@@ -139,14 +139,14 @@ class GeTest : public ::testing::Test {
 		Vertex v4{ 0, 0, width, 0, 1, 0 , 0, 1 };
 		Vertex v5{ width, 0, 0, 0, 1, 0 , 1, 1 };
 		Vertex v6{ -width, 0, 0, 0, 1, 0 , 0 , 0 };
-
+		/*
 		mesh.addVertex(v1);
 		mesh.addVertex(v2);
 		mesh.addVertex(v3);
 		mesh.addVertex(v4);
 		mesh.addVertex(v5);
 		mesh.addVertex(v6);
-
+		*/
 		Node root{"root"};
 		root.link(&mesh);
 		root.link(camera1);
