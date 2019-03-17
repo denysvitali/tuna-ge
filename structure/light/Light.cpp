@@ -3,8 +3,11 @@
 
 // FreeGLUT:
 #include <GL/freeglut.h>
+
 #include "../material/Material.h"
 #include "../../tuna-ge.h"
+
+#include <glm/gtc/matrix_inverse.hpp>
 
 using namespace tunage;
 
@@ -75,6 +78,11 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 		mat->render();
 	}
 
+	Program::getCurrent()->setMatrix4x4("modelview", pos);
+	glm::mat3 normal_matrix = glm::inverseTranspose(glm::mat3(pos));
+
+	Program::getCurrent()->setMatrix3x3("normal_matrix", normal_matrix);
+
 	//	Draw a small emissive sphere to show light position:
 	//glutSolidSphere(radius, 40, 40);
 
@@ -118,7 +126,8 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
 	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
 
-	Program::getCurrent()->setLight(this);
+
+	Program::getCurrent()->setLight(this, pos);
 }
 
 void Light::enable() {

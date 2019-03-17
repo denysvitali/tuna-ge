@@ -20,7 +20,7 @@ namespace tunage {
 		void bind(GLuint location, const char* name);
 		void setMatrix4x4(const char* name, glm::mat4 mat);
 		void setMatrix3x3(const char* name, glm::mat3 mat);
-		void setLight(Light* light);
+		void setLight(Light* light, glm::mat4 pos);
 		void setMaterial(Material* material);
 		GLuint getUniformLocation(const char* name);
 		bool render();

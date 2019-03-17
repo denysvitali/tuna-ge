@@ -30,9 +30,9 @@ void Program::setMatrix3x3(const char* name, glm::mat3 mat) {
 	glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr<float>(mat));
 }
 
-void Program::setLight(Light * light) {
-	const float* test = glm::value_ptr<float>(light->getRenderMatrix());
-	glUniform3fv(glGetUniformLocation(glId, "light_position"), 1, glm::value_ptr<float>(glm::vec3(2.f,2.f,2.f)));
+void Program::setLight(Light * light, glm::mat4 pos) {
+	glm::vec3 light_position = glm::vec3(pos[3][0], pos[3][1], pos[3][2]);
+	glUniform3fv(glGetUniformLocation(glId, "light_position"), 1, glm::value_ptr<float>(light_position));
 	glUniform3fv(glGetUniformLocation(glId, "light_ambient"), 1, glm::value_ptr<float>(light->getLightAmbient()));
 	glUniform3fv(glGetUniformLocation(glId, "light_diffuse"), 1, glm::value_ptr<float>(light->getLightDiffuse()));
 	glUniform3fv(glGetUniformLocation(glId, "light_specular"), 1, glm::value_ptr<float>(light->getLightSpecular()));
