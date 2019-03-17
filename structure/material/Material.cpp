@@ -1,6 +1,7 @@
 #include <glm/vec4.hpp>
+#include <GL/glew.h>
 #include "Material.h"
-#include <GL/freeglut.h>
+#include "../program/Program.h"
 
 using namespace tunage;
 
@@ -9,22 +10,24 @@ Material::~Material() {
 
 void Material::render() {
 	//	Render texture
-	if (texture != nullptr) {
-		texture->render();
-	} else {
-		glDisable(GL_TEXTURE_2D);
-	}
+	//if (texture != nullptr) {
+	//	texture->render();
+	//} else {
+	//	glDisable(GL_TEXTURE_2D);
+	//}
 
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
-				 glm::value_ptr(glm::vec4(ambient, alpha)));
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
-				 glm::value_ptr(glm::vec4(diffuse, alpha)));
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,
-				 glm::value_ptr(glm::vec4(specular, alpha)));
-	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,
-				 glm::value_ptr(glm::vec4(emission, alpha)));
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,
-				shininess);
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
+	//			 glm::value_ptr(glm::vec4(ambient, alpha)));
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,
+	//			 glm::value_ptr(glm::vec4(diffuse, alpha)));
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,
+	//			 glm::value_ptr(glm::vec4(specular, alpha)));
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,
+	//			 glm::value_ptr(glm::vec4(emission, alpha)));
+	//glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,
+	//			shininess);
+
+	Program::getCurrent()->setMaterial(this);
 }
 
 void Material::setAmbient(glm::vec3 light) {

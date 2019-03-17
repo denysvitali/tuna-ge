@@ -387,13 +387,10 @@ Node* OvoReader::parse(const char* path) {
 					facesArr[c*3] = face[0];
 					facesArr[c*3+1] = face[1];
 					facesArr[c*3+2] = face[2];
-					for (auto i : face) {
-						mesh->addVertex(v[i]);
-					}
 					position += sizeof(unsigned int) * 3;
 				}
 
-				mesh->addVertexes(vertexesPos, vertexesUv, vertexesNorm, facesArr, vertices, faces);
+				mesh->init(vertexesPos, vertexesUv, vertexesNorm, facesArr, vertices, faces);
 
 				// Extra information for skinned meshes:
 				if (isSkinned) {

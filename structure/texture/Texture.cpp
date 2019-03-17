@@ -22,15 +22,15 @@ Texture::~Texture() {
 
 //	Binds the texture
 void tunage::Texture::render() {
-	glEnable(GL_TEXTURE_2D);
-	//	The first call of this render method will call the init method
-	if (!initialized) {
-		initialized = true;
-		init();
-	} else {
-		// Update texture content:
-		glBindTexture(GL_TEXTURE_2D, texId);
-	}
+	//glEnable(GL_TEXTURE_2D);
+	////	The first call of this render method will call the init method
+	//if (!initialized) {
+	//	initialized = true;
+	//	init();
+	//} else {
+	//	// Update texture content:
+	//	glBindTexture(GL_TEXTURE_2D, texId);
+	//}
 }
 
 
@@ -91,12 +91,13 @@ void Texture::setAnisotropicLevel(int anisotropicLevel) {
 
 //	Loads the texture bitmap on FreeGLUT with the current settings
 void Texture::init() {
-	if (strstr((const char *) glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic")) {
-		isAnisotropicSupported = true;
-		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropicLevel);
-	} else {
-		isAnisotropicSupported = false;
-	}
+	//if (strstr((const char *) glGetString(GL_EXTENSIONS), "GL_EXT_texture_filter_anisotropic")) {
+	//	isAnisotropicSupported = true;
+	//	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropicLevel);
+	//} else {
+	//	isAnisotropicSupported = false;
+	//}
+	isAnisotropicSupported = false;
 
 	glGenTextures(1, &texId);
 

@@ -1,3 +1,4 @@
+#include "../program/Program.h"
 #include "Camera.h"
 #include <GL/freeglut.h>
 
@@ -42,6 +43,7 @@ void Camera::loadProjectionMatrix() {
 	glMatrixMode(GL_PROJECTION);
 	glm::mat4 Projection = getProjectionMatrix();
 	glLoadMatrixf(glm::value_ptr(Projection));
+	
 	glMatrixMode(GL_MODELVIEW);
 }
 

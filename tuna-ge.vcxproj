@@ -23,7 +23,7 @@
     <ProjectGuid>{AEF94EA7-0B7D-4E3B-93E4-60626104A469}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>tunage</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -93,6 +93,7 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;TUNAGE_EXPORTS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,6 +113,7 @@
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;TUNAGE_EXPORTS;GTEST_LANG_CXX11;DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,6 +135,7 @@
       <PreprocessorDefinitions>_WINDOWS;TUNAGE_EXPORTS;_CRT_SECURE_NO_WARNINGS;GTEST_LANG_CXX11;RELEASE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,6 +159,7 @@
       <PreprocessorDefinitions>_WINDOWS;TUNAGE_EXPORTS;_CRT_SECURE_NO_WARNINGS;GTEST_LANG_CXX11;RELEASE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,6 +173,8 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="assets\shaders\shader.frag" />
+    <None Include="assets\shaders\shader.vert" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +193,8 @@
     <ClCompile Include="structure\node\Node.cpp" />
     <ClCompile Include="structure\object\Object.cpp" />
     <ClCompile Include="structure\ovoreader\OvoReader.cpp" />
+    <ClCompile Include="structure\program\Program.cpp" />
+    <ClCompile Include="structure\shader\Shader.cpp" />
     <ClCompile Include="structure\string\String.cpp" />
     <ClCompile Include="structure\texture\Texture.cpp" />
     <ClCompile Include="structure\vertex\Vertex.cpp" />
@@ -215,6 +223,8 @@
     <ClInclude Include="structure\ovoreader\OvMesh.h" />
     <ClInclude Include="structure\ovoreader\OvObject.h" />
     <ClInclude Include="structure\ovoreader\OvoReader.h" />
+    <ClInclude Include="structure\program\Program.h" />
+    <ClInclude Include="structure\shader\Shader.h" />
     <ClInclude Include="structure\string\String.h" />
     <ClInclude Include="structure\texture\Texture.h" />
     <ClInclude Include="structure\utils\CurrentDir.h" />
@@ -231,6 +241,8 @@
     <Import Project="$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets" Condition="Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" />
     <Import Project="$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" />
     <Import Project="$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets" Condition="Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" />
+    <Import Project="..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets" Condition="Exists('..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets')" />
+    <Import Project="..\packages\glew.1.9.0.1\build\native\glew.targets" Condition="Exists('..\packages\glew.1.9.0.1\build\native\glew.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -243,5 +255,7 @@
     <Error Condition="!Exists('$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\glm.0.9.9.300\build\native\glm.targets'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.3.17.0\build\native\freeimage.targets'))" />
     <Error Condition="!Exists('$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\native.freeimage.redist.3.17.0\build\native\freeimage.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew.redist.1.9.0.1\build\native\glew.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\glew.1.9.0.1\build\native\glew.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew.1.9.0.1\build\native\glew.targets'))" />
   </Target>
 </Project>
