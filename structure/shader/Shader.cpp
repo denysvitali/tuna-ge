@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "Shader.h"
 
 Shader::Shader() : type(TYPE_UNDEFINED), glId(0) {}
 Shader::~Shader() {

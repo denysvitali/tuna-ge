@@ -1,6 +1,6 @@
 #include "../../libapi.h"
 
-#include "../Shader/shader.h"
+#include "../shader/Shader.h"
 #include "../light/Light.h"
 #include "../material/Material.h"
 
