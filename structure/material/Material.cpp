@@ -10,11 +10,11 @@ Material::~Material() {
 
 void Material::render() {
 	//	Render texture
-	//if (texture != nullptr) {
-	//	texture->render();
-	//} else {
-	//	glDisable(GL_TEXTURE_2D);
-	//}
+	if (texture != nullptr) {
+		texture->render();
+	} else {
+		glDisable(GL_TEXTURE_2D);
+	}
 
 	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,
 	//			 glm::value_ptr(glm::vec4(ambient, alpha)));
@@ -64,7 +64,7 @@ glm::vec3 Material::getDiffuse() const {
 }
 
 
-glm::vec3 Material::getEmission() const {
+glm::vec3 Material::getEmissive() const {
 	return this->emission;
 }
 
@@ -87,4 +87,8 @@ Texture* Material::getTexture() const {
 
 bool Material::isTransparent() {
 	return alpha < 1.0f;
+}
+
+float Material::getAlpha() {
+	return alpha;
 }

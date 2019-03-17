@@ -9,6 +9,7 @@
 #include "version.hh"
 
 #include <FreeImage.h>
+#include <structure/utils/CurrentDir.h>
 
 #include "structure/shader/Shader.h"
 #include "structure/program/Program.h"
@@ -73,69 +74,8 @@ void __stdcall debugCallback(GLenum source, GLenum type,
 }
 
 // SHADERS
-const char* vertShader = R"(
-#version 440 core
-
-uniform mat4 projection;
-uniform mat4 modelview;
-uniform mat3 normal_matrix;
-
-layout(location = 0) in vec3 in_position;
-//layout(location = 1) in vec2 in_tex_coord;
-layout(location = 2) in vec3 in_normal;
-
-//out vec2 tex_coord;
-out vec4 frag_position;
-out vec3 normal;
-
-void main(void)
-{
-frag_position = modelview * vec4(in_position, 1.0f);
-    gl_Position = projection * frag_position;
-	normal = normal_matrix * in_normal;
-//    texCoord = in_tex_coord;
-})";
-
-const char* fragShader = R"(
-#version 440 core
-
-//uniform sampler2D tex;
-
-uniform vec3 material_ambient;
-uniform vec3 material_diffuse;
-uniform vec3 material_emissive;
-uniform vec3 material_specular;
-uniform int material_shininess;
-
-uniform vec3 light_position; // in eye coordinates
-uniform vec3 light_ambient;
-uniform vec3 light_diffuse;
-uniform vec3 light_specular;
-
-//in vec2 tex_coord;
-
-in vec4 frag_position;
-in vec3 normal;
-
-out vec4 frag_out;
-
-void main(void)
-{
-	// Ambient term:
-	vec3 frag_color = material_ambient * light_ambient;
-	// Diffuse term:
-	vec3 _normal = normalize(normal);
-	vec3 light_direction = normalize(light_position - frag_position.xyz);
-	float nDotL = dot(light_direction, _normal);
-	if (nDotL > 0.0f) {
-		frag_color += material_diffuse * nDotL * light_diffuse;
-		// Specular term:
-		vec3 halfVector = normalize(light_direction + normalize(-frag_position.xyz));
-		float nDotHV = dot(_normal, halfVector);
-		frag_color += material_specular * pow(nDotHV, material_shininess) * light_specular;
-	}
-	frag_out = vec4(frag_color, 1.0f);
-})";
+const char* vertShader;
+const char* fragShader;
 
 void TunaGE::init() {
 	if (!TunaGE::freeAlreadyCalled) {
@@ -170,17 +110,30 @@ void TunaGE::init() {
 #endif
 	TunaGE::initGlut();
 
+
+	char dir[FILENAME_MAX];
+	GetCurrentDir(dir, FILENAME_MAX);
+
+	char* vsPath = new char[FILENAME_MAX + 50];
+	char* fsPath = new char[FILENAME_MAX + 50];
+
+	sprintf(vsPath, "%s%s", dir, "/assets/shaders/shader.vert");
+	sprintf(fsPath, "%s%s", dir, "/assets/shaders/shader.frag");
+
 	Shader* vs = new Shader();
-	Shader::loadFromMemory(Shader::TYPE_VERTEX, vertShader, *vs);
+	Shader::loadFromFile(Shader::TYPE_VERTEX, vsPath, *vs);
 	Shader* fs = new Shader();
-	Shader::loadFromMemory(Shader::TYPE_FRAGMENT, fragShader, *fs);
+	Shader::loadFromFile(Shader::TYPE_FRAGMENT, fsPath, *fs);
+
+	delete[] vsPath;
+	delete[] fsPath;
 
 	Program* ps = new Program();
 	Program::build(*vs, *fs, *ps);
 	ps->render();
-	ps->bind(0, "in_position");
-	//ps->bind(1, "in_tex_coord");
-	ps->bind(2, "in_normal");
+	ps->bind(0, "in_Position");
+	ps->bind(1, "in_Texture");
+	ps->bind(2, "in_Normal");
 }
 void TunaGE::initGlew() {
 	// Init Glew (*after* the context creation):
