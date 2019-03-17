@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "Program.h"
 
 Program* Program::current = nullptr;
@@ -20,7 +21,11 @@ Program* Program::getCurrent() {
 
 
 void Program::setMatrix(const char* name, glm::mat4 mat) {
-	glUniformMatrix4fv(getUniformLocation(name), 0, GL_FALSE, glm::value_ptr<float>(mat));
+	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr<float>(mat));
+}
+
+void Program::setMatrix(int location, glm::mat4 mat){
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 GLint Program::getUniformLocation(const char* name) {
@@ -95,4 +100,8 @@ bool Program::render() {
 		return false;
 	}
 	return true;
+}
+
+void Program::setMatrix(int location, glm::mat3 mat) {
+	glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }

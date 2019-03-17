@@ -79,7 +79,10 @@ namespace tunage {
 		//Fields//
 		static List renderList;
 
-    private:
+		static int getMvLoc();
+		static int getNormMatLoc();
+
+	private:
 
 		TunaGE() {};
 
@@ -130,7 +133,13 @@ namespace tunage {
         static bool glutInitAlreadyCalled;
         static bool freeAlreadyCalled;
 
+        // Locations
+        static int projLoc;
+        static int mvLoc;
+        static int normalMatLoc;
+
         static std::vector<Object*> allocatedObjects;
 
-    };
+		static void setProjectionMatrix(glm::mat4 mat);
+	};
 }

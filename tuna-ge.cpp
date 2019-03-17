@@ -58,6 +58,10 @@ double TunaGE::lastFPS = -1;
 int TunaGE::lastFPS_idx = 0;
 double TunaGE::lastFPSArr[FPS_COUNTER_SIZE] = {};
 
+int TunaGE::projLoc = -1;
+int TunaGE::mvLoc = -1;
+int TunaGE::normalMatLoc = -1;
+
 RGBColor debugColor = RGBColor::getColor("#fafafa");
 RGBColor fpsColor = RGBColor::getColor("#4CAF50");
 
@@ -121,38 +125,50 @@ void TunaGE::init() {
 	sprintf(vsPath, "%s%s", dir, "/assets/shaders/shader.vert");
 	sprintf(fsPath, "%s%s", dir, "/assets/shaders/shader.frag");
 
-	Shader* vs = new Shader();
+	auto* vs = new Shader();
 	Shader::loadFromFile(Shader::TYPE_VERTEX, vsPath, *vs);
-	Shader* fs = new Shader();
+	auto* fs = new Shader();
 	Shader::loadFromFile(Shader::TYPE_FRAGMENT, fsPath, *fs);
 
-	delete vsPath;
-	delete fsPath;
+	delete[] vsPath;
+	delete[] fsPath;
 
-	Program* ps = new Program();
+	auto* ps = new Program();
 	Program::build(*vs, *fs, *ps);
 	ps->render();
 	ps->bind(0, "in_Position");
-	ps->bind(1, "in_Color");
-	ps->bind(2, "in_normal");
+	ps->bind(1, "in_Texture");
+	ps->bind(2, "in_Normal");
+
+	TunaGE::projLoc = ps->getUniformLocation("projection");
+	TunaGE::mvLoc = ps->getUniformLocation("modelview");
+	TunaGE::normalMatLoc = ps->getUniformLocation("normal_matrix");
 }
+
+int TunaGE::getMvLoc(){
+	return TunaGE::mvLoc;
+}
+
 void TunaGE::initGlew() {
 	// Init Glew (*after* the context creation):
 	glewExperimental = GL_TRUE;
 	GLenum error = glewInit();
 
-	if (error != GLEW_OK)
-	{
+	if (error != GLEW_OK) {
 		std::cout << "Error: " << glewGetErrorString(error) << std::endl;
 		exit(-1);
 	}
-	else
+	else {
 		// OpenGL 2.1 is required:
-		if (!glewIsSupported("GL_VERSION_4_4"))
-		{
+		if (!glewIsSupported("GL_VERSION_4_4")) {
 			std::cerr << "OpenGL 4.4 not supported" << std::endl;
 			exit(-1);
 		}
+	}
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void TunaGE::initGlut() {
@@ -406,8 +422,7 @@ void TunaGE::reshapeCB(int w, int h) {
 
 	if (TunaGE::getCurrentCamera() != nullptr) {
 		TunaGE::getCurrentCamera()->setScreenSize(screen_w, screen_h);
-		TunaGE::getCurrentCamera()->loadProjectionMatrix();
-		Program::getCurrent()->setMatrix("projection", TunaGE::getCurrentCamera()->getProjectionMatrix());
+		TunaGE::setProjectionMatrix(TunaGE::getCurrentCamera()->getProjectionMatrix());
 	}
 
 	if (windowId != -1) {
@@ -642,4 +657,12 @@ void TunaGE::setDebug(bool enabled) {
 
 std::vector<Object*>& TunaGE::getAllocatedObjects() {
 	return allocatedObjects;
+}
+
+void TunaGE::setProjectionMatrix(glm::mat4 mat) {
+	Program::getCurrent()->setMatrix(TunaGE::projLoc, mat);
+}
+
+int TunaGE::getNormMatLoc() {
+	return TunaGE::normalMatLoc;
 }

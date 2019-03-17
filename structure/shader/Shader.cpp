@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "Shader.h"
 
 Shader::Shader() : type(TYPE_UNDEFINED), glId(0) {}
@@ -98,7 +99,7 @@ bool Shader::loadFromMemory(ShaderType type, const char* data, Shader &out) {
 		std::cout << "[Shader] ERROR: cannot initiliase shader object." << std::endl;
 		return false;
 	}
-	glShaderSource(out.glId, 1, &data, NULL);
+	glShaderSource(out.glId, 1, &data, nullptr);
 	glCompileShader(out.glId);
 
 	// Verify shader:
@@ -119,4 +120,32 @@ bool Shader::loadFromMemory(ShaderType type, const char* data, Shader &out) {
 
 	// Done:
 	return true;
+}
+
+int Shader::getParamLocation(const char* name) {
+	if (name == nullptr) {
+		std::cout << "[ERROR] Invalid params" << std::endl;
+		return 0;
+	}
+
+	int r = glGetUniformLocation(glId, name);
+	if (r == -1)
+		std::cout << "[ERROR] Param not found" << std::endl;
+	return r;
+}
+
+void Shader::setVec3(int location, glm::vec3 vec) {
+	glUniform3fv(location, 1, glm::value_ptr(vec));
+}
+
+void Shader::setFloat(int location, float f) {
+	glUniform1f(location, f);
+}
+
+void Shader::setMatrix3(int location, glm::mat3 mat) {
+	glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Shader::setMatrix4(int location, glm::mat4 mat) {
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }

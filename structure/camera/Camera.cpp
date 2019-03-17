@@ -4,6 +4,9 @@
 #ifdef DEBUG
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
+#include <structure/program/Program.h>
+#include <tuna-ge.h>
+
 #endif
 
 using namespace tunage;
@@ -40,7 +43,7 @@ glm::mat4 Camera::getProjectionMatrix() const {
 //	Loads the projection matrix used by FreeGLUT to render the scene
 void Camera::loadProjectionMatrix() {
 	//glMatrixMode(GL_PROJECTION);
-	glm::mat4 Projection = getProjectionMatrix();
+
 	//glLoadMatrixf(glm::value_ptr(Projection));
 	
 	//glMatrixMode(GL_MODELVIEW);
