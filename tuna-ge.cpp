@@ -9,7 +9,7 @@
 #include "version.hh"
 
 #include <FreeImage.h>
-#include <structure/utils/CurrentDir.h>
+#include "structure/utils/CurrentDir.h"
 
 #include "structure/shader/Shader.h"
 #include "structure/program/Program.h"
