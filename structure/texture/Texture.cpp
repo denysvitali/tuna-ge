@@ -39,10 +39,6 @@ void Texture::loadFromFile(const char* path) {
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
 
-#ifdef DEBUG
-	std::cout << "Current dir: " << dir << std::endl;
-#endif
-
 	std::regex jpg(".*\\.(jpg|jpeg)", std::regex_constants::ECMAScript | std::regex_constants::icase);
 	std::regex bmp(".*\\.bmp", std::regex_constants::ECMAScript | std::regex_constants::icase);
 	std::regex png(".*\\.png", std::regex_constants::ECMAScript | std::regex_constants::icase);

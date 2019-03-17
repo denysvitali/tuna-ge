@@ -108,6 +108,9 @@ include_directories( tuna_ge ${GLM_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENGL_
 target_link_libraries(tuna_ge ${GLM_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${GLEW_LIBRARY} )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/ DESTINATION ${CMAKE_BINARY_DIR}/tuna-gui)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/shader.frag ${CMAKE_BINARY_DIR}/tuna-gui/assets/shaders COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/shader.vert ${CMAKE_BINARY_DIR}/tuna-gui/assets/shaders COPYONLY)
+
 
 IF(FREEIMAGE_FOUND)
     INCLUDE_DIRECTORIES(${FREEIMAGE_INCLUDE_DIR})

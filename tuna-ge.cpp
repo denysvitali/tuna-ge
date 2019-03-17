@@ -9,6 +9,7 @@
 #include "version.hh"
 
 #include <FreeImage.h>
+#include <structure/utils/CurrentDir.h>
 
 #include "structure/shader/Shader.h"
 #include "structure/program/Program.h"
@@ -73,57 +74,8 @@ void __stdcall debugCallback(GLenum source, GLenum type,
 }
 
 // SHADERS
-const char* vertShader = R"(
-#version 440 core
-
-uniform mat4 projection;
-uniform mat4 modelview;
-
-layout(location = 0) in vec3 in_Position;
-layout(location = 1) in vec2 in_TexCoord;
-layout(location = 2) in vec3 in_Normal;
-
-out vec2 texCoord;
-
-void main(void)
-{
-    gl_Position = projection * modelview * vec4(in_Position, 1.0f);
-    texCoord = in_TexCoord;
-})";
-/*
-const char* vertShader = R"(
-#version 440 core
-
-   uniform mat4 projection;
-   uniform mat4 modelview;
-
-   layout(location = 0) in vec3 in_Position;
-   layout(location = 1) in vec4 in_Color;
-
-   out vec3 out_Color;
-   out float dist;
-
-   void main(void)
-   {
-		gl_Position = projection * modelview * vec4(in_Position, 1.0f);
-		dist = 1.0f;
-      	out_Color = in_Color.rgb;
-   }
-)";*/
-
-const char* fragShader = R"(
-#version 440 core
-
-uniform sampler2D tex;
-in vec2 texCoord;
-
-out vec4 fragOutput;
-
-void main(void)
-{
-  fragOutput = texture(tex, texCoord);
-}
-)";
+const char* vertShader;
+const char* fragShader;
 
 void TunaGE::init() {
 	if (!TunaGE::freeAlreadyCalled) {
@@ -158,10 +110,24 @@ void TunaGE::init() {
 #endif
 	TunaGE::initGlut();
 
+	// Load Vert Shader from file
+
+	char dir[FILENAME_MAX];
+	GetCurrentDir(dir, FILENAME_MAX);
+
+	char* vsPath = new char[FILENAME_MAX + 50];
+	char* fsPath = new char[FILENAME_MAX + 50];
+
+	sprintf(vsPath, "%s%s", dir, "/assets/shaders/shader.vert");
+	sprintf(fsPath, "%s%s", dir, "/assets/shaders/shader.frag");
+
 	Shader* vs = new Shader();
-	Shader::loadFromMemory(Shader::TYPE_VERTEX, vertShader, *vs);
+	Shader::loadFromFile(Shader::TYPE_VERTEX, vsPath, *vs);
 	Shader* fs = new Shader();
-	Shader::loadFromMemory(Shader::TYPE_FRAGMENT, fragShader, *fs);
+	Shader::loadFromFile(Shader::TYPE_FRAGMENT, fsPath, *fs);
+
+	delete vsPath;
+	delete fsPath;
 
 	Program* ps = new Program();
 	Program::build(*vs, *fs, *ps);
