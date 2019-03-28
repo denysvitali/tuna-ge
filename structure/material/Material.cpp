@@ -13,7 +13,7 @@ void Material::render() {
 	if (texture != nullptr) {
 		texture->render();
 	} else {
-		glDisable(GL_TEXTURE_2D);
+		//TODO: blank texture render
 	}
 
 	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,

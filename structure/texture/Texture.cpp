@@ -3,6 +3,8 @@
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT        0x84FE
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT    0x84FF
 
+// GLEW:
+#include <GL/glew.h>
 // FreeGLUT:
 #include <GL/freeglut.h>
 #include <FreeImage.h>
@@ -22,7 +24,6 @@ Texture::~Texture() {
 
 //	Binds the texture
 void tunage::Texture::render() {
-	glEnable(GL_TEXTURE_2D);
 	////	The first call of this render method will call the init method
 	if (!initialized) {
 		initialized = true;
@@ -107,6 +108,17 @@ void Texture::init() {
 	// Set circular coordinates:
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Set min/mag filters:
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA, this->bmp_w, this->bmp_h, 0, GL_BGRA, GL_UNSIGNED_BYTE, this->bitmap);
+	
+	/*
+	// Set circular coordinates:
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	if (anisotropic && isAnisotropicSupported)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicLevel);
 	else
@@ -126,5 +138,5 @@ void Texture::init() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, this->bmp_w, this->bmp_h, GL_BGRA_EXT, GL_UNSIGNED_BYTE, this->bitmap);
 	}
-
+	*/
 }

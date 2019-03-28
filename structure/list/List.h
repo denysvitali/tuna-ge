@@ -2,6 +2,7 @@
 
 #include "../../libapi.h"
 #include "../node/Node.h"
+#include "../fbo/Fbo.h"
 #include "../material/Material.h"
 #include "../element/Element.h"
 #include "../camera/Camera.h"
@@ -32,8 +33,22 @@ namespace tunage {
 		void clearCameras();
 
 	private:
+
+		// Enums:
+		enum Eye
+		{
+			EYE_LEFT = 0,
+			EYE_RIGHT = 1,
+
+			// Terminator:
+			EYE_LAST,
+		};
+
 		friend class TunaGE;
 		void render() override;
+
+		// FBO:      
+		Fbo *fbo[EYE_LAST] = { nullptr, nullptr };
 
 		//	Root of the current scene passed in the list
 		Node* sceneRoot = nullptr;

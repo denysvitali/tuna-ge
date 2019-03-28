@@ -96,13 +96,16 @@ void TunaGE::init() {
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitContextVersion(4, 4);
-	glutInitContextFlags(GLUT_CORE_PROFILE | GLUT_DEBUG);
-
+	glutInitContextProfile(GLUT_CORE_PROFILE);
+	glutInitContextFlags(GLUT_DEBUG);
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
 	TunaGE::windowId = glutCreateWindow("Tuna");
 	TunaGE::initGlew();
+
+	// Init FreeImage:
+	FreeImage_Initialise();
 
 #ifdef _DEBUG
 	glDebugMessageCallback((GLDEBUGPROC)debugCallback, nullptr);
@@ -246,6 +249,10 @@ void TunaGE::closeFunc() {
 //	Destroys all the elements of the scene (if any) and all the elements used in the list for additional features
 bool TunaGE::free() {
 	if (!freeAlreadyCalled) {
+
+		// Release FreeImage:
+		FreeImage_DeInitialise();
+
 		renderList.clearRenderElements();
 		renderList.clearCameras();
 
