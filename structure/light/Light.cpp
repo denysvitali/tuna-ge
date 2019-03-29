@@ -2,6 +2,7 @@
 
 // FreeGLUT:
 #include <GL/freeglut.h>
+#include <structure/program/Program.h>
 #include "../material/Material.h"
 #include "../../tuna-ge.h"
 
@@ -14,7 +15,7 @@ void Light::render() {
 	glLoadMatrixf(glm::value_ptr(getRenderMatrix()));
 
 	Material m{};
-	m.setEmission(lightAmbient);
+	m.setEmissive(lightAmbient);
 	//	Render material
 	m.render();
 
@@ -65,15 +66,16 @@ void Light::render() {
 }
 
 //	Render method using a material and render matrix passed as parameters
-void tunage::Light::render(glm::mat4 pos, Material* mat)
-{
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(glm::value_ptr(pos));
+void tunage::Light::render(glm::mat4 pos, Material* mat) {
 
 	//	Render material
 	if (mat != nullptr) {
 		mat->render();
 	}
+
+	Program::getCurrent()->setMatrix(TunaGE::getMvLoc(), pos);
+	glm::mat3 normal_matrix = glm::inverseTranspose(glm::mat3(pos));
+	Program::getCurrent()->setMatrix(TunaGE::getNormMatLoc(), normal_matrix);
 
 	//	Draw a small emissive sphere to show light position:
 	//glutSolidSphere(radius, 40, 40);
@@ -96,37 +98,14 @@ void tunage::Light::render(glm::mat4 pos, Material* mat)
 		lightSpecular[2] * intensity,
 		1.0f);
 
-	//	Sets various FreeGLUT options based on the light type (0 = DIRECTIONAL, 1 = OMNI, 2 = SPOT)
-	switch (lightType){
-		case 0:
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-			break;
-		case 1:
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
-			break;
-		case 2:
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_POSITION, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_CUTOFF, &lightCutoff);
-			glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPOT_DIRECTION, glm::value_ptr(lightDirection));
-			break;
-		default:
-			break;
-	}
-	//glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_CONSTANT_ATTENUATION, &attenuation);
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_AMBIENT, glm::value_ptr(ambient_wi));
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_DIFFUSE, glm::value_ptr(diffuse_wi));
-	glLightfv(static_cast<GLenum>(light + GL_LIGHT0), GL_SPECULAR, glm::value_ptr(specular_wi));
-
+	Program::getCurrent()->setLight(this, pos);
 }
 
 void Light::enable() {
 	enabled = true;
-	glEnable(static_cast<GLenum>(light + GL_LIGHT0));
 }
 void Light::disable() {
 	enabled = false;
-	glDisable(static_cast<GLenum>(light + GL_LIGHT0));
 }
 
 bool tunage::Light::isEnabled()

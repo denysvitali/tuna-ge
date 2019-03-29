@@ -62,6 +62,19 @@ int TunaGE::projLoc = -1;
 int TunaGE::mvLoc = -1;
 int TunaGE::normalMatLoc = -1;
 
+int TunaGE::matAmbientLoc = -1;
+int TunaGE::matDiffuseLoc = -1;
+int TunaGE::matEmissiveLoc = -1;
+int TunaGE::matSpecularLoc = -1;
+int TunaGE::matShininessLoc = -1;
+
+int TunaGE::lightPosLoc = -1;
+int TunaGE::lightAmbientLoc = -1;
+int TunaGE::lightDiffuseLoc = -1;
+int TunaGE::lightSpecularLoc = -1;
+
+
+
 RGBColor debugColor = RGBColor::getColor("#fafafa");
 RGBColor fpsColor = RGBColor::getColor("#4CAF50");
 
@@ -76,10 +89,6 @@ void __stdcall debugCallback(GLenum source, GLenum type,
 	GLvoid* userParam) {
 	printf("ARB_debug: %s\n", message);
 }
-
-// SHADERS
-const char* vertShader;
-const char* fragShader;
 
 void TunaGE::init() {
 	if (!TunaGE::freeAlreadyCalled) {
@@ -143,6 +152,18 @@ void TunaGE::init() {
 	TunaGE::projLoc = ps->getUniformLocation("projection");
 	TunaGE::mvLoc = ps->getUniformLocation("modelview");
 	TunaGE::normalMatLoc = ps->getUniformLocation("normal_matrix");
+
+	// Locations
+	TunaGE::matAmbientLoc = ps->getUniformLocation("material_ambient");
+	TunaGE::matDiffuseLoc= ps->getUniformLocation("material_diffuse");
+	TunaGE::matEmissiveLoc = ps->getUniformLocation("material_emissive");
+	TunaGE::matSpecularLoc = ps->getUniformLocation("material_specular");
+	TunaGE::matShininessLoc = ps->getUniformLocation("material_shininess");
+
+	TunaGE::lightPosLoc = ps->getUniformLocation("light_position");
+	TunaGE::lightAmbientLoc = ps->getUniformLocation("light_ambient");
+	TunaGE::lightDiffuseLoc= ps->getUniformLocation("light_diffuse");
+	TunaGE::lightSpecularLoc= ps->getUniformLocation("light_specular");
 }
 
 int TunaGE::getMvLoc(){
@@ -318,18 +339,14 @@ void TunaGE::displayCB() {
 	else {
 		glDisable(GL_CULL_FACE);
 	}
-	if (TunaGE::lighting) {
-		glEnable(GL_LIGHTING);
-	}
-	else {
-		glDisable(GL_LIGHTING);
-	}
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 	else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+
+	Program::getCurrent()->render();
 
 	Node* root = TunaGE::renderList.getSceneRoot();
 	TunaGE::renderList.clearRenderElements();
@@ -665,4 +682,40 @@ void TunaGE::setProjectionMatrix(glm::mat4 mat) {
 
 int TunaGE::getNormMatLoc() {
 	return TunaGE::normalMatLoc;
+}
+
+int TunaGE::getMatAmbientLoc() {
+	return TunaGE::matAmbientLoc;
+}
+
+int TunaGE::getMatDiffuseLoc() {
+	return TunaGE::matDiffuseLoc;
+}
+
+int TunaGE::getMatEmissiveLoc() {
+	return TunaGE::matEmissiveLoc;
+}
+
+int TunaGE::getMatSpecularLoc() {
+	return TunaGE::matSpecularLoc;
+}
+
+int TunaGE::getMatShininessLoc() {
+	return TunaGE::matShininessLoc;
+}
+
+int TunaGE::getLightAmbientLoc() {
+	return TunaGE::lightAmbientLoc;
+}
+
+int TunaGE::getLightDiffuseLoc() {
+	return TunaGE::lightDiffuseLoc;
+}
+
+int TunaGE::getLightPosLoc() {
+	return TunaGE::lightPosLoc;
+}
+
+int TunaGE::getLightSpecularLoc() {
+	return TunaGE::lightSpecularLoc;
 }

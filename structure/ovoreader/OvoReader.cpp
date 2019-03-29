@@ -132,7 +132,7 @@ Node* OvoReader::parse(const char* path) {
 				// Material term colors, starting with emissive:
 				glm::vec3 emission, albedo;
 				memcpy(&emission, data + position, sizeof(glm::vec3));
-				mat->setEmission(emission);
+				mat->setEmissive(emission);
 				position += sizeof(glm::vec3);
 
 				// Albedo:

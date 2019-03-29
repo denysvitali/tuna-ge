@@ -28,7 +28,7 @@ public:
 
 	static bool loadFromFile(ShaderType type, const char* path, Shader& out);
 	static bool loadFromMemory(ShaderType type, const char* data, Shader& out);
-	int getParamLocation(const char * param);
+
 	void setVec3(int location, glm::vec3 vec);
 	void setFloat(int location, float f);
 	void setMatrix3(int location, glm::mat3 mat);

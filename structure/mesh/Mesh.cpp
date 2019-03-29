@@ -5,50 +5,9 @@
 
 using namespace tunage;
 
-//	Render method using the mesh render matrix and material
-//	(Not used, because we're using the list)
-void Mesh::render() {
-	render(getRenderMatrix(), material);
+void Mesh::render(){
+	// TODO: Remove
 }
-
-////	Render method using a material and render matrix passed as parameters
-//void Mesh::render(glm::mat4 pos, Material* mat) {
-//	//	Render material
-//	if (mat != nullptr) {
-//		mat->render();
-//	}
-//	glLoadMatrixf(glm::value_ptr(pos));
-//	if (!initialized) {
-//		initialized = true;
-//		init();
-//	}
-//	
-//	glBindBuffer(GL_ARRAY_BUFFER, vertVboId);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceVboId);
-//
-//	// enable vertex arrays
-//	glEnableClientState(GL_VERTEX_ARRAY);
-//	glEnableClientState(GL_NORMAL_ARRAY);
-//	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//
-//	size_t tOffset = numVertices * 3 * sizeof(float);
-//	size_t nOffset = tOffset + numVertices * 2 * sizeof(float);
-//	
-//	// specify vertex arrays with their offsets
-//	glVertexPointer(3, GL_FLOAT, 0, (void*)0);
-//	glTexCoordPointer(2, GL_FLOAT, 0, (void*)tOffset);
-//	glNormalPointer(GL_FLOAT, 0, (void*)nOffset);
-//
-//	glDrawElements(GL_TRIANGLES,            // primitive type
-//		numFaces * 3 ,                      // # of indices
-//		GL_UNSIGNED_INT,         // data type
-//		(void*)0);               // offset to indices
-//
-//	// disable vertex arrays
-//	glDisableClientState(GL_VERTEX_ARRAY);
-//	glDisableClientState(GL_NORMAL_ARRAY);
-//	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-//}
 
 //	Render method using a material and render matrix passed as parameters
 void Mesh::render(glm::mat4 pos, Material* mat) {
@@ -80,8 +39,6 @@ void Mesh::init(float* positionArr,
 				int numFaces) {
 	this->numVertices = numVertices;
 	this->numFaces = numFaces;
-
-	//glGenBuffers(1, &vboId[1]);
 
 	glBindVertexArray(vaoId);
 	glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
@@ -125,7 +82,7 @@ Mesh::Mesh() : Node{} {
 
 Mesh::~Mesh() {
 	glDeleteVertexArrays(1, &vaoId);
-	glDeleteBuffers(4, vboId);
+	glDeleteBuffers(2, vboId);
 	//faces.clear();
 	//if (initialized) {
 	//	// Dispose buffer:

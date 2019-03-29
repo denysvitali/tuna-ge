@@ -110,7 +110,7 @@ bool Shader::loadFromMemory(ShaderType type, const char* data, Shader &out) {
 
 	glGetShaderiv(out.glId, GL_COMPILE_STATUS, &status);
 	glGetShaderInfoLog(out.glId, MAX_LOGSIZE, &length, buffer);
-	if (status == false) {
+	if (status == 0) {
 		std::cout << "[Shader] ERROR: could not compile shader: " << buffer << std::endl;
 		return false;
 	}
@@ -120,18 +120,6 @@ bool Shader::loadFromMemory(ShaderType type, const char* data, Shader &out) {
 
 	// Done:
 	return true;
-}
-
-int Shader::getParamLocation(const char* name) {
-	if (name == nullptr) {
-		std::cout << "[ERROR] Invalid params" << std::endl;
-		return 0;
-	}
-
-	int r = glGetUniformLocation(glId, name);
-	if (r == -1)
-		std::cout << "[ERROR] Param not found" << std::endl;
-	return r;
 }
 
 void Shader::setVec3(int location, glm::vec3 vec) {

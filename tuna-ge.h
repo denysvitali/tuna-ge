@@ -38,8 +38,8 @@ namespace tunage {
     class LIB_API TunaGE {
     public:
 		
-		//Methods//
-		//Main methods
+		// Methods
+		// Main methods
 		static void init();
 		static Node* loadOVO(const char* path);
 		static void loop();
@@ -82,11 +82,22 @@ namespace tunage {
 		static int getMvLoc();
 		static int getNormMatLoc();
 
+		static int getMatAmbientLoc();
+		static int getMatDiffuseLoc();
+		static int getMatEmissiveLoc();
+		static int getMatSpecularLoc();
+		static int getMatShininessLoc();
+
+		static int getLightPosLoc();
+		static int getLightAmbientLoc();
+		static int getLightDiffuseLoc();
+		static int getLightSpecularLoc();
+
 	private:
 
 		TunaGE() {};
 
-		//Methods//
+		// Methods
 		static void initGlew();
         static void initGlut();
         static void displayCB();
@@ -101,17 +112,17 @@ namespace tunage {
 
 		friend Node* OvoReader::parse(const char* path);
 
-		//Fields//
+		// Fields
 		static int windowId;
 
-		//Callbacks
+		// Callbacks
 		static void (* motion_callback)( int, int );
 		static void (* mouse_callback)( Mouse::Button, Button::State, int, int );
 		static void (* special_callback)( Keyboard::Key k, int x, int y);
 		static void (* keyboard_callback)( unsigned char, int, int );
 		static void (* loop_callback)();
 
-		//Flags
+		// Flags
 		static bool wireframe;
 		static bool debug;
         static bool culling;
@@ -137,6 +148,21 @@ namespace tunage {
         static int projLoc;
         static int mvLoc;
         static int normalMatLoc;
+
+        // Material Locations
+        static int matAmbientLoc;
+		static int matDiffuseLoc;
+		static int matEmissiveLoc;
+		static int matSpecularLoc;
+		static int matShininessLoc;
+
+
+		// Light Locations
+		static int lightPosLoc;
+		static int lightAmbientLoc;
+		static int lightDiffuseLoc;
+		static int lightSpecularLoc;
+
 
         static std::vector<Object*> allocatedObjects;
 

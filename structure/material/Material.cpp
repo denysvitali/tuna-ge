@@ -27,13 +27,7 @@ void Material::render() {
 	//glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,
 	//			shininess);
 
-	Program* p = Program::getCurrent();
-	assert(p != nullptr);
-	GLuint id = p->getId();
-	glUniformMatrix3fv(glGetUniformLocation(id, "ambient"), 0, GL_FALSE, glm::value_ptr<float>(ambient));
-	glUniformMatrix3fv(glGetUniformLocation(id, "diffuse"), 0, GL_FALSE, glm::value_ptr<float>(diffuse));
-	glUniformMatrix3fv(glGetUniformLocation(id, "emissive"), 0, GL_FALSE, glm::value_ptr<float>(emission));
-	glUniformMatrix3fv(glGetUniformLocation(id, "specular"), 0, GL_FALSE, glm::value_ptr<float>(specular));
+	Program::getCurrent()->setMaterial(this);
 }
 
 void Material::setAmbient(glm::vec3 light) {
@@ -48,7 +42,7 @@ void Material::setSpecular(glm::vec3 light) {
 	specular = glm::vec3(light[0], light[1], light[2]);
 }
 
-void Material::setEmission(glm::vec3 light) {
+void Material::setEmissive(glm::vec3 light) {
 	emission = glm::vec3(light[0], light[1], light[2]);
 }
 
@@ -70,7 +64,7 @@ glm::vec3 Material::getDiffuse() const {
 }
 
 
-glm::vec3 Material::getEmission() const {
+glm::vec3 Material::getEmissive() const {
 	return this->emission;
 }
 
@@ -93,4 +87,8 @@ Texture* Material::getTexture() const {
 
 bool Material::isTransparent() {
 	return alpha < 1.0f;
+}
+
+float Material::getAlpha() {
+       return alpha;
 }
