@@ -36,6 +36,7 @@ namespace tunage {
 
 		
 		friend class TunaGE;
+		friend class FrontRender;
 		void render() override;
 
 		//	Root of the current scene passed in the list

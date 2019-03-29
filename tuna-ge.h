@@ -81,9 +81,6 @@ namespace tunage {
 
 		static int getMvLoc();
 		static int getNormMatLoc();
-		static int getPassMvLoc();
-		static int getPassProjLoc();
-		static int getPassColorLoc();
 
 		static int getMatAmbientLoc();
 		static int getMatDiffuseLoc();
@@ -152,9 +149,6 @@ namespace tunage {
         static int projLoc;
         static int mvLoc;
         static int normalMatLoc;
-		static int passProjLoc;
-		static int passMvLoc;
-		static int passColorLoc;
 
         // Material Locations
         static int matAmbientLoc;

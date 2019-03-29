@@ -187,6 +187,7 @@
     <ClCompile Include="structure\element\Element.cpp" />
     <ClCompile Include="structure\fbo\fbo.cpp" />
     <ClCompile Include="structure\font\Font.cpp" />
+    <ClCompile Include="structure\frontRender\FrontRender.cpp" />
     <ClCompile Include="structure\keyboard\Keyboard.cpp" />
     <ClCompile Include="structure\light\Light.cpp" />
     <ClCompile Include="structure\list\List.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="structure\element\Element.h" />
     <ClInclude Include="structure\fbo\fbo.h" />
     <ClInclude Include="structure\font\Font.h" />
+    <ClInclude Include="structure\frontRender\FrontRender.h" />
     <ClInclude Include="structure\keyboard\Keyboard.h" />
     <ClInclude Include="structure\light\Light.h" />
     <ClInclude Include="structure\list\List.h" />

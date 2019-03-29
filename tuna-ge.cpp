@@ -13,7 +13,7 @@
 #include "structure/utils/CurrentDir.h"
 
 #include "structure/shader/Shader.h"
-#include "structure/program/Program.h"
+#include "structure/frontRender/FrontRender.h"
 
 
 // Save Image during renderSingleFrame in a temp dir (in order to generate expected test results)
@@ -24,7 +24,7 @@
 #define APP_WINDOWSIZEY   512
 #define APP_FBOSIZEX      APP_WINDOWSIZEX / 2
 #define APP_FBOSIZEY      APP_WINDOWSIZEY 
-
+/*
 // Enums:
 enum Eye
 {
@@ -34,7 +34,7 @@ enum Eye
 	// Terminator:
 	EYE_LAST,
 };
-
+*/
 using namespace tunage;
 
 //Set default values//
@@ -79,10 +79,6 @@ double TunaGE::lastFPSArr[FPS_COUNTER_SIZE] = {};
 int TunaGE::projLoc = -1;
 int TunaGE::mvLoc = -1;
 int TunaGE::normalMatLoc = -1;
-int TunaGE::passProjLoc = -1;
-int TunaGE::passMvLoc = -1;
-int TunaGE::passColorLoc = -1;
-
 
 int TunaGE::matAmbientLoc = -1;
 int TunaGE::matDiffuseLoc = -1;
@@ -94,8 +90,6 @@ int TunaGE::lightPosLoc = -1;
 int TunaGE::lightAmbientLoc = -1;
 int TunaGE::lightDiffuseLoc = -1;
 int TunaGE::lightSpecularLoc = -1;
-
-
 
 RGBColor debugColor = RGBColor::getColor("#fafafa");
 RGBColor fpsColor = RGBColor::getColor("#4CAF50");
@@ -118,22 +112,12 @@ const char* fragShader;
 
 // PROGRAMS
 Program* ps;
-Program* passPs;
-
-// FBO:      
-Fbo *fbo[EYE_LAST] = { nullptr, nullptr };
-
-// Vertex buffers:
-unsigned int boxVertexVbo = 0;
-unsigned int boxTexCoordVbo = 0;
-unsigned int globalVao = 0;
-
-// Textures:
-unsigned int fboTexId[EYE_LAST] = { 0, 0 };
 
 // Matrices:
 glm::mat4 ortho;
 glm::mat4 fboPerspective;
+
+FrontRender* frontRender = nullptr;
 
 void TunaGE::init() {
 	if (!TunaGE::freeAlreadyCalled) {
@@ -179,59 +163,7 @@ void TunaGE::init() {
 	// Init Shaders
 	TunaGE::initShaders();
 
-	// Create a 2D box for screen rendering:
-	glm::vec2 *boxPlane = new glm::vec2[4];
-	boxPlane[0] = glm::vec2(0.0f, 0.0f);
-	boxPlane[1] = glm::vec2(APP_FBOSIZEX, 0.0f);
-	boxPlane[2] = glm::vec2(0.0f, APP_FBOSIZEY);
-	boxPlane[3] = glm::vec2(APP_FBOSIZEX, APP_FBOSIZEY);
-
-	glGenVertexArrays(1, &globalVao);
-	glBindVertexArray(globalVao);
-
-	// Copy data into VBOs:
-	glGenBuffers(1, &boxVertexVbo);
-	glBindBuffer(GL_ARRAY_BUFFER, boxVertexVbo);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec2), boxPlane, GL_STATIC_DRAW);
-	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	delete[] boxPlane;
-
-	glm::vec2 *texCoord = new glm::vec2[4];
-	texCoord[0] = glm::vec2(0.0f, 0.0f);
-	texCoord[1] = glm::vec2(1.0f, 0.0f);
-	texCoord[2] = glm::vec2(0.0f, 1.0f);
-	texCoord[3] = glm::vec2(1.0f, 1.0f);
-	glGenBuffers(1, &boxTexCoordVbo);
-	glBindBuffer(GL_ARRAY_BUFFER, boxTexCoordVbo);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec2), texCoord, GL_STATIC_DRAW);
-	glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	delete[] texCoord;
-
-	// Load FBO and its texture:
-	GLint prevViewport[4];
-	glGetIntegerv(GL_VIEWPORT, prevViewport);
-
-	for (int c = 0; c < EYE_LAST; c++)
-	{
-		int fboSizeX = APP_WINDOWSIZEX;
-		int fboSizeY = APP_WINDOWSIZEY;
-		glGenTextures(1, &fboTexId[c]);
-		glBindTexture(GL_TEXTURE_2D, fboTexId[c]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fboSizeX, fboSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		fbo[c] = new Fbo();
-		fbo[c]->bindTexture(0, Fbo::BIND_COLORTEXTURE, fboTexId[c]);
-		fbo[c]->bindRenderBuffer(1, Fbo::BIND_DEPTHBUFFER, fboSizeX, fboSizeY);
-		if (!fbo[c]->isOk())
-			std::cout << "[ERROR] Invalid FBO" << std::endl;
-	}
-	Fbo::disable();
-	glViewport(0, 0, prevViewport[2], prevViewport[3]);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	frontRender = new FrontRender(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
 }
 
 void TunaGE::initGlew() {
@@ -282,46 +214,23 @@ void TunaGE::initGlut() {
 
 void TunaGE::initShaders() {
 
-
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
 
 	char* vsPath = new char[FILENAME_MAX + 50];
 	char* fsPath = new char[FILENAME_MAX + 50];
-	char* passVsPath = new char[FILENAME_MAX + 50];
-	char* passFsPath = new char[FILENAME_MAX + 50];
 
 	sprintf(vsPath, "%s%s", dir, "/assets/shaders/shader.vert");
 	sprintf(fsPath, "%s%s", dir, "/assets/shaders/shader.frag");
-	sprintf(passVsPath, "%s%s", dir, "/assets/shaders/passShader.vert");
-	sprintf(passFsPath, "%s%s", dir, "/assets/shaders/passShader.frag");
 
 	Shader* vs = new Shader();
 	Shader::loadFromFile(Shader::TYPE_VERTEX, vsPath, *vs);
 	Shader* fs = new Shader();
 	Shader::loadFromFile(Shader::TYPE_FRAGMENT, fsPath, *fs);
 
-	Shader* passVs = new Shader();
-	Shader::loadFromFile(Shader::TYPE_VERTEX, passVsPath, *passVs);
-	Shader* passFs = new Shader();
-	Shader::loadFromFile(Shader::TYPE_FRAGMENT, passFsPath, *passFs);
-
 	delete[] vsPath;
 	delete[] fsPath;
-	delete[] passVsPath;
-	delete[] passFsPath;
-
-	passPs = new Program();
-	Program::build(*passVs, *passFs, *passPs);
-
-	passPs->render();
-	passPs->bind(0, "in_Position");
-	passPs->bind(2, "in_TexCoord");
-
-	TunaGE::passProjLoc = passPs->getUniformLocation("projection");
-	TunaGE::passMvLoc = passPs->getUniformLocation("modelview");
-	TunaGE::passColorLoc = passPs->getUniformLocation("color");
-
+	
 	ps = new Program();
 	Program::build(*vs, *fs, *ps);
 
@@ -330,11 +239,11 @@ void TunaGE::initShaders() {
 	ps->bind(1, "in_Texture");
 	ps->bind(2, "in_Normal");
 
+	// Locations
 	TunaGE::projLoc = ps->getUniformLocation("projection");
 	TunaGE::mvLoc = ps->getUniformLocation("modelview");
 	TunaGE::normalMatLoc = ps->getUniformLocation("normal_matrix");
 
-	// Locations
 	TunaGE::matAmbientLoc = ps->getUniformLocation("material_ambient");
 	TunaGE::matDiffuseLoc = ps->getUniformLocation("material_diffuse");
 	TunaGE::matEmissiveLoc = ps->getUniformLocation("material_emissive");
@@ -487,55 +396,13 @@ void TunaGE::displayCB() {
 	ps->render();
 
 	Program::getCurrent()->setMatrix(projLoc, fboPerspective);
-	// Store the current viewport size:
-	GLint prevViewport[4];
-	glGetIntegerv(GL_VIEWPORT, prevViewport);
 
-	// Render to each eye: 
-	for (int c = 0; c < EYE_LAST; c++) {
-		fbo[c]->render();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (frontRender != nullptr) {
+		frontRender->render(TunaGE::renderList, ortho);
+	}
+	else {
 		TunaGE::renderList.render();
 	}
-
-	// Done with the FBO, go back to rendering into the default context buffers:
-	Fbo::disable();
-	glViewport(0, 0, prevViewport[2], prevViewport[3]);
-
-	////////////////
-   // 2D rendering:
-
-   // Set a matrix for the left "eye":    
-	glm::mat4 f = glm::mat4(1.0f);
-
-	// Setup the passthrough shader:
-	passPs->render();
-	Program::getCurrent()->setMatrix(passProjLoc, ortho);
-	Program::getCurrent()->setMatrix(passMvLoc, f);
-	Program::getCurrent()->setVec(passColorLoc, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-	glBindVertexArray(globalVao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, boxVertexVbo);
-	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glEnableVertexAttribArray(0);
-
-	glDisableVertexAttribArray(1); // We don't need normals for the 2D quad
-
-	glBindBuffer(GL_ARRAY_BUFFER, boxTexCoordVbo);
-	glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glEnableVertexAttribArray(2);
-
-	// Bind the FBO buffer as texture and render:
-	glBindTexture(GL_TEXTURE_2D, fboTexId[EYE_LEFT]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	// Do the same for the right "eye": 
-	f = glm::translate(glm::mat4(1.0f), glm::vec3(APP_WINDOWSIZEX / 2, 0.0f, 0.0f));
-	Program::getCurrent()->setMatrix(passMvLoc, f);
-	Program::getCurrent()->setVec(passColorLoc, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-	glBindTexture(GL_TEXTURE_2D, fboTexId[EYE_RIGHT]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	
 	if (TunaGE::framerateVisible) {
 		if (lastFPS != -1) {
@@ -922,16 +789,4 @@ int TunaGE::getLightPosLoc() {
 
 int TunaGE::getLightSpecularLoc() {
 	return TunaGE::lightSpecularLoc;
-}
-
-int TunaGE::getPassProjLoc() {
-	return TunaGE::passProjLoc;
-}
-
-int TunaGE::getPassMvLoc(){
-	return TunaGE::passMvLoc;
-}
-
-int TunaGE::getPassColorLoc() {
-	return TunaGE::passColorLoc;
 }
