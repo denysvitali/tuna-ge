@@ -173,6 +173,8 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="assets\shaders\passShader.frag" />
+    <None Include="assets\shaders\passShader.vert" />
     <None Include="assets\shaders\shader.frag" />
     <None Include="assets\shaders\shader.vert" />
     <None Include="packages.config" />

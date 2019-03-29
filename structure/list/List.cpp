@@ -73,6 +73,7 @@ void List::pass(Node* element) {
 
 //	Renders the elements saved in the various render lists using the first camera in the renderCamera list
 void tunage::List::render() {
+
 	if (!renderCameras.empty()) {
         renderCameras.front()->update();
         cameraMatrix = renderCameras.front()->getRenderMatrix();
@@ -106,13 +107,14 @@ void tunage::List::render() {
 	glFrontFace(GL_CW);
 	for (auto &i : renderSequenceMirrored) {
 		(*i.getNode())
-				.render(cameraMatrix * i.getMatrix(), i.getMaterial());
+			.render(cameraMatrix * i.getMatrix(), i.getMaterial());
 	}
 	glFrontFace(GL_CCW);
 	for (auto &j : renderSequenceElements) {
 		(*j.getNode())
-				.render(cameraMatrix * j.getMatrix(), j.getMaterial());
+			.render(cameraMatrix * j.getMatrix(), j.getMaterial());
 	}
+
 }
 
 const std::vector<Element> &List::getRenderElements() const {

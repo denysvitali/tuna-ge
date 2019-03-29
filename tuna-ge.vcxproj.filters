@@ -22,6 +22,8 @@
     <None Include="assets\shaders\shader.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="assets\shaders\passShader.vert" />
+    <None Include="assets\shaders\passShader.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="structure\object\Object.cpp">

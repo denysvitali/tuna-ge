@@ -3,8 +3,9 @@
 using namespace tunage;
 
 Program* Program::current = nullptr;
+unsigned int Program::idCounter = 0;
 
-Program::Program() : glId(0) {}
+Program::Program() : glId(idCounter++) {}
 
 Program::~Program() {
 	if (glId) {
@@ -27,6 +28,10 @@ void Program::setMatrix4x4(const char* name, glm::mat4 mat) {
 
 void Program::setMatrix3x3(const char* name, glm::mat3 mat) {
 	glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr<float>(mat));
+}
+
+void Program::setVec4(const char* name, glm::vec4 vec) {
+	glUniform4fv(getUniformLocation(name), 1, glm::value_ptr<float>(vec));
 }
 
 void Program::setLight(Light* light, glm::mat4 pos) {
