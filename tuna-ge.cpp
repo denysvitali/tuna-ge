@@ -142,8 +142,6 @@ void TunaGE::init() {
 
 	TunaGE::freeAlreadyCalled = false;
 
-	
-
 	if (!glutInitAlreadyCalled) {
 		// FreeGLUT can parse command-line params, in case:
 		int argc = 1;
@@ -152,29 +150,33 @@ void TunaGE::init() {
 		glutInitAlreadyCalled = true;
 	}
 
+	
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitContextVersion(4, 4);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitContextFlags(GLUT_DEBUG);
-	// Create window:
-	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
-	TunaGE::setWindowSize(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
+
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
-	TunaGE::windowId = glutCreateWindow("Tuna");
-	TunaGE::initGlew();
+	// Create window:
+	TunaGE::setWindowSize(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
 
 	// Init FreeImage:
 	FreeImage_Initialise();
+
+	// Init Glew
+	TunaGE::initGlew();
 
 #ifdef _DEBUG
 	glDebugMessageCallback((GLDEBUGPROC)debugCallback, nullptr);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 #endif
+
+	// Init Glut
 	TunaGE::initGlut();
 
+	// Init Shaders
 	TunaGE::initShaders();
 
 	// Create a 2D box for screen rendering:
@@ -183,7 +185,6 @@ void TunaGE::init() {
 	boxPlane[1] = glm::vec2(APP_FBOSIZEX, 0.0f);
 	boxPlane[2] = glm::vec2(0.0f, APP_FBOSIZEY);
 	boxPlane[3] = glm::vec2(APP_FBOSIZEX, APP_FBOSIZEY);
-
 
 	glGenVertexArrays(1, &globalVao);
 	glBindVertexArray(globalVao);
@@ -231,7 +232,6 @@ void TunaGE::init() {
 	Fbo::disable();
 	glViewport(0, 0, prevViewport[2], prevViewport[3]);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	
 }
 
 void TunaGE::initGlew() {
@@ -257,7 +257,6 @@ void TunaGE::initGlew() {
 }
 
 void TunaGE::initGlut() {
-	glutSetWindow(TunaGE::windowId);
 
 	// Set callback functions:
 	glutMotionFunc(motion_callback);
@@ -852,9 +851,9 @@ void TunaGE::setWindowSize(int width, int height) {
 			return;
 		}
 		else {
-			glutDestroyWindow(TunaGE::windowId);
-			TunaGE::windowId = glutCreateWindow("Tuna");
+			glutInitWindowPosition(100, 100);
 			glutInitWindowSize(width, height);
+			TunaGE::windowId = glutCreateWindow("Tuna");
 			glutSetWindow(TunaGE::windowId);
 		}
 	}
