@@ -86,6 +86,7 @@ namespace tunage {
 		//Methods//
 		static void initGlew();
         static void initGlut();
+		static void initShaders();
         static void displayCB();
 		static void reshapeCB(int w, int h);
 		static void mouseCB(int button, int state, int x, int y);

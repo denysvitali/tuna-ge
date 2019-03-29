@@ -152,50 +152,7 @@ void TunaGE::init() {
 #endif
 	TunaGE::initGlut();
 
-	
-
-	char dir[FILENAME_MAX];
-	GetCurrentDir(dir, FILENAME_MAX);
-
-	char* vsPath = new char[FILENAME_MAX + 50];
-	char* fsPath = new char[FILENAME_MAX + 50];
-	char* passVsPath = new char[FILENAME_MAX + 50];
-	char* passFsPath = new char[FILENAME_MAX + 50];
-
-	sprintf(vsPath, "%s%s", dir, "/assets/shaders/shader.vert");
-	sprintf(fsPath, "%s%s", dir, "/assets/shaders/shader.frag");
-	sprintf(passVsPath, "%s%s", dir, "/assets/shaders/passShader.vert");
-	sprintf(passFsPath, "%s%s", dir, "/assets/shaders/passShader.frag");
-
-	Shader* vs = new Shader();
-	Shader::loadFromFile(Shader::TYPE_VERTEX, vsPath, *vs);
-	Shader* fs = new Shader();
-	Shader::loadFromFile(Shader::TYPE_FRAGMENT, fsPath, *fs);
-
-	Shader* passVs = new Shader();
-	Shader::loadFromFile(Shader::TYPE_VERTEX, passVsPath, *passVs);
-	Shader* passFs = new Shader();
-	Shader::loadFromFile(Shader::TYPE_FRAGMENT, passFsPath, *passFs);
-
-	delete[] vsPath;
-	delete[] fsPath;
-	delete[] passVsPath;
-	delete[] passFsPath;
-
-	passPs = new Program();
-	Program::build(*passVs, *passFs, *passPs);
-
-	passPs->render();
-	passPs->bind(0, "in_Position");
-	passPs->bind(2, "in_TexCoord");
-
-	ps = new Program();
-	Program::build(*vs, *fs, *ps);
-
-	ps->render();
-	ps->bind(0, "in_Position");
-	ps->bind(1, "in_Texture");
-	ps->bind(2, "in_Normal");
+	TunaGE::initShaders();
 
 	// Create a 2D box for screen rendering:
 	glm::vec2 *boxPlane = new glm::vec2[4];
@@ -300,6 +257,51 @@ void TunaGE::initGlut() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void TunaGE::initShaders() {
+	char dir[FILENAME_MAX];
+	GetCurrentDir(dir, FILENAME_MAX);
+
+	char* vsPath = new char[FILENAME_MAX + 50];
+	char* fsPath = new char[FILENAME_MAX + 50];
+	char* passVsPath = new char[FILENAME_MAX + 50];
+	char* passFsPath = new char[FILENAME_MAX + 50];
+
+	sprintf(vsPath, "%s%s", dir, "/assets/shaders/shader.vert");
+	sprintf(fsPath, "%s%s", dir, "/assets/shaders/shader.frag");
+	sprintf(passVsPath, "%s%s", dir, "/assets/shaders/passShader.vert");
+	sprintf(passFsPath, "%s%s", dir, "/assets/shaders/passShader.frag");
+
+	Shader* vs = new Shader();
+	Shader::loadFromFile(Shader::TYPE_VERTEX, vsPath, *vs);
+	Shader* fs = new Shader();
+	Shader::loadFromFile(Shader::TYPE_FRAGMENT, fsPath, *fs);
+
+	Shader* passVs = new Shader();
+	Shader::loadFromFile(Shader::TYPE_VERTEX, passVsPath, *passVs);
+	Shader* passFs = new Shader();
+	Shader::loadFromFile(Shader::TYPE_FRAGMENT, passFsPath, *passFs);
+
+	delete[] vsPath;
+	delete[] fsPath;
+	delete[] passVsPath;
+	delete[] passFsPath;
+
+	passPs = new Program();
+	Program::build(*passVs, *passFs, *passPs);
+
+	passPs->render();
+	passPs->bind(0, "in_Position");
+	passPs->bind(2, "in_TexCoord");
+
+	ps = new Program();
+	Program::build(*vs, *fs, *ps);
+
+	ps->render();
+	ps->bind(0, "in_Position");
+	ps->bind(1, "in_Texture");
+	ps->bind(2, "in_Normal");
 }
 
 void TunaGE::loopEvent() {
