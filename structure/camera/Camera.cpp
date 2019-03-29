@@ -5,6 +5,9 @@
 #ifdef DEBUG
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
+#include <structure/program/Program.h>
+#include <tuna-ge.h>
+
 #endif
 
 using namespace tunage;

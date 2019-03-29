@@ -44,7 +44,8 @@ namespace tunage {
 		//	Render matrix of the first camera in the renderCameras list
 		glm::mat4 cameraMatrix;
 
-		//  Render matrix of the last parent node (used for pass())
+
+		// Render matrix of the last parent node (used in pass())
 		glm::mat4 parentMatrix = glm::mat4(1.0f);
 
 		//	Materials used for lights

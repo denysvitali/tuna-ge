@@ -9,6 +9,7 @@
 #include "version.hh"
 
 #include <FreeImage.h>
+
 #include "structure/utils/CurrentDir.h"
 
 #include "structure/shader/Shader.h"
@@ -74,6 +75,28 @@ double TunaGE::lastFPS = -1;
 int TunaGE::lastFPS_idx = 0;
 double TunaGE::lastFPSArr[FPS_COUNTER_SIZE] = {};
 
+// Locations
+int TunaGE::projLoc = -1;
+int TunaGE::mvLoc = -1;
+int TunaGE::normalMatLoc = -1;
+int TunaGE::passProjLoc = -1;
+int TunaGE::passMvLoc = -1;
+int TunaGE::passColorLoc = -1;
+
+
+int TunaGE::matAmbientLoc = -1;
+int TunaGE::matDiffuseLoc = -1;
+int TunaGE::matEmissiveLoc = -1;
+int TunaGE::matSpecularLoc = -1;
+int TunaGE::matShininessLoc = -1;
+
+int TunaGE::lightPosLoc = -1;
+int TunaGE::lightAmbientLoc = -1;
+int TunaGE::lightDiffuseLoc = -1;
+int TunaGE::lightSpecularLoc = -1;
+
+
+
 RGBColor debugColor = RGBColor::getColor("#fafafa");
 RGBColor fpsColor = RGBColor::getColor("#4CAF50");
 
@@ -103,7 +126,6 @@ Fbo *fbo[EYE_LAST] = { nullptr, nullptr };
 // Vertex buffers:
 unsigned int boxVertexVbo = 0;
 unsigned int boxTexCoordVbo = 0;
-
 unsigned int globalVao = 0;
 
 // Textures:
@@ -120,7 +142,7 @@ void TunaGE::init() {
 
 	TunaGE::freeAlreadyCalled = false;
 
-	TunaGE::setWindowSize(TunaGE::screen_w, TunaGE::screen_h);
+	
 
 	if (!glutInitAlreadyCalled) {
 		// FreeGLUT can parse command-line params, in case:
@@ -137,6 +159,7 @@ void TunaGE::init() {
 	// Create window:
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
+	TunaGE::setWindowSize(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
 	// Set some optional flags:
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
@@ -208,24 +231,23 @@ void TunaGE::init() {
 	Fbo::disable();
 	glViewport(0, 0, prevViewport[2], prevViewport[3]);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
+	
 }
+
 void TunaGE::initGlew() {
 	// Init Glew (*after* the context creation):
 	glewExperimental = GL_TRUE;
 	GLenum error = glewInit();
 
-	if (error != GLEW_OK)
-	{
+	if (error != GLEW_OK) {
 		std::cout << "Error: " << glewGetErrorString(error) << std::endl;
 		exit(-1);
 	}
 	else {
 		// OpenGL 4.4 is required:
-		if (!glewIsSupported("GL_VERSION_4_4"))
-		{
-			std::cout << "OpenGL 4.4 not supported" << std::endl;
-			exit;
+		if (!glewIsSupported("GL_VERSION_4_4")) {
+			std::cerr << "OpenGL 4.4 not supported" << std::endl;
+			exit(-1);
 		}
 	}
 
@@ -260,6 +282,8 @@ void TunaGE::initGlut() {
 }
 
 void TunaGE::initShaders() {
+
+
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
 
@@ -295,6 +319,10 @@ void TunaGE::initShaders() {
 	passPs->bind(0, "in_Position");
 	passPs->bind(2, "in_TexCoord");
 
+	TunaGE::passProjLoc = passPs->getUniformLocation("projection");
+	TunaGE::passMvLoc = passPs->getUniformLocation("modelview");
+	TunaGE::passColorLoc = passPs->getUniformLocation("color");
+
 	ps = new Program();
 	Program::build(*vs, *fs, *ps);
 
@@ -302,6 +330,22 @@ void TunaGE::initShaders() {
 	ps->bind(0, "in_Position");
 	ps->bind(1, "in_Texture");
 	ps->bind(2, "in_Normal");
+
+	TunaGE::projLoc = ps->getUniformLocation("projection");
+	TunaGE::mvLoc = ps->getUniformLocation("modelview");
+	TunaGE::normalMatLoc = ps->getUniformLocation("normal_matrix");
+
+	// Locations
+	TunaGE::matAmbientLoc = ps->getUniformLocation("material_ambient");
+	TunaGE::matDiffuseLoc = ps->getUniformLocation("material_diffuse");
+	TunaGE::matEmissiveLoc = ps->getUniformLocation("material_emissive");
+	TunaGE::matSpecularLoc = ps->getUniformLocation("material_specular");
+	TunaGE::matShininessLoc = ps->getUniformLocation("material_shininess");
+
+	TunaGE::lightPosLoc = ps->getUniformLocation("light_position");
+	TunaGE::lightAmbientLoc = ps->getUniformLocation("light_ambient");
+	TunaGE::lightDiffuseLoc = ps->getUniformLocation("light_diffuse");
+	TunaGE::lightSpecularLoc = ps->getUniformLocation("light_specular");
 }
 
 void TunaGE::loopEvent() {
@@ -430,12 +474,6 @@ void TunaGE::displayCB() {
 	else {
 		glDisable(GL_CULL_FACE);
 	}
-	//if (TunaGE::lighting) {
-	//	glEnable(GL_LIGHTING);
-	//}
-	//else {
-	//	glDisable(GL_LIGHTING);
-	//}
 	if (TunaGE::wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -449,7 +487,7 @@ void TunaGE::displayCB() {
 
 	ps->render();
 
-	Program::getCurrent()->setMatrix4x4("projection", fboPerspective);
+	Program::getCurrent()->setMatrix(projLoc, fboPerspective);
 	// Store the current viewport size:
 	GLint prevViewport[4];
 	glGetIntegerv(GL_VIEWPORT, prevViewport);
@@ -473,9 +511,9 @@ void TunaGE::displayCB() {
 
 	// Setup the passthrough shader:
 	passPs->render();
-	Program::getCurrent()->setMatrix4x4("projection", ortho);
-	Program::getCurrent()->setMatrix4x4("modelview", f);
-	Program::getCurrent()->setVec4("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	Program::getCurrent()->setMatrix(passProjLoc, ortho);
+	Program::getCurrent()->setMatrix(passMvLoc, f);
+	Program::getCurrent()->setVec(passColorLoc, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	glBindVertexArray(globalVao);
 
@@ -495,8 +533,8 @@ void TunaGE::displayCB() {
 
 	// Do the same for the right "eye": 
 	f = glm::translate(glm::mat4(1.0f), glm::vec3(APP_WINDOWSIZEX / 2, 0.0f, 0.0f));
-	Program::getCurrent()->setMatrix4x4("modelview", f);
-	Program::getCurrent()->setVec4("color", glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+	Program::getCurrent()->setMatrix(passMvLoc, f);
+	Program::getCurrent()->setVec(passColorLoc, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 	glBindTexture(GL_TEXTURE_2D, fboTexId[EYE_RIGHT]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	
@@ -597,7 +635,6 @@ void TunaGE::reshapeCB(int w, int h) {
 
 
 		fboPerspective = TunaGE::getCurrentCamera()->getProjectionMatrix();
-		//	TunaGE::getCurrentCamera()->loadProjectionMatrix();
 		
 	}
 	
@@ -634,34 +671,36 @@ void TunaGE::setSpecialCallback(void(*special_callback)(Keyboard::Key k, int x, 
 //	Renders a string on screen with position, color and font specified
 void TunaGE::renderString(float x, float y, FontType ft, RGBColor &color, String string) {
 
-	//void* font = Font::getFont(ft);
+	/*
+	void* font = Font::getFont(ft);
 
-	////glDisable(GL_LIGHTING);
-	//glDisable(GL_TEXTURE_2D);
-	//glMatrixMode(GL_PROJECTION);
-	//glPushMatrix();
-	//glLoadIdentity();
-	//gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
-	//glMatrixMode(GL_MODELVIEW);
-	//glPushMatrix();
-	//glLoadIdentity();
+	glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, TunaGE::screen_w, 0.0, TunaGE::screen_h);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
 
-	//glColor3f(color.r(), color.g(), color.b());
-	//glRasterPos2f(x, y);
+	glColor3f(color.r(), color.g(), color.b());
+	glRasterPos2f(x, y);
 
-	//for (char c : std::string(string.data())) {
-	//	glutBitmapCharacter(font, c);
-	//}
+	for (char c : std::string(string.data())) {
+		glutBitmapCharacter(font, c);
+	}
 
-	//glMatrixMode(GL_PROJECTION);
-	//glPopMatrix();
-	//glMatrixMode(GL_MODELVIEW);
-	//glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	////if (TunaGE::lighting) {
-	////	glEnable(GL_LIGHTING);
-	////}
-	//glColor3f(255, 255, 255); // Reset to White
+	if (TunaGE::lighting) {
+		glEnable(GL_LIGHTING);
+	}
+	glColor3f(255, 255, 255); // Reset to White
+	 */
 }
 
 // Forces a call on displayCallback, usable client-side
@@ -835,4 +874,65 @@ void TunaGE::setDebug(bool enabled) {
 
 std::vector<Object*>& TunaGE::getAllocatedObjects() {
 	return allocatedObjects;
+}
+
+void TunaGE::setProjectionMatrix(glm::mat4 mat) {
+	Program::getCurrent()->setMatrix(TunaGE::projLoc, mat);
+}
+
+
+int TunaGE::getMvLoc() {
+	return TunaGE::mvLoc;
+}
+
+int TunaGE::getNormMatLoc() {
+	return TunaGE::normalMatLoc;
+}
+
+int TunaGE::getMatAmbientLoc() {
+	return TunaGE::matAmbientLoc;
+}
+
+int TunaGE::getMatDiffuseLoc() {
+	return TunaGE::matDiffuseLoc;
+}
+
+int TunaGE::getMatEmissiveLoc() {
+	return TunaGE::matEmissiveLoc;
+}
+
+int TunaGE::getMatSpecularLoc() {
+	return TunaGE::matSpecularLoc;
+}
+
+int TunaGE::getMatShininessLoc() {
+	return TunaGE::matShininessLoc;
+}
+
+int TunaGE::getLightAmbientLoc() {
+	return TunaGE::lightAmbientLoc;
+}
+
+int TunaGE::getLightDiffuseLoc() {
+	return TunaGE::lightDiffuseLoc;
+}
+
+int TunaGE::getLightPosLoc() {
+	return TunaGE::lightPosLoc;
+}
+
+int TunaGE::getLightSpecularLoc() {
+	return TunaGE::lightSpecularLoc;
+}
+
+int TunaGE::getPassProjLoc() {
+	return TunaGE::passProjLoc;
+}
+
+int TunaGE::getPassMvLoc(){
+	return TunaGE::passMvLoc;
+}
+
+int TunaGE::getPassColorLoc() {
+	return TunaGE::passColorLoc;
 }

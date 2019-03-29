@@ -33,6 +33,7 @@ namespace tunage {
 		unsigned int faceVboId;
 		int numVertices;
 		int numFaces;
+		bool initialized = false;
 		Material* material = nullptr;
 	};
 }

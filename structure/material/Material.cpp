@@ -42,7 +42,7 @@ void Material::setSpecular(glm::vec3 light) {
 	specular = glm::vec3(light[0], light[1], light[2]);
 }
 
-void Material::setEmission(glm::vec3 light) {
+void Material::setEmissive(glm::vec3 light) {
 	emission = glm::vec3(light[0], light[1], light[2]);
 }
 
@@ -92,3 +92,4 @@ bool Material::isTransparent() {
 float Material::getAlpha() {
 	return alpha;
 }
+

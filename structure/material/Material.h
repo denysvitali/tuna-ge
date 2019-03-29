@@ -18,13 +18,14 @@ namespace tunage {
 		glm::vec3 getDiffuse() const;
         void setSpecular(glm::vec3 light);
 		glm::vec3 getSpecular() const;
-        void setEmission(glm::vec3 light);
+        void setEmissive(glm::vec3 light);
 		glm::vec3 getEmissive() const;
         void setShininess(int intensity);
 		int getShininess() const;
 		void setAlpha(float alpha);
 		float getAlpha();
 		bool isTransparent();
+		
         
         //	Texture methods
 		void setTexture(Texture* texture);

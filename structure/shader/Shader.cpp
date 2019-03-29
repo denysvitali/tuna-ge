@@ -1,14 +1,18 @@
+
+#include <GL/glew.h>
 #include "Shader.h"
 
 Shader::Shader() : type(TYPE_UNDEFINED), glId(0) {}
+
 Shader::~Shader() {
 	if (glId)
-		switch (type)
-		{
-		case TYPE_VERTEX:
-		case TYPE_FRAGMENT:
-			glDeleteShader(glId);
-			break;
+		switch (type) {
+			case TYPE_VERTEX:
+			case TYPE_FRAGMENT:
+				glDeleteShader(glId);
+				break;
+			default:
+				break;
 		}
 }
 
@@ -20,31 +24,27 @@ GLuint Shader::getId() {
 	return glId;
 }
 
-bool Shader::loadFromFile(int type, const char* path, Shader& out)
-{
-	if (path == nullptr)
-	{
+bool Shader::loadFromFile(ShaderType type, const char* path, Shader &out) {
+	if (path == nullptr) {
 		std::cerr << "[Shader] ERROR: null pointer as path." << std::endl;
 		return false;
 	}
 
-	FILE *dat = fopen(path, "rt");
-	if (dat == nullptr)
-	{
+	FILE* dat = fopen(path, "rt");
+	if (dat == nullptr) {
 		std::cout << "[Shader] ERROR: " << path << " is not a valid path." << std::endl;
 		return false;
 	}
 
-	unsigned int length;
+	long length;
 	fseek(dat, 0, SEEK_END);
 	length = ftell(dat);
 	fseek(dat, 0, SEEK_SET);
 
-	char *data = nullptr;
-	if (length > 0)
-	{
+	char* data = nullptr;
+	if (length > 0) {
 		data = new char[sizeof(char) * (length + 1)];
-		length = (unsigned int)fread(data, sizeof(char), length, dat);
+		length = (unsigned int) fread(data, sizeof(char), static_cast<size_t>(length), dat);
 		data[length] = '\0';
 	}
 	fclose(dat);
@@ -59,56 +59,48 @@ bool Shader::loadFromFile(int type, const char* path, Shader& out)
 	return result;
 }
 
-bool Shader::loadFromMemory(int type, const char * data, Shader & out)
-{
-	if (data == nullptr)
-	{
+bool Shader::loadFromMemory(ShaderType type, const char* data, Shader &out) {
+	if (data == nullptr) {
 		std::cout << "[Shader] ERROR: null pointer as data." << std::endl;
 		return false;
 	}
 
 	// Check kind:
 	int glKind = 0;
-	switch (type)
-	{
-		////////////////////
-	case TYPE_VERTEX: //
-		glKind = GL_VERTEX_SHADER;
-		break;
-
-		//////////////////////
-	case TYPE_FRAGMENT: //
-		glKind = GL_FRAGMENT_SHADER;
-		break;
-
-		///////////
-	default: //
-		std::cout << "[Shader] ERROR: invalid shader type enum value." << std::endl;
-		return false;
-	}
-
-	// Destroy if already loaded:
-	if (out.glId)
-		switch (type)
-		{
+	switch (type) {
 		case TYPE_VERTEX:
+			glKind = GL_VERTEX_SHADER;
+			break;
+
 		case TYPE_FRAGMENT:
-			glDeleteShader(out.glId);
+			glKind = GL_FRAGMENT_SHADER;
 			break;
 
 		default:
 			std::cout << "[Shader] ERROR: invalid shader type enum value." << std::endl;
 			return false;
+	}
+
+	// Destroy if already loaded:
+	if (out.glId)
+		switch (type) {
+			case TYPE_VERTEX:
+			case TYPE_FRAGMENT:
+				glDeleteShader(out.glId);
+				break;
+
+			default:
+				std::cout << "[Shader] ERROR: invalid shader type enum value." << std::endl;
+				return false;
 		}
 
 	// Load program:
 	out.glId = glCreateShader(glKind);
-	if (out.glId == 0)
-	{
+	if (out.glId == 0) {
 		std::cout << "[Shader] ERROR: cannot initiliase shader object." << std::endl;
 		return false;
 	}
-	glShaderSource(out.glId, 1, (const char **)&data, NULL);
+	glShaderSource(out.glId, 1, &data, nullptr);
 	glCompileShader(out.glId);
 
 	// Verify shader:
@@ -119,8 +111,7 @@ bool Shader::loadFromMemory(int type, const char * data, Shader & out)
 
 	glGetShaderiv(out.glId, GL_COMPILE_STATUS, &status);
 	glGetShaderInfoLog(out.glId, MAX_LOGSIZE, &length, buffer);
-	if (status == false)
-	{
+	if (status == 0) {
 		std::cout << "[Shader] ERROR: could not compile shader: " << buffer << std::endl;
 		return false;
 	}
@@ -130,4 +121,20 @@ bool Shader::loadFromMemory(int type, const char * data, Shader & out)
 
 	// Done:
 	return true;
+}
+
+void Shader::setVec3(int location, glm::vec3 vec) {
+	glUniform3fv(location, 1, glm::value_ptr(vec));
+}
+
+void Shader::setFloat(int location, float f) {
+	glUniform1f(location, f);
+}
+
+void Shader::setMatrix3(int location, glm::mat3 mat) {
+	glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Shader::setMatrix4(int location, glm::mat4 mat) {
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }

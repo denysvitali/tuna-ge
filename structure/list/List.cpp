@@ -27,7 +27,11 @@ void List::pass(Node* element) {
 		Material* mat = mesh->getMaterial();
 		if (element->getFlipScene()) {
 			Element mirrorElement{element};
-			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * currentRenderMatrix);
+			mirrorElement.setMatrix(
+					glm::scale(glm::mat4(1.0f),
+							glm::vec3(1, -1, 1)) * currentRenderMatrix
+			);
+
 			mirrorElement.setMaterial(mat);
 			renderSequenceMirrored.push_back(mirrorElement);
 		}
@@ -37,14 +41,16 @@ void List::pass(Node* element) {
 		auto* light = dynamic_cast<Light*>(element);
 
 		lightMaterial = new Material();
-		lightMaterial->setEmission(light->getLightAmbient());
+		lightMaterial->setEmissive(light->getLightAmbient());
 		if (element->getFlipScene()) {
 			auto* mirroredLight = new Light();
 			*mirroredLight = *light;
 			mirroredLight->setReferenceLight(light);
 			mirroredLight->clearHierarchy();
 			Element mirrorElement{mirroredLight};
-			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f), glm::vec3(1, -1, 1)) * currentRenderMatrix);
+			mirrorElement.setMatrix(glm::scale(glm::mat4(1.0f),
+					glm::vec3(1, -1, 1)) * currentRenderMatrix);
+
 			mirrorElement.setMaterial(lightMaterial);
 			renderSequenceLightsMirrored.push_back(mirrorElement);
 		}
