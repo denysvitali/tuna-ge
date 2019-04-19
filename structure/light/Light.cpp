@@ -1,11 +1,10 @@
 #include "Light.h"
+#include "../../tuna-ge.h"
 #include "../program/Program.h"
 
+#include "../material/Material.h"
 // FreeGLUT:
 #include <GL/freeglut.h>
-
-#include "../material/Material.h"
-#include "../../tuna-ge.h"
 
 #include <glm/gtc/matrix_inverse.hpp>
 

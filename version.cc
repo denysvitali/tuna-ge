@@ -5,6 +5,6 @@
 #endif
 
 using namespace tunage;
-const std::string& Version::GIT_SHA1 = "aeab0d7-dirty";
-const std::string& Version::GIT_DATE = "Thu Mar 28 23:08:26 2019";
-const std::string& Version::GIT_COMMIT_SUBJECT = "Add fbo class, fix texture";
+const std::string& Version::GIT_SHA1 = "15b566a-dirty";
+const std::string& Version::GIT_DATE = "Fri Mar 29 23:12:21 2019";
+const std::string& Version::GIT_COMMIT_SUBJECT = "Refactor of displayCB: class FrontRender to handle FBOs";

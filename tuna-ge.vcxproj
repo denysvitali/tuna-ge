@@ -94,15 +94,20 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>..\dependencies\openvr\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openvr_api64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\dependencies\openvr\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Unrestricted $(ProjectDir)generate-version.ps1</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy ..\dependencies\openvr\bin\$(Platform)\$(Configuration)\openvr_api64.dll $(OutDir) /Y &gt; nul</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -160,17 +165,22 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>..\dependencies\openvr\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openvr_api64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\dependencies\openvr\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Unrestricted $(ProjectDir)generate-version.ps1</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy ..\dependencies\openvr\bin\$(Platform)\$(Configuration)\openvr_api64.dll $(OutDir) /Y &gt; nul</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="assets\shaders\passShader.frag" />
@@ -199,6 +209,7 @@
     <ClCompile Include="structure\ovoreader\OvoReader.cpp" />
     <ClCompile Include="structure\program\Program.cpp" />
     <ClCompile Include="structure\shader\Shader.cpp" />
+    <ClCompile Include="structure\skybox\Skybox.cpp" />
     <ClCompile Include="structure\string\String.cpp" />
     <ClCompile Include="structure\texture\Texture.cpp" />
     <ClCompile Include="structure\vertex\Vertex.cpp" />
@@ -229,8 +240,10 @@
     <ClInclude Include="structure\ovoreader\OvMesh.h" />
     <ClInclude Include="structure\ovoreader\OvObject.h" />
     <ClInclude Include="structure\ovoreader\OvoReader.h" />
+    <ClInclude Include="structure\ovr\ovr.h" />
     <ClInclude Include="structure\program\Program.h" />
     <ClInclude Include="structure\shader\Shader.h" />
+    <ClInclude Include="structure\skybox\Skybox.h" />
     <ClInclude Include="structure\string\String.h" />
     <ClInclude Include="structure\texture\Texture.h" />
     <ClInclude Include="structure\utils\CurrentDir.h" />

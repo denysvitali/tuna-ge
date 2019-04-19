@@ -25,7 +25,6 @@
 #include "structure/color/RGBColor.h"
 #include "structure/camera/Camera.h"
 #include "structure/mesh/Mesh.h"
-#include "structure/list/List.h"
 #include "structure/element/Element.h"
 #include "structure/string/String.h"
 #include "structure/font/Font.h"
@@ -33,6 +32,7 @@
 #include "structure/button/Button.h"
 #include "structure/keyboard/Keyboard.h"
 #include "structure/ovoreader/OvoReader.h"
+#include "structure/list/List.h"
 
 namespace tunage {
     class LIB_API TunaGE {
@@ -93,6 +93,7 @@ namespace tunage {
 		static int getLightDiffuseLoc();
 		static int getLightSpecularLoc();
 
+		static void setProjectionMatrix(glm::mat4 mat);
 	private:
 
 		TunaGE() {};
@@ -167,6 +168,6 @@ namespace tunage {
 
         static std::vector<Object*> allocatedObjects;
 
-		static void setProjectionMatrix(glm::mat4 mat);
+		
 	};
 }

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../program/Program.h"
+//#include "../../tuna-ge.h"
 #include "../fbo/Fbo.h"
 #include "../list/List.h"
+#include "../ovr/ovr.h"
+#include "../skybox/Skybox.h"
 
 // Enums:
 enum Eye
@@ -18,12 +20,14 @@ namespace tunage {
 	class FrontRender {
 	public:
 
-		FrontRender(int windowsX, int windowsY);
+		FrontRender(int windowsX, int windowsY, OvVR* ovr);
 		~FrontRender();
 
 		void render(List renderList, glm::mat4 ortho);
 
 	private:
+		//OpenVR
+		OvVR* ovVr;
 		// FBO:      
 		Fbo *fbo[EYE_LAST] = { nullptr, nullptr };
 		// Textures:

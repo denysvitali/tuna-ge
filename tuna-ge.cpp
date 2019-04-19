@@ -14,7 +14,7 @@
 
 #include "structure/shader/Shader.h"
 #include "structure/frontRender/FrontRender.h"
-
+#include "structure/ovr/ovr.h"
 
 // Save Image during renderSingleFrame in a temp dir (in order to generate expected test results)
 #define SAVE_IMAGE 1
@@ -117,6 +117,8 @@ Program* ps;
 glm::mat4 ortho;
 glm::mat4 fboPerspective;
 
+OvVR* ovr = nullptr;
+
 FrontRender* frontRender = nullptr;
 
 void TunaGE::init() {
@@ -159,11 +161,62 @@ void TunaGE::init() {
 
 	// Init Glut
 	TunaGE::initGlut();
-
+	
+	// Init OpenVR:   
+	ovr = new OvVR();
+	if (ovr->init() == false)
+	{
+		std::cout << "[ERROR] Unable to init OpenVR" << std::endl;
+		delete ovr;
+		exit(-1);
+	}
+	// Report some info:
+	std::cout << "   Manufacturer . . :  " << ovr->getManufacturerName() << std::endl;
+	std::cout << "   Tracking system  :  " << ovr->getTrackingSysName() << std::endl;
+	std::cout << "   Model number . . :  " << ovr->getModelNumber() << std::endl;
+	
 	// Init Shaders
 	TunaGE::initShaders();
 
-	frontRender = new FrontRender(APP_WINDOWSIZEX, APP_WINDOWSIZEY);
+	frontRender = new FrontRender(APP_WINDOWSIZEX, APP_WINDOWSIZEY, ovr);
+	
+	std::string cubemapNames[] =
+	{
+	   "posx.jpg",
+	   "negx.jpg",
+	   "posy.jpg",
+	   "negy.jpg",
+	   "posz.jpg",
+	   "negz.jpg",
+	};
+	float cubeVertices[] = // Vertex and tex. coords are the same
+	{
+	   -1.0f,  1.0f,  1.0f,
+	   -1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+	   -1.0f,  1.0f, -1.0f,
+	   -1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+	};
+	unsigned short cubeFaces[] =
+	{
+	   0, 1, 2,
+	   0, 2, 3,
+	   3, 2, 6,
+	   3, 6, 7,
+	   4, 0, 3,
+	   4, 3, 7,
+	   6, 5, 4,
+	   7, 6, 4,
+	   4, 5, 1,
+	   4, 1, 0,
+	   1, 5, 6,
+	   1, 6, 2,
+	};
+	
+	Skybox::instantiate(cubemapNames, sizeof(cubemapNames), cubeVertices, sizeof(cubeVertices), cubeFaces, sizeof(cubeFaces));
 }
 
 void TunaGE::initGlew() {
@@ -395,7 +448,7 @@ void TunaGE::displayCB() {
 
 	ps->render();
 
-	Program::getCurrent()->setMatrix(projLoc, fboPerspective);
+	//Program::getCurrent()->setMatrix(projLoc, fboPerspective);
 
 	if (frontRender != nullptr) {
 		frontRender->render(TunaGE::renderList, ortho);
@@ -745,7 +798,6 @@ std::vector<Object*>& TunaGE::getAllocatedObjects() {
 void TunaGE::setProjectionMatrix(glm::mat4 mat) {
 	Program::getCurrent()->setMatrix(TunaGE::projLoc, mat);
 }
-
 
 int TunaGE::getMvLoc() {
 	return TunaGE::mvLoc;

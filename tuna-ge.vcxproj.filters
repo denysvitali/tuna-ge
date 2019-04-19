@@ -101,6 +101,9 @@
     <ClCompile Include="structure\frontRender\FrontRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="structure\skybox\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structure\object\Object.h">
@@ -191,6 +194,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="structure\frontRender\FrontRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\skybox\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structure\ovr\ovr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,6 @@
 #include "List.h"
+#include "../../tuna-ge.h"
+#include "../skybox/Skybox.h"
 #include "../mesh/Mesh.h"
 #include "../light/Light.h"
 #include <algorithm>
@@ -80,14 +82,26 @@ void List::pass(Node* element) {
 //	Renders the elements saved in the various render lists using the first camera in the renderCamera list
 void tunage::List::render() {
 
-	if (!renderCameras.empty()) {
-        renderCameras.front()->update();
-        cameraMatrix = renderCameras.front()->getRenderMatrix();
-    } else {
+	
+	if (renderCameras.empty()) {
 		// Create a default camera
 		auto camera = new Camera{"Default Camera"};
 		renderCameras.push_back(camera);
 	}
+	renderCameras.front()->update();
+	cameraMatrix = additionalModelView * renderCameras.front()->getRenderMatrix();
+
+	if (Skybox::getCurrent() != nullptr) {
+		//Stores the current shader program to re-enable it later when the skybox is done rendering
+		Program* temp = Program::getCurrent();
+		glm::mat4 skyboxMV = glm::translate(cameraMatrix, renderCameras.front()->getAbsolutePosition());
+		float l = ((renderCameras.front()->getFarPlane() - renderCameras.front()->getNearPlane()) / sqrt(2)) / 2;
+		skyboxMV = glm::scale(skyboxMV, glm::vec3(l, l, l));
+		Skybox::getCurrent()->render(proj, skyboxMV);
+		temp->render();
+	}
+
+	TunaGE::setProjectionMatrix(proj);
 
 	//	Mirrored elements needs to be rendered ClockWise
 	glFrontFace(GL_CW);
@@ -121,6 +135,8 @@ void tunage::List::render() {
 			.render(cameraMatrix * j.getMatrix(), j.getMaterial());
 	}
 
+	
+
 }
 
 const std::vector<Element> &List::getRenderElements() const {
@@ -133,6 +149,31 @@ const std::vector<Element> &List::getRenderLights() const {
 
 std::vector<Camera*> &List::getRenderCameras() {
 	return renderCameras;
+}
+/*
+const Skybox * tunage::List::getSkybox() const
+{
+	return skybox;
+}
+
+void tunage::List::setSkybox(Skybox * skybox)
+{
+	this->skybox = skybox;
+}
+*/
+const glm::mat4 tunage::List::getProj() const
+{
+	return proj;
+}
+
+void tunage::List::setProj(glm::mat4 proj)
+{
+	this->proj = proj;
+}
+
+void tunage::List::setAdditionalModelView(glm::mat4 additionalModelView)
+{
+	this->additionalModelView = additionalModelView;
 }
 
 //	Clears the list vectors and deallocates the light materials and the mirrored light nodes allocated in the pass method,

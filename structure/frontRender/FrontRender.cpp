@@ -1,15 +1,14 @@
+
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "FrontRender.h"
 #include "../utils/CurrentDir.h"
-
-
-
+#include "../../tuna-ge.h"
+#include "FrontRender.h"
 
 
 using namespace tunage;
 
-FrontRender::FrontRender(int windowsX, int windowsY) : windowsSizeX(windowsX), windowsSizeY(windowsY), fboSizeX(windowsX/2), fboSizeY(windowsY) {
+FrontRender::FrontRender(int windowsX, int windowsY, OvVR* ovr) : windowsSizeX(windowsX), windowsSizeY(windowsY), fboSizeX(windowsX/2), fboSizeY(windowsY), ovVr(ovr){
 
 	char dir[FILENAME_MAX];
 	GetCurrentDir(dir, FILENAME_MAX);
@@ -52,6 +51,7 @@ FrontRender::FrontRender(int windowsX, int windowsY) : windowsSizeX(windowsX), w
 	glBindBuffer(GL_ARRAY_BUFFER, boxVertexVbo);
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec2), boxPlane, GL_STATIC_DRAW);
 	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(0);
 	delete[] boxPlane;
 
 	glm::vec2 *texCoord = new glm::vec2[4];
@@ -63,6 +63,7 @@ FrontRender::FrontRender(int windowsX, int windowsY) : windowsSizeX(windowsX), w
 	glBindBuffer(GL_ARRAY_BUFFER, boxTexCoordVbo);
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec2), texCoord, GL_STATIC_DRAW);
 	glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(2);
 	delete[] texCoord;
 
 	// Load FBO and its texture:
@@ -71,8 +72,8 @@ FrontRender::FrontRender(int windowsX, int windowsY) : windowsSizeX(windowsX), w
 
 	for (int c = 0; c < EYE_LAST; c++)
 	{
-		int fboSizeX = windowsSizeX;
-		int fboSizeY = windowsSizeY;
+	//	int fboSizeX = windowsSizeX;
+	//	int fboSizeY = windowsSizeY;
 		glGenTextures(1, &fboTexId[c]);
 		glBindTexture(GL_TEXTURE_2D, fboTexId[c]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fboSizeX, fboSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -98,12 +99,28 @@ void FrontRender::render(List renderList, glm::mat4 ortho) {
 	GLint prevViewport[4];
 	glGetIntegerv(GL_VIEWPORT, prevViewport);
 
+	// Update user position:
+	ovVr->update();
+	glm::mat4 headPos = ovVr->getModelviewMatrix();
+
 	// Render to each eye: 
 	for (int c = 0; c < EYE_LAST; c++) {
+		OvVR::OvEye curEye = (OvVR::OvEye) c;
+		glm::mat4 projMat = ovVr->getProjMatrix(curEye, renderList.getRenderCameras().front()->getNearPlane(), renderList.getRenderCameras().front()->getFarPlane());
+		glm::mat4 eye2Head = ovVr->getEye2HeadMatrix(curEye);
+		// Set your camera projection matrix to this one:
+		glm::mat4 myCameraProjMat = projMat * glm::inverse(eye2Head);
+		// Set your camera modelview matrix to this one:
+		glm::mat4 myCameraModelViewMat = glm::inverse(headPos);
 		fbo[c]->render();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		renderList.setProj(myCameraProjMat);
+		renderList.setAdditionalModelView(myCameraModelViewMat);
 		renderList.render();
+		ovVr->pass(curEye, fboTexId[c]);
 	}
+	// Update internal OpenVR settings:
+	ovVr->render();
 
 	// Done with the FBO, go back to rendering into the default context buffers:
 	Fbo::disable();
@@ -122,17 +139,7 @@ void FrontRender::render(List renderList, glm::mat4 ortho) {
 	Program::getCurrent()->setVec(passColorLoc, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 	glBindVertexArray(frontVao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, boxVertexVbo);
-	glVertexAttribPointer((GLuint)0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glEnableVertexAttribArray(0);
-
-	glDisableVertexAttribArray(1); // We don't need normals for the 2D quad
-
-	glBindBuffer(GL_ARRAY_BUFFER, boxTexCoordVbo);
-	glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glEnableVertexAttribArray(2);
-
+	
 	// Bind the FBO buffer as texture and render:
 	glBindTexture(GL_TEXTURE_2D, fboTexId[EYE_LEFT]);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
