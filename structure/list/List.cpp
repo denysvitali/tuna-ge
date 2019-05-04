@@ -90,6 +90,9 @@ void tunage::List::render() {
 	}
 	renderCameras.front()->update();
 	cameraMatrix = additionalModelView * renderCameras.front()->getRenderMatrix();
+
+	renderCameras.front()->setAdditionalFront(-glm::normalize(glm::vec3(glm::inverse(cameraMatrix)[2])));
+	
 	if (Skybox::getCurrent() != nullptr) {
 		//Stores the current shader program to re-enable it later when the skybox is done rendering
 		Program* temp = Program::getCurrent();

@@ -20,6 +20,12 @@ namespace tunage {
 		m_matrix = matrix;
 	}
 
+	void Node::setMatrix(glm::mat3 matrix) {
+		m_matrix[0] = glm::vec4(matrix[0], 0);
+		m_matrix[1] = glm::vec4(matrix[1], 0);
+		m_matrix[2] = glm::vec4(matrix[2], 0);
+	}
+
 	void Node::setFlipScene(bool flipScene) {
 		this->flipScene = flipScene;
 	}

@@ -28,6 +28,7 @@ namespace tunage {
 		virtual glm::mat4 getRenderMatrix() const;
 
 		void setMatrix(glm::mat4 matrix);
+		void setMatrix(glm::mat3 matrix);
 		glm::mat4 getMatrix() const;
 		void setFlipScene(bool flipScene);
 		bool getFlipScene() const;

@@ -105,6 +105,16 @@ glm::vec3 Camera::getFront() {
 	return front;
 }
 
+void tunage::Camera::setAdditionalFront(glm::vec3 additionalFront)
+{
+	this->additionalFront = additionalFront;
+}
+
+glm::vec3 tunage::Camera::getAdditionalFront()
+{
+	return additionalFront;
+}
+
 void Camera::setUp(glm::vec3 cameraUp) {
 	this->up = cameraUp;
 }
