@@ -216,7 +216,7 @@ void TunaGE::init() {
 	   1, 6, 2,
 	};
 	
-	Skybox::instantiate(cubemapNames, sizeof(cubemapNames), cubeVertices, sizeof(cubeVertices), cubeFaces, sizeof(cubeFaces));
+	Skybox::setCurrent(Skybox::instantiate(cubemapNames, sizeof(cubemapNames), cubeVertices, sizeof(cubeVertices), cubeFaces, sizeof(cubeFaces)));
 }
 
 void TunaGE::initGlew() {

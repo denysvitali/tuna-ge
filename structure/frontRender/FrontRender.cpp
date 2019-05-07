@@ -102,8 +102,6 @@ void FrontRender::render(List renderList, glm::mat4 ortho) {
 	// Update user position:
 	ovVr->update();
 	glm::mat4 headPos = ovVr->getModelviewMatrix();
-	glm::mat4 mat1;
-	glm::mat4 mat2;
 	// Render to each eye: 
 	for (int c = 0; c < EYE_LAST; c++) {
 		OvVR::OvEye curEye = (OvVR::OvEye) c;

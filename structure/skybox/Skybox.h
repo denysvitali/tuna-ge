@@ -8,8 +8,9 @@ namespace tunage {
 	public:
 
 		static Skybox* getCurrent();
-		static void instantiate(std::string cubemapNames[], unsigned int cubemapNamesSize, float cubeVertices[], unsigned int cubeVerticesSize, unsigned short cubeFaces[], unsigned int cubeFacesSize);
+		static Skybox* instantiate(std::string cubemapNames[], unsigned int cubemapNamesSize, float cubeVertices[], unsigned int cubeVerticesSize, unsigned short cubeFaces[], unsigned int cubeFacesSize);
 		void render(glm::mat4 proj, glm::mat4 modelView);
+		static void setCurrent(Skybox* newCurrent);
 	private:
 
 		Skybox(std::string cubemapNames[], unsigned int cubemapNamesSize, float cubeVertices[], unsigned int cubeVerticesSize, unsigned short cubeFaces[], unsigned int cubeFacesSize);

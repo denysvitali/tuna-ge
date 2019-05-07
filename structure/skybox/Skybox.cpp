@@ -100,9 +100,9 @@ Skybox* Skybox::getCurrent()
 	return Skybox::current;
 }
 
-void Skybox::instantiate(std::string cubemapNames[], unsigned int cubemapNamesSize, float cubeVertices[], unsigned int cubeVerticesSize, unsigned short cubeFaces[], unsigned int cubeFacesSize)
+Skybox* Skybox::instantiate(std::string cubemapNames[], unsigned int cubemapNamesSize, float cubeVertices[], unsigned int cubeVerticesSize, unsigned short cubeFaces[], unsigned int cubeFacesSize)
 {
-	Skybox::current = new Skybox(cubemapNames, cubemapNamesSize, cubeVertices, cubeVerticesSize, cubeFaces, cubeFacesSize);
+	return new Skybox(cubemapNames, cubemapNamesSize, cubeVertices, cubeVerticesSize, cubeFaces, cubeFacesSize);
 }
 
 void Skybox::render(glm::mat4 proj, glm::mat4 modelView)
@@ -112,4 +112,9 @@ void Skybox::render(glm::mat4 proj, glm::mat4 modelView)
 	cubePs->setMatrix(cubeMvLoc, modelView);
 	glBindVertexArray(cubeVao);
 	glDrawElements(GL_TRIANGLES, cubeFacesSize / sizeof(unsigned short), GL_UNSIGNED_SHORT, nullptr);
+}
+
+void tunage::Skybox::setCurrent(Skybox * newCurrent)
+{
+	Skybox::current = newCurrent;
 }

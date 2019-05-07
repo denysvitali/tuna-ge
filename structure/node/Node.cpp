@@ -48,6 +48,8 @@ namespace tunage {
 
 	//	Links a node as a children of the current node
 	void Node::link(Node* child) {
+		if (child->getParent() == this)
+			return;
 		child->setParent(this);
 		m_hierarchy.push_back(child);
 	}
