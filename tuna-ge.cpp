@@ -182,12 +182,12 @@ void TunaGE::init() {
 	
 	std::string cubemapNames[] =
 	{
-	   "posx.jpg",
-	   "negx.jpg",
-	   "posy.jpg",
-	   "negy.jpg",
-	   "posz.jpg",
-	   "negz.jpg",
+	   "assets/skybox/posx.jpg",
+	   "assets/skybox/negx.jpg",
+	   "assets/skybox/posy.jpg",
+	   "assets/skybox/negy.jpg",
+	   "assets/skybox/posz.jpg",
+	   "assets/skybox/negz.jpg",
 	};
 	float cubeVertices[] = // Vertex and tex. coords are the same
 	{

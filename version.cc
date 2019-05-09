@@ -5,6 +5,6 @@
 #endif
 
 using namespace tunage;
-const std::string& Version::GIT_SHA1 = "30cdb4a-dirty";
-const std::string& Version::GIT_DATE = "Sun May 5 15:56:46 2019";
-const std::string& Version::GIT_COMMIT_SUBJECT = "change scene";
+const std::string& Version::GIT_SHA1 = "6a75c6a-dirty";
+const std::string& Version::GIT_DATE = "Tue May 7 16:28:18 2019";
+const std::string& Version::GIT_COMMIT_SUBJECT = "Skybox images";
